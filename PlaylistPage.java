@@ -1,8 +1,22 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class PlaylistPage 
+import javax.swing.JFrame;
+
+public class PlaylistPage extends JFrame implements ActionListener
 {
+	
 	public static void main(String[] args) 
 	{
-	      System.out.println("Hello, World");
+		// constructing the playlist frame
+		JFrame playlistFrame = new PlaylistFrame();
+		playlistFrame.setVisible(true);
+	}
+	
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
