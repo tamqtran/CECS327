@@ -17,6 +17,7 @@ public class Login implements ActionListener {
 	JPasswordField passwordField;
 	JLabel n, p, E;
 	JButton loginButton;
+	String message, cmd;
 	
 	public Login() {
 		frame = new JFrame("'MusicService' Login");
@@ -42,18 +43,19 @@ public class Login implements ActionListener {
 		passwordField.setLocation(105, 35);
 		frame.add(passwordField);
 		
+		E = new JLabel("Error message");
+		E.setVisible(false);
+		E.setSize(E.getPreferredSize());
+		E.setLocation(10, 98);	
+		E.setForeground(Color.RED);
+		frame.add(E);
+		
 		loginButton = new JButton("Login");
 		loginButton.setSize(loginButton.getPreferredSize());
 		loginButton.setLocation(112,65);
 		loginButton.addActionListener(this);
 		frame.add(loginButton);
-		
-		E = new JLabel("Error message");
-		E.setVisible(false);
-		E.setSize(E.getPreferredSize());
-		E.setLocation(105, 98);	E.setForeground(Color.RED);
-		frame.add(E);
-		
+				
 		frame.setVisible(true);
 	}
 	
@@ -70,31 +72,38 @@ public class Login implements ActionListener {
 	//The error message will change based on the error made after clicking the login button.
 	
 	
-	public void actionPerformed(ActionEvent e ) {
-		String cmd = e.getActionCommand();
-		if (cmd.equals("ok")) {
-			String user = usernameField.getText();
-			if (isUser(user)) {
-				char[] pass = passwordField.getPassword();
-				if (confirmPassword(user, pass)) {
-					//redirect to homepage with their data
-				}
-			}
-		}
+	public void actionPerformed(ActionEvent e) {
+
+		String user = usernameField.getText();
+		if (isUser(user) && codeDenialS(user)) {
+			char[] pass = passwordField.getPassword();
+			if (confirmPassword(user, pass) && codeDenialC(pass)) {
+				//redirect to homepage with their data
+				//then close the login
+			} else message = "Incorrect password; try again.";
+		} else message = "No such user; try again.";
+		E.setText(message);
+		E.setSize(E.getPreferredSize());
+		E.setVisible(true);
+		
 	}
 	
 	public boolean isUser (String user) {
+		//find the existence of a user with this name from wherever they're stored
 		return false;
 	}
 	
 	public boolean confirmPassword (String user, char[] pass) {
+		//find the user that has this username and this password
 		return false;
 	}
 	
 	public boolean codeDenialS (String input) {
+		//denies if input has the following: ;://\!&=?, (code injection prevention)
 		return false;
 	}
 	public boolean codeDenialC (char[] input) {
+		//denies if input has the following: ;://\!&=?, (code injection prevention)
 		return false;
 	}
 }
