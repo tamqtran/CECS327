@@ -5,10 +5,10 @@ public class PlaylistFrame extends JFrame
 {
 	public PlaylistFrame()
 	{
-		setTitle("PLaylist Page");
-		setSize(700, 700);
-		setResizable(false);
+		setTitle("Playlist Page");
 		
+		setResizable(false);
+		setSize(700, 700);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JPanel panel = new PlaylistButton();
 		this.add(panel);
