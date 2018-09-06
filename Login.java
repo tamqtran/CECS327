@@ -20,7 +20,7 @@ public class Login implements ActionListener {
 	private JFrame frame;
 	protected JTextField usernameField;
 	protected JPasswordField passwordField;
-	private JLabel n, p, E;
+	private JLabel nLabel, pLabel, eLabel;
 	protected JButton loginButton;
 	private String message;
 	private JPanel userPanel, passPanel, errorPanel, buttonPanel;
@@ -35,7 +35,6 @@ public class Login implements ActionListener {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		addComponentsToPane(frame.getContentPane());
-
 		frame.setVisible(true);
 	}
 		
@@ -45,22 +44,22 @@ public class Login implements ActionListener {
 		userPanel = new JPanel();
 		userPanel.setLayout(new BoxLayout(userPanel, BoxLayout.LINE_AXIS));
 		
-		n = new JLabel("Username:");
-		usernameField = new JTextField();	usernameField.setColumns(15);
+		nLabel = new JLabel("Username:");
+		usernameField = new JTextField(); usernameField.setColumns(15);
 		usernameField.setMaximumSize(usernameField.getPreferredSize());
 
-		userPanel.add(n);
+		userPanel.add(nLabel);
 		userPanel.add(Box.createRigidArea(new Dimension(5,0)));
 		userPanel.add(usernameField);
 		
 		passPanel = new JPanel();
 		passPanel.setLayout(new BoxLayout(passPanel, BoxLayout.LINE_AXIS));
 		
-		p = new JLabel("Password:");
-		passwordField = new JPasswordField();	passwordField.setColumns(15);
+		pLabel = new JLabel("Password:");
+		passwordField = new JPasswordField(); passwordField.setColumns(15);
 		passwordField.setMaximumSize(passwordField.getPreferredSize());
 		
-		passPanel.add(p);
+		passPanel.add(pLabel);
 		passPanel.add(Box.createRigidArea(new Dimension(6,0)));
 		passPanel.add(passwordField);
 		
@@ -73,18 +72,14 @@ public class Login implements ActionListener {
 		
 		errorPanel = new JPanel();
 		errorPanel.setLayout(new BoxLayout(errorPanel, BoxLayout.LINE_AXIS));
-		E = new JLabel("Error message");	E.setForeground(Color.RED);
-		E.setVisible(false);
-		errorPanel.add(E);
+		eLabel = new JLabel("Error message"); eLabel.setForeground(Color.RED);
+		eLabel.setVisible(false);
+		errorPanel.add(eLabel);
 				
-		pane.add(Box.createRigidArea(new Dimension(0,20)));
-		pane.add(userPanel);
-		pane.add(Box.createRigidArea(new Dimension(0,7)));
-		pane.add(passPanel);
-		pane.add(Box.createRigidArea(new Dimension(0,13)));
-		pane.add(buttonPanel);
-		pane.add(Box.createRigidArea(new Dimension(0,10)));
-		pane.add(errorPanel);
+		pane.add(Box.createRigidArea(new Dimension(0,20)));		pane.add(userPanel);
+		pane.add(Box.createRigidArea(new Dimension(0,7)));		pane.add(passPanel);
+		pane.add(Box.createRigidArea(new Dimension(0,13)));		pane.add(buttonPanel);
+		pane.add(Box.createRigidArea(new Dimension(0,10)));		pane.add(errorPanel);
 	}
 	
 	public static void main (String[] args) {
@@ -116,9 +111,9 @@ public class Login implements ActionListener {
 			} else message = "No such user; try again.";
 		} else message = "Fill out both boxes.";
 		
-		E.setText(message);
-		E.setSize(E.getPreferredSize());
-		E.setVisible(true);
+		eLabel.setText(message);
+		eLabel.setSize(eLabel.getPreferredSize());
+		eLabel.setVisible(true);
 	}
 	
 	public boolean isUser (String user) {
