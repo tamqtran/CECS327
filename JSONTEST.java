@@ -11,57 +11,40 @@ public class JSONTEST {
 
 	public static void main(String[] args) {
 		//Writing to JSON
+		/*
+		//Create JSON object and add value
+		JSONObject obj = new JSONObject();
+		obj.put("name", "Allan");
+		obj.put("password", "Forever");
 		
-		//Profile Object
-		JSONObject profile = new JSONObject();
-		profile.put("name", "Allan");
-		profile.put("password", "Forever");
+		//Create JSON array and add value
+		JSONArray list = new JSONArray();
+		list.put("playlist1");
+		list.put("playlist2");
+		list.put("playlist3");
 		
-		//Playlist Object
-		JSONObject play = new JSONObject();
-		JSONArray playlist = new JSONArray();
-		
-		JSONObject song = new JSONObject();
-		JSONArray songList = new JSONArray();
-		
-		songList.put("song1");
-		songList.put("song2");
-		songList.put("song3");
-		
-		
-		playlist.put("playlist1");
-		playlist.put("playlist2");
-		playlist.put("playlist3");
-		
-		song.put("songs", songList);
-		play.put("playlists", song);
-		
+		obj.put("playlists", list);
 		
 		//Write all to json file
 		try {
-			FileWriter fileWriter = new FileWriter("user.json");
-			fileWriter.write(profile.toString());
-			fileWriter.write(playlist.toString());
+			FileWriter fileWriter = new FileWriter("Allan.json");
+			fileWriter.write(obj.toString());
 			fileWriter.flush();
 			fileWriter.close();
 		}catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 		
 		//Reading from JSON
-		/*JSONObject obj;
-		String pathname = "Allan.json";
+		JSONObject obj;
+		String pathname = "practice.json";
 		try (InputStream input = new FileInputStream(pathname)) {
 		    obj = new JSONObject(new JSONTokener(input));
-		    String name = obj.get("playlists").toString();
-		    //String pageName = obj.getJSONObject("pageInfo").getString("pageName");
+		    String name = obj.get("playlist").toString();
 		    System.out.println(name);
-		   // System.out.println(pageName);
-		    
 		}catch (Exception e) {
 			e.printStackTrace();
-		}*/
-	
+		}
 	}
 
 }
