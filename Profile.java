@@ -30,6 +30,7 @@ import java.awt.event.KeyEvent;
 
 public class Profile {
 
+	String username = "allan";
 	private JFrame frame;
 	private JTextField txtSearchMyPlaylists;
 
@@ -86,7 +87,7 @@ public class Profile {
 		btnLogout.setBounds(10, 11, 79, 23);
 		frame.getContentPane().add(btnLogout);
 		
-		JButton btnEdit = new JButton("Edit");
+		JButton btnEdit = new JButton("Explore");
 		btnEdit.setBounds(221, 265, 97, 33);
 		frame.getContentPane().add(btnEdit);
 		
@@ -103,7 +104,7 @@ public class Profile {
 		lblName.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblName.setBounds(25, 67, 293, 33);
 		frame.getContentPane().add(lblName);
-		lblName.setText("Name: ");
+		lblName.setText("Name: "+getName(username));
 		
 		JLabel lblMyPlaylists = new JLabel("My Playlists");
 		lblMyPlaylists.setFont(new Font("Times New Roman", Font.PLAIN, 18));
@@ -120,9 +121,8 @@ public class Profile {
 					txtSearchMyPlaylists.setText("Enter name of the new playlist");
 					txtSearchMyPlaylists.setForeground(Color.RED);;
 				}else if(!dm.contains(txtSearchMyPlaylists.getText())){
-					dm.addElement(txtSearchMyPlaylists.getText()); //add to playlist
-					//add to playlist to json
-					
+					addPlaylist(txtSearchMyPlaylists.getText(), username); //add to playlist to json
+					getPlaylists(dm); //update list gui
 				}
 				
 			}
@@ -130,7 +130,8 @@ public class Profile {
 		
 		btnRemovePlaylist.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dm.removeElementAt(list_1.getSelectedIndex());
+				removePlaylist(list_1.getSelectedValue().toString(), username); //add to playlist to json
+				getPlaylists(dm); //update list gui
 			}
 		});
 		
@@ -170,13 +171,7 @@ public class Profile {
 			}
 		});
 	}
-	/**
-	 * Add new songs with 
-	 * @param dm defaultlistModel
-	 */
-	void addPlaylist(DefaultListModel dm) {
-		
-	}
+	
 	/**
 	 * Read playlists array from json file and add to gui list
 	 * @param dm defaultlistModel
@@ -197,4 +192,68 @@ public class Profile {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Remove playlist from JSON FiLE
+	 * @param playlist playlist to be removed
+	 * @param username current login user
+	 */
+	 void removePlaylist(String playlist, String username) {
+		try (InputStream input = new FileInputStream(username+".json")) {
+		    JSONObject obj1 = new JSONObject(new JSONTokener(input));
+		    
+		    JSONArray currentList = obj1.getJSONArray("playlists");
+		    currentList.remove(currentList.toList().indexOf(playlist)); 
+		    obj1.remove(playlist); // also need to remove songs from playlist
+		    
+		    FileWriter fileWriter = new FileWriter(username+".json");
+			fileWriter.write(obj1.toString());
+			fileWriter.flush();
+			fileWriter.close();
+		    
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Add playlist to JSON FiLE
+	 * @param playlist playlist to be added
+	 * @param username current login user
+	 */
+	 void addPlaylist(String playlist, String username) {
+		try (InputStream input = new FileInputStream(username+".json")) {
+		    JSONObject obj1 = new JSONObject(new JSONTokener(input));
+		    
+		    JSONArray currentList = obj1.getJSONArray("playlists");
+		    if(!currentList.toList().contains(playlist)) {
+		    	currentList.put(playlist);
+		    	obj1.put(playlist, new JSONArray()); //empty song list for this array
+		    }
+		    
+		    FileWriter fileWriter = new FileWriter(username+".json");
+			fileWriter.write(obj1.toString());
+			fileWriter.flush();
+			fileWriter.close();
+		    
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	 /**
+	  * Get current login user's name
+	  * @param username 
+	 * @return 
+	  */
+	 String getName(String username) {
+		 String name = null;
+		 try (InputStream input = new FileInputStream(username+".json")) {
+			    JSONObject obj1 = new JSONObject(new JSONTokener(input));
+			    name = obj1.get("name").toString();
+		 }catch (Exception e) {
+				e.printStackTrace();
+			}
+		 return name;
+	 }
+	
 }
