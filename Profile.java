@@ -1,17 +1,37 @@
+import java.awt.Color;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JPanel;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
+import java.awt.Font;
+import javax.swing.JTextField;
+
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.InputStream;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class Profile {
 
 	private JFrame frame;
+	private JTextField txtSearchMyPlaylists;
 
 	/**
 	 * Launch the application.
@@ -49,37 +69,62 @@ public class Profile {
 		DefaultListModel dm = new DefaultListModel();
 		
 		JList list_1 = new JList();
-		list_1.setBounds(328, 29, 285, 325);
+		list_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		list_1.setBounds(339, 81, 274, 279);
 		frame.getContentPane().add(list_1);
 		
 		//BUTTONS
-		JButton btnAddPlaylist = new JButton("Add Playlist");
-		btnAddPlaylist.setBounds(211, 249, 107, 40);
+		JButton btnAddPlaylist = new JButton("Add");
+		btnAddPlaylist.setBounds(221, 221, 97, 33);
 		frame.getContentPane().add(btnAddPlaylist);
 		
-		JButton btnRemovePlaylist = new JButton("Remove Playlist");
-		btnRemovePlaylist.setBounds(211, 314, 107, 40);
+		JButton btnRemovePlaylist = new JButton("Remove");
+		btnRemovePlaylist.setBounds(221, 309, 97, 33);
 		frame.getContentPane().add(btnRemovePlaylist);
 		
 		JButton btnLogout = new JButton("Logout");
-		btnLogout.setBounds(10, 11, 89, 23);
+		btnLogout.setBounds(10, 11, 79, 23);
 		frame.getContentPane().add(btnLogout);
 		
-		//Panel name from json
-		JLabel label = new JLabel("");
-		label.setBounds(10, 45, 303, 33);
-		frame.getContentPane().add(label);
-		label.setText("Nick");
-		//Playlist List FROM json
+		JButton btnEdit = new JButton("Edit");
+		btnEdit.setBounds(221, 265, 97, 33);
+		frame.getContentPane().add(btnEdit);
+		
+		txtSearchMyPlaylists = new JTextField();
+		
+		
+		txtSearchMyPlaylists.setText("Search my playlists");
+		txtSearchMyPlaylists.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		txtSearchMyPlaylists.setBounds(339, 47, 274, 23);
+		frame.getContentPane().add(txtSearchMyPlaylists);
+		txtSearchMyPlaylists.setColumns(10);
+		
+		JLabel lblName = new JLabel("");
+		lblName.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblName.setBounds(25, 67, 293, 33);
+		frame.getContentPane().add(lblName);
+		lblName.setText("Name: ");
+		
+		JLabel lblMyPlaylists = new JLabel("My Playlists");
+		lblMyPlaylists.setFont(new Font("Times New Roman", Font.PLAIN, 18));
+		lblMyPlaylists.setBounds(339, 15, 129, 19);
+		frame.getContentPane().add(lblMyPlaylists);
+		
+		//Playlist FROM json file
 		list_1.setModel(dm);
-		dm.addElement("Playlist1");
-		dm.addElement("Playlist2");
-		dm.addElement("Playlist3");
+		getPlaylists(dm);
+		
 		btnAddPlaylist.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//Moveto playlist panel
-				list_1.setModel(dm);
-				dm.addElement("Happy");
+				if(txtSearchMyPlaylists.getText().equals("Search my playlists")) {
+					txtSearchMyPlaylists.setText("Enter name of the new playlist");
+					txtSearchMyPlaylists.setForeground(Color.RED);;
+				}else if(!dm.contains(txtSearchMyPlaylists.getText())){
+					dm.addElement(txtSearchMyPlaylists.getText()); //add to playlist
+					//add to playlist to json
+					
+				}
+				
 			}
 		});
 		
@@ -89,5 +134,67 @@ public class Profile {
 			}
 		});
 		
+		txtSearchMyPlaylists.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//enter pressed for search playlist
+				if(dm.contains(txtSearchMyPlaylists.getText())) { 
+					dm.clear();
+					dm.addElement(txtSearchMyPlaylists.getText());
+				}else {
+					dm.clear();
+				}
+				
+			}
+		});
+		txtSearchMyPlaylists.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				txtSearchMyPlaylists.setText("");
+				txtSearchMyPlaylists.setForeground(Color.BLACK);
+				getPlaylists(dm);
+			}
+		});
+		txtSearchMyPlaylists.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				if(txtSearchMyPlaylists.getText().equals("")) {
+					txtSearchMyPlaylists.setText("Search my playlists");
+				}
+			}
+		});
+		txtSearchMyPlaylists.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if(txtSearchMyPlaylists.getText().equals(""))
+					getPlaylists(dm);
+			}
+		});
+	}
+	/**
+	 * Add new songs with 
+	 * @param dm defaultlistModel
+	 */
+	void addPlaylist(DefaultListModel dm) {
+		
+	}
+	/**
+	 * Read playlists array from json file and add to gui list
+	 * @param dm defaultlistModel
+	 */
+	void getPlaylists(DefaultListModel dm) {
+		dm.clear(); //clear list 
+		JSONObject obj1;
+		String pathname = "allan.json";
+		try (InputStream input = new FileInputStream(pathname)) {
+			obj1 = new JSONObject(new JSONTokener(input));
+		    //read playlists
+		    String playlist = obj1.get("playlists").toString();
+		    String [] playlistArray = playlist.substring(2, playlist.length() - 2).split("\",\"");
+		    //add playlist to default list
+		    for(int i = 0; i < playlistArray.length; i++)
+		    	dm.addElement(playlistArray[i]);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
