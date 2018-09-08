@@ -53,7 +53,7 @@ public class Profile {
 	/**
 	 * Create the application.
 	 */
-	public Profile() {
+	public Profile(){
 		initialize();
 	}
 
@@ -61,7 +61,7 @@ public class Profile {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
+		frame = new JFrame("'MusicService' Profile");
 		frame.setBounds(100, 100, 659, 427);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -87,9 +87,9 @@ public class Profile {
 		btnLogout.setBounds(10, 11, 79, 23);
 		frame.getContentPane().add(btnLogout);
 		
-		JButton btnEdit = new JButton("Explore");
-		btnEdit.setBounds(221, 265, 97, 33);
-		frame.getContentPane().add(btnEdit);
+		JButton btnExplorePlaylist = new JButton("Explore");
+		btnExplorePlaylist.setBounds(221, 265, 97, 33);
+		frame.getContentPane().add(btnExplorePlaylist);
 		
 		txtSearchMyPlaylists = new JTextField();
 		
@@ -114,6 +114,21 @@ public class Profile {
 		//Playlist FROM json file
 		list_1.setModel(dm);
 		getPlaylists(dm);
+		
+		
+		btnLogout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+		        new Login().setVisible(true); 
+			}
+		});
+		
+		btnExplorePlaylist.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				frame.dispose();
+		        new PlaylistFrame().setVisible(true); 
+			}
+		});
 		
 		btnAddPlaylist.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -255,5 +270,10 @@ public class Profile {
 			}
 		 return name;
 	 }
+
+	public void setVisible(boolean b) {
+		// TODO Auto-generated method stub
+		frame.setVisible(b);
+	}
 	
 }

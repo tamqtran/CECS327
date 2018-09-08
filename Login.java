@@ -15,6 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Login implements ActionListener {
 	private JFrame frame;
@@ -66,6 +68,7 @@ public class Login implements ActionListener {
 		buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
 		loginButton = new JButton("Login"); 
+	
 		loginButton.setMaximumSize(loginButton.getPreferredSize());
 		loginButton.addActionListener(this);
 		buttonPanel.add(loginButton);
@@ -140,5 +143,11 @@ public class Login implements ActionListener {
 			for (char s : specials.toCharArray())
 				if (s == c) return false;
 		} return true;
+	}
+
+	public void setVisible(boolean b) {
+		// TODO Auto-generated method stub
+		frame.setVisible(b);
+		
 	}
 }
