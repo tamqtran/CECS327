@@ -16,7 +16,7 @@ public class JSONTEST {
 		//Writing to JSON
 		
 		//Create JSON object and add value
-		/*JSONObject obj = new JSONObject();
+		JSONObject obj = new JSONObject();
 		obj.put("name", "allan");
 		obj.put("password", "forever");
 		
@@ -45,7 +45,7 @@ public class JSONTEST {
 			fileWriter.close();
 		}catch (Exception e) {
 			e.printStackTrace();
-		}*/
+		}
 		
 		//Reading from JSON
 		JSONObject obj1;
@@ -79,16 +79,31 @@ public class JSONTEST {
 			    }
 		    	System.out.println();
 		    }
-		    
+		    //Add new song to playlist x
 		    System.out.println("Adding new song...");
-		    //int index = playlistJsonArray.toList().indexOf("playlist2");
-		    //System.out.println(index);
-		    //JSONArray newSonglist = songlistArray.get(index);
-		    //newSonglist.put("song4");
-		    //songlistArray.remove(index);
-		    //songlistArray.add(index,newSonglist);
+		    JSONArray songlistToAdd = obj1.getJSONArray("playlist1");
+		    if(!songlistToAdd.toList().contains("song5")) {
+		    	songlistToAdd.put("song5");
+		    }
 		    
-		    obj1.append("playlist1", "song5");
+		    //Remove song from playlist x
+		    System.out.println("Removing song...");
+		    JSONArray songlistToRemove = obj1.getJSONArray("playlist1");
+		    songlistToRemove.remove(songlistToRemove.toList().indexOf("song5"));
+		    
+		    //Add new playlist
+		    System.out.println("Adding new playlist...");
+		    JSONArray playlistToAdd = obj1.getJSONArray("playlists");
+		    if(!playlistToAdd.toList().contains("playlist8")) {
+		    	playlistToAdd.put("playlist8");
+		    	obj1.put("playlist8", new JSONArray());
+		    }
+		    
+		    //Remove playlist
+		    System.out.println("Removing playlist....");
+		    JSONArray playlistToRemove = obj1.getJSONArray("playlists");
+		    playlistToRemove.remove(playlistToRemove.toList().indexOf("playlist8"));
+		    obj1.remove("playlist8");
 		    
 		  //Write all to json file
 			try {
@@ -100,6 +115,7 @@ public class JSONTEST {
 				e.printStackTrace();
 			}
 			
+			//removePlaylist("playlist5", "allan");
 		    for(int i = 0; i < playlistJsonArray.length(); i++) {
 		    	JSONArray songlistJsonArray = obj1.getJSONArray((String) playlistJsonArray.get(i));
 		    	songlistArray.add(songlistJsonArray);
@@ -114,55 +130,102 @@ public class JSONTEST {
 			e.printStackTrace();
 		}
 	}
+	
 	/**
-	 * Update json file with new information
-	 * @param oper operation to perform: "addsong", "removesong", "addplaylist", "removeplaylist"
-	 * @param ele element to be changed
-	 * @param play playlist if updating songs else should be empty string;
+	 * Add playlist to JSON FiLE
+	 * @param playlist playlist to be added
+	 * @param username current login user
 	 */
-	void updateJson(String oper, String play, String ele, String username) {
-		//read data from current json file
-		JSONObject obj1;
-		String pathname = username+".json";
-		String name;
-		String password;
-		JSONArray playlistJsonArray = null;
-		List<JSONArray> songlistArray = null;
-		try (InputStream input = new FileInputStream(pathname)) {
-		    obj1 = new JSONObject(new JSONTokener(input));
-		    //read name + password
-		    name = obj1.get("name").toString();
-		    password = obj1.get("password").toString();
-		 
-		    //read playlists
-		    playlistJsonArray = obj1.getJSONArray("playlists");
-		    		    
-		    //songs of each playlist
-		    songlistArray = new ArrayList<JSONArray>();
-		    for(int i = 0; i < playlistJsonArray.length(); i++) {
-		    	JSONArray songlistJsonArray = obj1.getJSONArray((String) playlistJsonArray.get(i));
-		    	for(int j=0; j<songlistJsonArray.length();j++) {
-		    		songlistArray.add(songlistJsonArray);
-			    }
+	static void addPlaylist(String playlist, String username) {
+		try (InputStream input = new FileInputStream(username+".json")) {
+		    JSONObject obj1 = new JSONObject(new JSONTokener(input));
+		    
+		    JSONArray currentList = obj1.getJSONArray("playlists");
+		    if(!currentList.toList().contains(playlist)) {
+		    	currentList.put(playlist);
+		    	obj1.put(playlist, new JSONArray()); //empty song list for this array
 		    }
+		    
+		    FileWriter fileWriter = new FileWriter(username+".json");
+			fileWriter.write(obj1.toString());
+			fileWriter.flush();
+			fileWriter.close();
 		    
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
-		if(oper.equals("addsong")) {
-			int index = playlistJsonArray.toList().indexOf(play);
-			JSONArray temp = songlistArray.get(index);
-			
-			
-		}else if(oper.equals("removesong")) {
-			
-		}else if(oper.equals("addplaylist")) {
-			
-		}else if(oper.equals("removeplaylist")) {
-			
-		}else {
-			System.out.println("Invalid operation when using method updateJson");
-			return;
+	}
+	/**
+	 * Remove playlist from JSON FiLE
+	 * @param playlist playlist to be removed
+	 * @param username current login user
+	 */
+	static void removePlaylist(String playlist, String username) {
+		try (InputStream input = new FileInputStream(username+".json")) {
+		    JSONObject obj1 = new JSONObject(new JSONTokener(input));
+		    
+		    JSONArray currentList = obj1.getJSONArray("playlists");
+		    currentList.remove(currentList.toList().indexOf(playlist)); 
+		    obj1.remove(playlist); // also need to remove songs from playlist
+		    
+		    FileWriter fileWriter = new FileWriter(username+".json");
+			fileWriter.write(obj1.toString());
+			fileWriter.flush();
+			fileWriter.close();
+		    
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * Add a song to a playlist
+	 * @param playlist playlist to add the song
+	 * @param song song to be added to playlist
+	 * @param username current login user
+	 */
+	static void removeSong(String playlist, String song, String username) {
+		try (InputStream input = new FileInputStream(username+".json")) {
+		    JSONObject obj1 = new JSONObject(new JSONTokener(input));
+		    
+		    JSONArray currentPlaylist = obj1.getJSONArray("playlists");
+		    if(currentPlaylist.toList().contains(playlist)) {
+		    	JSONArray currentList = obj1.getJSONArray(playlist);
+		    	currentList.remove(currentList.toList().indexOf(song));
+		    }
+		    FileWriter fileWriter = new FileWriter(username+".json");
+			fileWriter.write(obj1.toString());
+			fileWriter.flush();
+			fileWriter.close();
+		    
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * Remove a song from a playlist
+	 * @param playlist playlist that song is in
+	 * @param song song to be removed
+	 * @param username current login user
+	 */
+	static void addSong(String playlist, String song, String username) {
+		try (InputStream input = new FileInputStream(username+".json")) {
+		    JSONObject obj1 = new JSONObject(new JSONTokener(input));
+		    
+		    JSONArray currentPlaylist = obj1.getJSONArray("playlists");
+		    if(currentPlaylist.toList().contains(playlist)) {
+		    	 JSONArray currentList = obj1.getJSONArray(playlist);
+				    if(!currentList.toList().contains(song)) {
+				    	currentList.put(song);
+				    }
+		    }
+		    
+		    FileWriter fileWriter = new FileWriter(username+".json");
+			fileWriter.write(obj1.toString());
+			fileWriter.flush();
+			fileWriter.close();
+		    
+		}catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
