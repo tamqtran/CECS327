@@ -10,7 +10,8 @@ public class PlaylistFrame extends JFrame
 		setResizable(false);
 		setSize(700, 700);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		JPanel panel = new PlaylistButton();
+		JPanel panel = new PlaylistPanel();
 		this.add(panel);
 	}
+
 }
