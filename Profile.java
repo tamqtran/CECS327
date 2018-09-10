@@ -41,7 +41,7 @@ public class Profile {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Profile window = new Profile();
+					Profile window = new Profile("allan");
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -53,7 +53,8 @@ public class Profile {
 	/**
 	 * Create the application.
 	 */
-	public Profile(){
+	public Profile(String user){
+		username = user;
 		initialize();
 	}
 
