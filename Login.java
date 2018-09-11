@@ -15,6 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Login implements ActionListener {
 	private JFrame frame;
@@ -41,8 +43,10 @@ public class Login implements ActionListener {
 	public void addComponentsToPane (Container pane){
 		pane.setLayout(new BoxLayout(pane, BoxLayout.PAGE_AXIS));
 		
-		userPanel = new JPanel();
-		userPanel.setLayout(new BoxLayout(userPanel, BoxLayout.LINE_AXIS));
+		userPanel = new JPanel();	userPanel.setLayout(new BoxLayout(userPanel, BoxLayout.LINE_AXIS));
+		passPanel = new JPanel();	passPanel.setLayout(new BoxLayout(passPanel, BoxLayout.LINE_AXIS));
+		buttonPanel = new JPanel();	buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
+		errorPanel = new JPanel();	errorPanel.setLayout(new BoxLayout(errorPanel, BoxLayout.LINE_AXIS));
 		
 		nLabel = new JLabel("Username:");
 		usernameField = new JTextField(); usernameField.setColumns(15);
@@ -52,9 +56,6 @@ public class Login implements ActionListener {
 		userPanel.add(Box.createRigidArea(new Dimension(5,0)));
 		userPanel.add(usernameField);
 		
-		passPanel = new JPanel();
-		passPanel.setLayout(new BoxLayout(passPanel, BoxLayout.LINE_AXIS));
-		
 		pLabel = new JLabel("Password:");
 		passwordField = new JPasswordField(); passwordField.setColumns(15);
 		passwordField.setMaximumSize(passwordField.getPreferredSize());
@@ -63,17 +64,16 @@ public class Login implements ActionListener {
 		passPanel.add(Box.createRigidArea(new Dimension(6,0)));
 		passPanel.add(passwordField);
 		
+		loginButton = new JButton("Login"); loginButton.addActionListener(this);
 		buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
 		loginButton = new JButton("Login"); 
+	
 		loginButton.setMaximumSize(loginButton.getPreferredSize());
-		loginButton.addActionListener(this);
 		buttonPanel.add(loginButton);
 		
-		errorPanel = new JPanel();
-		errorPanel.setLayout(new BoxLayout(errorPanel, BoxLayout.LINE_AXIS));
-		eLabel = new JLabel("Error message"); eLabel.setForeground(Color.RED);
-		eLabel.setVisible(false);
+		eLabel = new JLabel("Error message"); 
+		eLabel.setForeground(Color.RED); eLabel.setVisible(false);
 		errorPanel.add(eLabel);
 				
 		pane.add(Box.createRigidArea(new Dimension(0,20)));		pane.add(userPanel);
@@ -99,12 +99,12 @@ public class Login implements ActionListener {
 
 		String user = usernameField.getText();
 		char[] pass = passwordField.getPassword();
-		System.out.println(user + " : " + String.valueOf(pass));
+		System.out.println(user + " : " + String.valueOf(pass)); //debug
 		
 		if ((!user.isEmpty()) && (pass.length > 0)) {
 			if (isUser(user) && codeDenialS(user)) {
 				if (confirmPassword(user, pass) && codeDenialC(pass)) {
-					System.out.println("Success. Redirecting...");
+					System.out.println("Success. Redirecting..."); //debug
 					//redirect to homepage with their data
 					frame.dispose(); //then close the login
 				} else message = "Incorrect password; try again.";
@@ -140,5 +140,11 @@ public class Login implements ActionListener {
 			for (char s : specials.toCharArray())
 				if (s == c) return false;
 		} return true;
+	}
+
+	public void setVisible(boolean b) {
+		// TODO Auto-generated method stub
+		frame.setVisible(b);
+		
 	}
 }
