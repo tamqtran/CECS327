@@ -114,6 +114,16 @@ public class Profile {
 		
 		//Playlist FROM json file
 		list_1.setModel(dm);
+		
+		JButton btnNewButton = new JButton("Search Menu");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+		        new SearchMenuFrame().setVisible(true); 
+			}
+		});
+		btnNewButton.setBounds(25, 311, 115, 29);
+		frame.getContentPane().add(btnNewButton);
 		getPlaylists(dm);
 		
 		
@@ -138,8 +148,8 @@ public class Profile {
 		
 		btnAddPlaylist.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if(txtSearchMyPlaylists.getText().equals("Search my playlists")) {
-					txtSearchMyPlaylists.setText("Enter name of the new playlist");
+				if(txtSearchMyPlaylists.getText().equals("Search my playlists") || txtSearchMyPlaylists.getText().equals("Select a playlist to explore") || txtSearchMyPlaylists.getText().equals("Select a playlist to remove") || txtSearchMyPlaylists.getText().equals("Enter a name for the new playlist")) {
+					txtSearchMyPlaylists.setText("Enter a name for the new playlist");
 					txtSearchMyPlaylists.setForeground(Color.RED);;
 				}else if(!dm.contains(txtSearchMyPlaylists.getText())){
 					addPlaylist(txtSearchMyPlaylists.getText(), username); //add to playlist to json
@@ -151,8 +161,14 @@ public class Profile {
 		
 		btnRemovePlaylist.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				removePlaylist(list_1.getSelectedValue().toString(), username); //add to playlist to json
-				getPlaylists(dm); //update list gui
+				if(list_1.getSelectedIndex()!=-1) {
+					removePlaylist(list_1.getSelectedValue().toString(), username); //add to playlist to json
+					getPlaylists(dm); //update list gui
+				}
+				else {
+					txtSearchMyPlaylists.setText("Select a playlist to remove");
+					txtSearchMyPlaylists.setForeground(Color.RED);;
+				}
 			}
 		});
 		
@@ -281,5 +297,4 @@ public class Profile {
 		// TODO Auto-generated method stub
 		frame.setVisible(b);
 	}
-	
 }
