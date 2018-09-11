@@ -126,8 +126,13 @@ public class Profile {
 		
 		btnExplorePlaylist.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				frame.dispose();
-		        new PlaylistFrame().setVisible(true); 
+				if(list_1.getSelectedIndex()==-1) {
+					txtSearchMyPlaylists.setText("Select a playlist to explore");
+					txtSearchMyPlaylists.setForeground(Color.RED);;
+				}else {
+					frame.dispose();
+					new PlaylistFrame(username,list_1.getSelectedValue().toString()).setVisible(true); 
+				}
 			}
 		});
 		
