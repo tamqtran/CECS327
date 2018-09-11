@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -54,6 +55,7 @@ public class Login implements ActionListener {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		addComponentsToPane(frame.getContentPane());
+		frame.getRootPane().setDefaultButton(loginButton);
 		frame.setVisible(true);
 	}
 	
