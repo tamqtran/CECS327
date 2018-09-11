@@ -114,6 +114,16 @@ public class Profile {
 		
 		//Playlist FROM json file
 		list_1.setModel(dm);
+		
+		JButton btnNewButton = new JButton("Search Menu");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+		        new SearchMenuFrame().setVisible(true); 
+			}
+		});
+		btnNewButton.setBounds(25, 311, 115, 29);
+		frame.getContentPane().add(btnNewButton);
 		getPlaylists(dm);
 		
 		
@@ -287,5 +297,4 @@ public class Profile {
 		// TODO Auto-generated method stub
 		frame.setVisible(b);
 	}
-	
 }
