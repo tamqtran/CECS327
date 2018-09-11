@@ -179,6 +179,9 @@ public class JSONTEST {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	/*-------------------------Playlist Frame------------------------------*
 	/**
 	 * Add a song to a playlist
 	 * @param playlist playlist to add the song
@@ -234,7 +237,7 @@ public class JSONTEST {
 	 * Read songs array from a playlist in json file and add to gui list
 	 * @param dm defaultlistModel
 	 */
-	void getPlaylists(DefaultListModel dm, String playlist) {
+	void getSonglist(DefaultListModel dm, String playlist) {
 		dm.clear(); //clear list 
 		JSONObject obj1;
 		String pathname = "allan.json";
