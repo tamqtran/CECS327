@@ -33,7 +33,7 @@ public class PlaylistPage
 			queenSongLists.put("song2");
 			
 			obj.put("king", kingSongLists);
-			obj.put("kingqueen", queenSongLists);
+			obj.put("queen", queenSongLists);
 			
 			
 			
@@ -49,7 +49,7 @@ public class PlaylistPage
 			}
 			
 			System.out.println(obj);
-			System.out.print(obj.getJSONArray("king").toString());
+			//System.out.print(obj.getJSONArray("king").toString());
 			
 			// constructing the playlist frame
 			JFrame playlistFrame = new PlaylistFrame("allan", "king");

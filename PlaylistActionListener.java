@@ -29,7 +29,7 @@ public class PlaylistActionListener implements ActionListener
 		{
 			JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 			pFrame.dispose();
-			new Profile().setVisible(true);
+			new Profile(panel.username).setVisible(true);
 	        
 		}
 		else if(source == panel.selectSongButton)
@@ -38,16 +38,13 @@ public class PlaylistActionListener implements ActionListener
 			pFrame.dispose();
 			//new PlayButton().setVisible(true);
 		}
-		else if(source == panel.addSongButton)
-		{
-			
-		}
 		else if(source == panel.deleteSongButton)
 		{
 			
 			String username = panel.username;
 			String playlistName = panel.playlist;
-			String songName;
+			String songName = panel.songList.getSelectedValue().toString();
+			
 			
 			try (InputStream input = new FileInputStream(username+".json")) 
 			{
@@ -57,7 +54,7 @@ public class PlaylistActionListener implements ActionListener
 			    // get correct playlist from JSON file
 			    JSONArray pJSON = JSONfile.getJSONArray(playlistName);//play
 			    
-			    //pJSON.remove(pJSON.toList().indexOf(songName));
+			    pJSON.remove(pJSON.toList().indexOf(songName));
 			 
 			    FileWriter fileWriter = new FileWriter(username+".json");
 				fileWriter.write(JSONfile.toString());
@@ -69,6 +66,10 @@ public class PlaylistActionListener implements ActionListener
 			{
 				f.printStackTrace();
 			}
+			
+			// update Jlist on Frame
+			panel.updatePlaylist();
+			
 		}
 	}
 }
