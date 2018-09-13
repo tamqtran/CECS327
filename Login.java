@@ -38,6 +38,7 @@ public class Login implements ActionListener {
 	
 	/*
 	 * The driver. When run, the system calls the Login() constructor.
+	 * NOTE: Can be commented out if need be.
 	 */
 	public static void main (String[] args) {
 		new Login();
@@ -55,14 +56,14 @@ public class Login implements ActionListener {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		addComponentsToPane(frame.getContentPane());
-		frame.getRootPane().setDefaultButton(loginButton);
+		frame.getRootPane().setDefaultButton(loginButton); //'ENTER' keystroke functionality set to loginButton
 		frame.setVisible(true);
 	}
 	
 	/*
 	 * The extra panes constructor. Fills in the contents of the login frame.
 	 */
-	public void addComponentsToPane (Container pane){
+	private void addComponentsToPane (Container pane){
 		pane.setLayout(new BoxLayout(pane, BoxLayout.PAGE_AXIS));
 		
 		userPanel = new JPanel();	userPanel.setLayout(new BoxLayout(userPanel, BoxLayout.LINE_AXIS));
@@ -94,7 +95,7 @@ public class Login implements ActionListener {
 		buttonPanel.add(loginButton);	
 		
 		eLabel = new JLabel("Error message"); 
-		eLabel.setForeground(Color.RED); //eLabel.setVisible(false);
+		eLabel.setForeground(Color.RED); eLabel.setVisible(false);
 		errorPanel.add(eLabel);
 				
 		pane.add(Box.createRigidArea(new Dimension(0,20)));		pane.add(userPanel);
@@ -134,7 +135,7 @@ public class Login implements ActionListener {
 	 * @param user: The name of the user
 	 * @return a boolean determining if a user exists within the accounts currently logged in the service
 	 */
-	public boolean isUser (String user) {
+	private boolean isUser (String user) {
 		//find the existence of a user with this name from whatever json file they're stored in
 		//if user == json.username_username then true
 		try (InputStream input = new FileInputStream(user + ".json")) {
@@ -153,7 +154,7 @@ public class Login implements ActionListener {
 	 * @param pass: The password for the specified user
 	 * @return a boolean determining if a password matches with the password logged in the given user's file
 	 */
-	public boolean confirmPassword (String user, String pass) {
+	private boolean confirmPassword (String user, String pass) {
 		//find the user that has this username and this password from whatever json file they're stored in
 		//if pass == json.username_pass then true
 		try (InputStream input = new FileInputStream(user + ".json")) {
@@ -171,7 +172,7 @@ public class Login implements ActionListener {
 	 * @param input: A string, either username or password
 	 * @return false if any special characters are found in input; true otherwise
 	 */
-	public boolean codeDenial (String input) {
+	private boolean codeDenial (String input) {
 		//denies if input has the following: "[!@#$%&*()_+=|<>?{}\\[\\]~-]" (code injection prevention)
 		for (char c : input.toCharArray()) {
 			for (char s : specials.toCharArray())
@@ -179,9 +180,12 @@ public class Login implements ActionListener {
 		} return true;
 	}
 
+	/**
+	 * A void method that can make a frame visible.
+	 * @param b boolean (true/false) that determines visibility of the frame (where true makes it visible, and false makes it not visible
+	 */
 	public void setVisible(boolean b) {
 		// TODO Auto-generated method stub
 		frame.setVisible(b);
-		
 	}
 }
