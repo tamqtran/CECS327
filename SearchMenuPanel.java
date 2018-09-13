@@ -39,7 +39,7 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 
 		responseLabel = new JLabel("");
 		responseLabel.setSize(new Dimension(220,50));
-		responseLabel.setLocation(255, 460);
+		responseLabel.setLocation(245, 460);
 		this.add(responseLabel);
 
 		// Back button. Tries to match the playlist page visually
@@ -73,9 +73,9 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 		this.add(searchTextField);
 
 		// Testing. Dummy values to store in JTable
-		String data[][] = { { "data1", "data2", "data3" }, { "data4", "data5", "data6" },
-				{ "data7", "data8", "data9" } };
-		String[] columns = { "Song Title", "Artist", "Album" };
+		String data[][] = { { }, {},
+				{ } };
+		String[] columns = {};
 
 		DefaultTableModel model = new DefaultTableModel(data, columns);
 
@@ -102,6 +102,7 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 		addButton.setLocation(360, 425);
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (results.getSelectedRow() != -1) {
 				String selectedPL = playList.getSelectedItem().toString();
 				int row = results.getSelectedRow();
 				String selectedSong = results.getModel().getValueAt(row, 1).toString();
@@ -115,6 +116,7 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 					// Add new song to playlist x
 					System.out.println("Adding new song...");
 					JSONArray songlistToAdd = obj1.getJSONArray(selectedPL);
+					
 					if (!songlistToAdd.toList().contains(selectedSong)) {
 						songlistToAdd.put(selectedSong);
 						responseLabel.setText("Success! Song was added to playlist");
@@ -127,7 +129,12 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 				} catch (Exception c) {
 					c.printStackTrace();
 				}
-			}}
+			} else {
+				responseLabel.setText("No song is being selected");
+				responseLabel.setForeground(Color.RED);
+			}
+				}
+			}
 		);
 		this.add(addButton);
 	}
