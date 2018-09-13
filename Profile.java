@@ -62,6 +62,7 @@ public class Profile {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		//FRAME
 		frame = new JFrame("'MusicService' Profile");
 		frame.setBounds(100, 100, 659, 427);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -92,9 +93,12 @@ public class Profile {
 		btnExplorePlaylist.setBounds(221, 265, 97, 33);
 		frame.getContentPane().add(btnExplorePlaylist);
 		
+		JButton btnSearchMenuButton = new JButton("Search Menu");
+		btnSearchMenuButton.setBounds(25, 311, 115, 29);
+		frame.getContentPane().add(btnSearchMenuButton);
+		
+		
 		txtSearchMyPlaylists = new JTextField();
-		
-		
 		txtSearchMyPlaylists.setText("Search my playlists");
 		txtSearchMyPlaylists.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		txtSearchMyPlaylists.setBounds(339, 47, 274, 23);
@@ -112,19 +116,16 @@ public class Profile {
 		lblMyPlaylists.setBounds(339, 15, 129, 19);
 		frame.getContentPane().add(lblMyPlaylists);
 		
-		//Playlist FROM json file
+		//ADD LIST TO DEFAULT MODEL
 		list_1.setModel(dm);
-		
-		JButton btnNewButton = new JButton("Search Menu");
-		btnNewButton.addActionListener(new ActionListener() {
+		getPlaylists(dm);
+		//MOVE TO SEARCH SONG BY ALBUM/NAME...
+		btnSearchMenuButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
 		        new SearchMenuFrame().setVisible(true); 
 			}
 		});
-		btnNewButton.setBounds(25, 311, 115, 29);
-		frame.getContentPane().add(btnNewButton);
-		getPlaylists(dm);
 		
 		
 		btnLogout.addActionListener(new ActionListener() {
