@@ -22,10 +22,11 @@ public class PlaySong{
 		current.open(player);
 		current.start();
 		int time = current.getFrameLength();
-		while(current.getFramePosition() <= time)
+		while(current.getFramePosition() < time)
 		{
 			Thread.sleep(10);
 		}
+		Thread.currentThread().interrupt();
 		current.stop();
 	}
 
