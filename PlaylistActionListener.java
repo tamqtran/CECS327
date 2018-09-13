@@ -30,7 +30,6 @@ public class PlaylistActionListener implements ActionListener
 			JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 			pFrame.dispose();
 			new Profile(panel.username).setVisible(true);
-	        
 		}
 		else if(source == panel.selectSongButton)
 		{
