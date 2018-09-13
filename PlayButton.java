@@ -107,7 +107,7 @@ public class PlayButton {
 				{
 					JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 					pFrame.dispose();
-					new SearchMenuFrame();
+					new SearchMenuFrame(uName);
 				}
 			}
 		}
@@ -139,7 +139,7 @@ public class PlayButton {
 				{
 					JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 					pFrame.dispose();
-					new SearchMenuFrame();
+					new SearchMenuFrame(uName);
 				}
 			}
 		}
