@@ -286,7 +286,7 @@ public class Profile {
 		 String name = null;
 		 try (InputStream input = new FileInputStream(username+".json")) {
 			    JSONObject obj1 = new JSONObject(new JSONTokener(input));
-			    name = obj1.get("name").toString();
+			    name = obj1.get("username").toString();
 		 }catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -36,7 +36,7 @@ public class PlaylistActionListener implements ActionListener
 		{
 			JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 			pFrame.dispose();
-			//new PlayButton().setVisible(true);
+			new PlayButton.PlayFrame(panel.songList.getSelectedValue().toString(), panel.username, panel.playlist).setVisible(true);
 		}
 		else if(source == panel.deleteSongButton)
 		{

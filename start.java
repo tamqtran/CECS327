@@ -15,13 +15,13 @@ public class start {
 		
 		//Create JSON object and add value
 		JSONObject obj = new JSONObject();
-		obj.put("name", "allan");
+		obj.put("username", "allan");
 		obj.put("password", "forever");
 		
 		JSONArray playlists = new JSONArray();
 		playlists.put("king");
 		playlists.put("queen");
-		obj.put("Playlist", playlists);
+		obj.put("playlists", playlists);
 		
 		JSONArray kingSongLists = new JSONArray();
 		JSONArray queenSongLists = new JSONArray();
