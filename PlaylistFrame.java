@@ -1,5 +1,6 @@
 import javax.swing.JFrame;
 
+@SuppressWarnings("serial")
 public class PlaylistFrame extends JFrame
 {
 	//initialize variables

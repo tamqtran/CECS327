@@ -6,6 +6,10 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -15,8 +19,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+//import java.awt.event.MouseAdapter;
+//import java.awt.event.MouseEvent;
+
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 public class Login implements ActionListener {
 	private JFrame frame;
@@ -28,6 +35,17 @@ public class Login implements ActionListener {
 	private JPanel userPanel, passPanel, errorPanel, buttonPanel;
 	private String specials = "[!@#$%&*()_+=|<>?{}\\[\\]~-]";
 	
+	
+	/*
+	 * The driver. When run, the system calls the Login() constructor.
+	 */
+	public static void main (String[] args) {
+		new Login();
+	}
+	
+	/*
+	 * The main constructor. Constructs the frame for the login.
+	 */
 	public Login() {
 		frame = new JFrame("'MusicService' Login");
 		frame.setSize(300,175);
@@ -37,9 +55,13 @@ public class Login implements ActionListener {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		addComponentsToPane(frame.getContentPane());
+		frame.getRootPane().setDefaultButton(loginButton);
 		frame.setVisible(true);
 	}
-		
+	
+	/*
+	 * The extra panes constructor. Fills in the contents of the login frame.
+	 */
 	public void addComponentsToPane (Container pane){
 		pane.setLayout(new BoxLayout(pane, BoxLayout.PAGE_AXIS));
 		
@@ -64,16 +86,15 @@ public class Login implements ActionListener {
 		passPanel.add(Box.createRigidArea(new Dimension(6,0)));
 		passPanel.add(passwordField);
 		
-		loginButton = new JButton("Login"); loginButton.addActionListener(this);
 		buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
-		loginButton = new JButton("Login"); 
-	
+		
+		loginButton = new JButton("Login"); loginButton.addActionListener(this);
 		loginButton.setMaximumSize(loginButton.getPreferredSize());
-		buttonPanel.add(loginButton);
+		buttonPanel.add(loginButton);	
 		
 		eLabel = new JLabel("Error message"); 
-		eLabel.setForeground(Color.RED); eLabel.setVisible(false);
+		eLabel.setForeground(Color.RED); //eLabel.setVisible(false);
 		errorPanel.add(eLabel);
 				
 		pane.add(Box.createRigidArea(new Dimension(0,20)));		pane.add(userPanel);
@@ -81,32 +102,24 @@ public class Login implements ActionListener {
 		pane.add(Box.createRigidArea(new Dimension(0,13)));		pane.add(buttonPanel);
 		pane.add(Box.createRigidArea(new Dimension(0,10)));		pane.add(errorPanel);
 	}
-	
-	public static void main (String[] args) {
-		new Login();
-	}
-	
-	//If the user is in the system, then it will redirect to the main page with their data on it.
-	//Otherwise, an error message will appear saying:
-	//"Identify yourself on the text boxes above and click "Login"." (Neither box is filled out)
-	//"Fill out both boxes to proceed." (Only one of the boxes is filled out)
-	//"User not found. Please try again." (No such user found)
-	//"Incorrect password. Please try again." (Incorrect password)
-	//The error message will change based on the error made after clicking the login button.
-	
-	
+			
+	/*
+	 * The actionListener for the login button. When pressed, the system will test the typed-in username and password against
+	 * current users in the system. If the username and password is found, then the login will let them through.
+	 * Any mistake will be pointed out as an error message (in red).
+	 */
 	public void actionPerformed(ActionEvent e) {
-
 		String user = usernameField.getText();
-		char[] pass = passwordField.getPassword();
-		System.out.println(user + " : " + String.valueOf(pass)); //debug
+		String pass = String.valueOf(passwordField.getPassword());
 		
-		if ((!user.isEmpty()) && (pass.length > 0)) {
-			if (isUser(user) && codeDenialS(user)) {
-				if (confirmPassword(user, pass) && codeDenialC(pass)) {
+		System.out.println("Typed User: " + user + "\nTyped Pass: " + pass); //debug
+		
+		if ((!user.isEmpty()) && (!pass.isEmpty())) {
+			if (isUser(user) && codeDenial(user)) {
+				if (codeDenial(pass) && confirmPassword(user, pass)) {
 					System.out.println("Success. Redirecting..."); //debug
-					//redirect to homepage with their data
-					frame.dispose(); //then close the login
+					frame.dispose(); 					//close the login
+					new Profile(user).setVisible(true); //then redirect to homepage with their data
 				} else message = "Incorrect password; try again.";
 			} else message = "No such user; try again.";
 		} else message = "Fill out both boxes.";
@@ -116,27 +129,51 @@ public class Login implements ActionListener {
 		eLabel.setVisible(true);
 	}
 	
+	/**
+	 * A boolean method that tests if the system has a json file of the user 
+	 * @param user: The name of the user
+	 * @return a boolean determining if a user exists within the accounts currently logged in the service
+	 */
 	public boolean isUser (String user) {
-		//find the existence of a user with this name from whatever .txt file they're stored in
+		//find the existence of a user with this name from whatever json file they're stored in
+		//if user == json.username_username then true
+		try (InputStream input = new FileInputStream(user + ".json")) {
+			JSONObject obj = new JSONObject(new JSONTokener(input));
+		    String username = obj.get("username").toString();
+		    return username.equals(user);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	/**
+	 * A boolean method that checks if a given user exists in the list of accounts logged by the service, and is authentically
+	 * the person they claim to be (using their password for proof).
+	 * @param user: The name of the user
+	 * @param pass: The password for the specified user
+	 * @return a boolean determining if a password matches with the password logged in the given user's file
+	 */
+	public boolean confirmPassword (String user, String pass) {
+		//find the user that has this username and this password from whatever json file they're stored in
+		//if pass == json.username_pass then true
+		try (InputStream input = new FileInputStream(user + ".json")) {
+			JSONObject obj = new JSONObject(new JSONTokener(input));
+		    String password = obj.get("password").toString();
+		    return password.equals(pass);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 	
-	public boolean confirmPassword (String user, char[] pass) {
-		//find the user that has this username and this password from whatever .txt file they're stored in
-		return false;
-	}
-	
-	public boolean codeDenialS (String input) {
+	/**
+	 * A boolean method that abhors code injections.
+	 * @param input: A string, either username or password
+	 * @return false if any special characters are found in input; true otherwise
+	 */
+	public boolean codeDenial (String input) {
 		//denies if input has the following: "[!@#$%&*()_+=|<>?{}\\[\\]~-]" (code injection prevention)
 		for (char c : input.toCharArray()) {
-			for (char s : specials.toCharArray())
-				if (s == c) return false;
-		} return true;
-	}
-	
-	public boolean codeDenialC (char[] input) {
-		//denies if input has the following: "[!@#$%&*()_+=|<>?{}\\[\\]~-]" (code injection prevention)
-		for (char c : input) {
 			for (char s : specials.toCharArray())
 				if (s == c) return false;
 		} return true;

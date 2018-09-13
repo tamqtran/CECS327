@@ -1,7 +1,5 @@
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.InputStream;
 
 import javax.swing.DefaultListModel;
@@ -15,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+
 public class PlaylistPanel extends JPanel
 {
 	public JLabel playlistName;
@@ -24,10 +23,11 @@ public class PlaylistPanel extends JPanel
 				   deleteSongButton,
 				   backToProfileButton;
 	
-	public JList songList;
+	public JList<String> songList;
 	
 	String username,
-		   playlist;
+		   playlist,
+		   songName;
 	// based on absolute layout to organize the components in the frame (https://docs.oracle.com/javase/tutorial/uiswing/layout/none.html)
 	
 	public PlaylistPanel(String username, String playlist)
@@ -59,13 +59,7 @@ public class PlaylistPanel extends JPanel
 		selectSongButton.setLocation(350, 500);
 		selectSongButton.addActionListener(listener);
 		this.add(selectSongButton);
-		
-		// add song button 
-		addSongButton = new JButton("Add Song");
-		addSongButton.setSize(addSongButton.getPreferredSize());
-		addSongButton.setLocation(457, 500);
-		addSongButton.addActionListener(listener);
-		this.add(addSongButton);
+	
 		
 		// delete song button
 		deleteSongButton = new JButton("Delete Song");
@@ -75,17 +69,15 @@ public class PlaylistPanel extends JPanel
 		this.add(deleteSongButton);
 		
 		// list of songs in the playlist
-		songList = new JList();
+		songList = new JList<String>();
 		songList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		DefaultListModel DM = new DefaultListModel();
-		songList.setModel(DM);
+		DefaultListModel<String> DLM = new DefaultListModel<String>();
+		songList.setModel(DLM);
 		songList.setSize(300,380);
 		songList.setLocation(350, 100);
 		this.add(songList);		
 		
 		// add content to songList
-					
-		
 		try (InputStream input = new FileInputStream(username+".json")) 
 		{
 		    JSONObject obj = new JSONObject(new JSONTokener(input));
@@ -94,12 +86,39 @@ public class PlaylistPanel extends JPanel
 		    
 		    for(int i = 0; i < listOfSongs.length(); i++)
 		    {
-		    	DM.addElement(listOfSongs.getString(i));
+		    	DLM.addElement(listOfSongs.getString(i));
 		    }
-		    //currentList.remove(currentList.toList().indexOf(playlist)); 
+
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		// update playlist
+		
+		
+		
+		
+	}
+	
+	public void updatePlaylist() 
+	{
+		
+		try (InputStream input = new FileInputStream(username+".json")) 
+		{
+			DefaultListModel<String> model = (DefaultListModel<String>) this.songList.getModel();
+			model.removeAllElements();
+		    JSONObject obj = new JSONObject(new JSONTokener(input));
 		    
+		    JSONArray listOfSongs = obj.getJSONArray(playlist);
 		    
-		}catch (Exception e) 
+		    for(int i = 0; i < listOfSongs.length(); i++)
+		    {
+		    	model.addElement(listOfSongs.getString(i));
+		    }
+
+		}
+		catch (Exception e) 
 		{
 			e.printStackTrace();
 		}
