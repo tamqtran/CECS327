@@ -38,7 +38,7 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 		this.add(userLabel);
 
 		responseLabel = new JLabel("");
-		responseLabel.setSize(responseLabel.getPreferredSize());
+		responseLabel.setSize(new Dimension(220,50));
 		responseLabel.setLocation(255, 460);
 		this.add(responseLabel);
 
