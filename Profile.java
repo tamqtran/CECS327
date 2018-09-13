@@ -30,7 +30,7 @@ import java.awt.event.KeyEvent;
 
 public class Profile {
 
-	String username = "allan";
+	String username;
 	private JFrame frame;
 	private JTextField txtSearchMyPlaylists;
 
@@ -77,27 +77,32 @@ public class Profile {
 		frame.getContentPane().add(list_1);
 		
 		//BUTTONS
+		//Add a new playlist by entering a new unique playlist name
 		JButton btnAddPlaylist = new JButton("Add");
 		btnAddPlaylist.setBounds(221, 221, 97, 33);
 		frame.getContentPane().add(btnAddPlaylist);
 		
+		//Remove a playlist by selecting the playlist from the list
 		JButton btnRemovePlaylist = new JButton("Remove");
 		btnRemovePlaylist.setBounds(221, 309, 97, 33);
 		frame.getContentPane().add(btnRemovePlaylist);
 		
+		//Logout: return to login panel
 		JButton btnLogout = new JButton("Logout");
 		btnLogout.setBounds(10, 11, 79, 23);
 		frame.getContentPane().add(btnLogout);
 		
+		//Explore playlist: move to playlist frame showing all songs in the playlist
 		JButton btnExplorePlaylist = new JButton("Explore");
 		btnExplorePlaylist.setBounds(221, 265, 97, 33);
 		frame.getContentPane().add(btnExplorePlaylist);
 		
+		//Move to search menu frame where user can search for song by album or name
 		JButton btnSearchMenuButton = new JButton("Search Menu");
 		btnSearchMenuButton.setBounds(25, 311, 115, 29);
 		frame.getContentPane().add(btnSearchMenuButton);
 		
-		
+		//TEXT FIELD for searching playlist
 		txtSearchMyPlaylists = new JTextField();
 		txtSearchMyPlaylists.setText("Search my playlists");
 		txtSearchMyPlaylists.setFont(new Font("Tahoma", Font.PLAIN, 11));
@@ -105,12 +110,14 @@ public class Profile {
 		frame.getContentPane().add(txtSearchMyPlaylists);
 		txtSearchMyPlaylists.setColumns(10);
 		
+		//LABEL for user name
 		JLabel lblName = new JLabel("");
 		lblName.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblName.setBounds(25, 67, 293, 33);
 		frame.getContentPane().add(lblName);
 		lblName.setText("Name: "+getName(username));
 		
+		//LABEL for "Playlist" section
 		JLabel lblMyPlaylists = new JLabel("My Playlists");
 		lblMyPlaylists.setFont(new Font("Times New Roman", Font.PLAIN, 18));
 		lblMyPlaylists.setBounds(339, 15, 129, 19);
@@ -127,14 +134,14 @@ public class Profile {
 			}
 		});
 		
-		
+		//Move back to login panel
 		btnLogout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
 		        new Login().setVisible(true); 
 			}
 		});
-		
+		//Check if a playlist is selected and move to playlist frame, pass username and playlist as arguments
 		btnExplorePlaylist.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if(list_1.getSelectedIndex()==-1) {
@@ -146,7 +153,7 @@ public class Profile {
 				}
 			}
 		});
-		
+		//Check if text field is not empty and playlist does not already exist: add playlist to JSON and gui list
 		btnAddPlaylist.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if(txtSearchMyPlaylists.getText().equals("Search my playlists") || txtSearchMyPlaylists.getText().equals("Select a playlist to explore") || txtSearchMyPlaylists.getText().equals("Select a playlist to remove") || txtSearchMyPlaylists.getText().equals("Enter a name for the new playlist")) {
@@ -160,6 +167,7 @@ public class Profile {
 			}
 		});
 		
+		//Check if a playlist is selected and remove that playlist from json and gui list
 		btnRemovePlaylist.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(list_1.getSelectedIndex()!=-1) {
@@ -173,6 +181,7 @@ public class Profile {
 			}
 		});
 		
+		//When the enter key is pressed in SearchMyPlaylist text field, limit the gui list to to that specific playlist name
 		txtSearchMyPlaylists.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//enter pressed for search playlist
@@ -185,6 +194,8 @@ public class Profile {
 				
 			}
 		});
+		
+		//When searchmyPlaylist text field is clicked, remove the content of the text field and update the gui list
 		txtSearchMyPlaylists.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -193,6 +204,7 @@ public class Profile {
 				getPlaylists(dm);
 			}
 		});
+		//When focus is lost on searchPlaylist text field and it is empty: add "search my playlist" to it
 		txtSearchMyPlaylists.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent arg0) {
@@ -201,6 +213,7 @@ public class Profile {
 				}
 			}
 		});
+		//When a key is pressed and serachplaylist text field is empty, update the gui list
 		txtSearchMyPlaylists.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
