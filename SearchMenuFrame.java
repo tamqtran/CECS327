@@ -2,13 +2,16 @@ import java.awt.*;
 import javax.swing.*;
 
 public class SearchMenuFrame extends JFrame {
-
-  public SearchMenuFrame() {
+	
+	private String username;
+	
+  public SearchMenuFrame(String username) {
+	this.username = username;
     setTitle("Song Search");
     setResizable(false);
-    setSize(500,400);
+    setSize(700,700);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    JPanel panel = new SearchMenuPanel();
+    JPanel panel = new SearchMenuPanel(username);
     this.add(panel);
   }
   
