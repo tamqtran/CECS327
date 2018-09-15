@@ -139,7 +139,10 @@ public class PlayButton {
 				{
 					JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 					pFrame.dispose();
-					new SearchMenuFrame(uName);
+					if(playlist.matches(""))
+						new SearchMenuFrame(uName);
+					else
+						new PlaylistFrame(uName, playlist);
 				}
 			}
 		}

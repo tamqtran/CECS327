@@ -25,13 +25,14 @@ public class start {
 		
 		JSONArray kingSongLists = new JSONArray();
 		JSONArray queenSongLists = new JSONArray();
-		kingSongLists.put("song1");
-		kingSongLists.put("song4");
-		kingSongLists.put("song7");
-		queenSongLists.put("song2");
+		kingSongLists.put("Imagine");
+		kingSongLists.put("Money");
+		kingSongLists.put("So_Serious");
+		queenSongLists.put("Yellow_Submarine");
+		queenSongLists.put("Sgt._Pepper's_Lonely_Hearts_Club_Band");
 		
 		obj.put("king", kingSongLists);
-		obj.put("kingqueen", queenSongLists);
+		obj.put("queen", queenSongLists);
 		
 		
 		
