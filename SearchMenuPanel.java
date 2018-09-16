@@ -105,7 +105,7 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 				if (results.getSelectedRow() != -1) {
 				String selectedPL = playList.getSelectedItem().toString();
 				int row = results.getSelectedRow();
-				String selectedSong = results.getModel().getValueAt(row, 1).toString();
+				String selectedSong = results.getModel().getValueAt(row, 0).toString();
 
 				// Reading from JSON
 				JSONObject obj1;
