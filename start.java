@@ -27,9 +27,9 @@ public class start {
 		JSONArray queenSongLists = new JSONArray();
 		kingSongLists.put("Imagine");
 		kingSongLists.put("Money");
-		kingSongLists.put("So_Serious");
-		queenSongLists.put("Yellow_Submarine");
-		queenSongLists.put("Sgt._Pepper's_Lonely_Hearts_Club_Band");
+		kingSongLists.put("So Serious");
+		queenSongLists.put("Yellow Submarine");
+		queenSongLists.put("Sgt. Pepper's Lonely Hearts Club Band");
 		
 		obj.put("king", kingSongLists);
 		obj.put("queen", queenSongLists);

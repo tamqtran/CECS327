@@ -13,10 +13,12 @@ import org.json.JSONTokener;
 
 import javax.swing.table.*;
 
-public class SearchMenuPanel extends JPanel implements DocumentListener, ActionListener{
+public class SearchMenuPanel extends JPanel implements DocumentListener, ActionListener {
 	private JTextField searchTextField;
 
 	private JTable results;
+
+	private JScrollPane resultsJPS;
 
 	private JButton backButton, playButton, addButton;
 
@@ -38,7 +40,7 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 		this.add(userLabel);
 
 		responseLabel = new JLabel("");
-		responseLabel.setSize(new Dimension(220,50));
+		responseLabel.setSize(new Dimension(220, 50));
 		responseLabel.setLocation(245, 460);
 		this.add(responseLabel);
 
@@ -51,10 +53,10 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 
 		playButton = new JButton("Play Song");
 		playButton.setSize(playButton.getPreferredSize());
-		playButton.setLocation(270,500);
+		playButton.setLocation(270, 500);
 		playButton.addActionListener(this);
 		this.add(playButton);
-		
+
 		searchTextField = new JTextField("Search for song title, album, or artist", 20);
 		// Wipe textfield once you click it
 		searchTextField.addMouseListener(new MouseAdapter() {
@@ -73,15 +75,15 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 		this.add(searchTextField);
 
 		// Testing. Dummy values to store in JTable
-		String data[][] = { { }, {},
-				{ } };
-		String[] columns = {};
+		String data[][] = { {}, {}, {} };
+		String[] columns = { "Song Title", "Artist", "Album" };
 
-		DefaultTableModel model = new DefaultTableModel(data, columns);
+		DefaultTableModel model = new DefaultTableModel(null, columns);
 
 		results = new JTable(model);
 		results.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		JScrollPane resultsJPS = new JScrollPane(results);
+
+		resultsJPS = new JScrollPane(results);
 		resultsJPS.setSize(new Dimension(400, 250));
 		resultsJPS.setLocation(150, 100);
 		// News JScrollPane else column names wont show up
@@ -103,39 +105,38 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (results.getSelectedRow() != -1) {
-				String selectedPL = playList.getSelectedItem().toString();
-				int row = results.getSelectedRow();
-				String selectedSong = results.getModel().getValueAt(row, 0).toString();
+					String selectedPL = playList.getSelectedItem().toString();
+					int row = results.getSelectedRow();
+					String selectedSong = results.getModel().getValueAt(row, 0).toString();
 
-				// Reading from JSON
-				JSONObject obj1;
-				String pathname = username + ".json";
-				try (InputStream input = new FileInputStream(pathname)) {
-					obj1 = new JSONObject(new JSONTokener(input));
+					// Reading from JSON
+					JSONObject obj1;
+					String pathname = username + ".json";
+					try (InputStream input = new FileInputStream(pathname)) {
+						obj1 = new JSONObject(new JSONTokener(input));
 
-					// Add new song to playlist x
-					System.out.println("Adding new song...");
-					JSONArray songlistToAdd = obj1.getJSONArray(selectedPL);
-					
-					if (!songlistToAdd.toList().contains(selectedSong)) {
-						songlistToAdd.put(selectedSong);
-						responseLabel.setText("Success! Song was added to playlist");
-						responseLabel.setForeground(Color.GREEN);
-					} else {
-						responseLabel.setText("Invalid! Song is alreadly in the playlist");
-						responseLabel.setForeground(Color.RED);
+						// Add new song to playlist x
+						System.out.println("Adding new song...");
+						JSONArray songlistToAdd = obj1.getJSONArray(selectedPL);
+
+						if (!songlistToAdd.toList().contains(selectedSong)) {
+							songlistToAdd.put(selectedSong);
+							responseLabel.setText("Success! Song was added to playlist");
+							responseLabel.setForeground(Color.GREEN);
+						} else {
+							responseLabel.setText("Invalid! Song is alreadly in the playlist");
+							responseLabel.setForeground(Color.RED);
+						}
+
+					} catch (Exception c) {
+						c.printStackTrace();
 					}
-
-				} catch (Exception c) {
-					c.printStackTrace();
-				}
-			} else {
-				responseLabel.setText("No song is being selected");
-				responseLabel.setForeground(Color.RED);
-			}
+				} else {
+					responseLabel.setText("No song is being selected");
+					responseLabel.setForeground(Color.RED);
 				}
 			}
-		);
+		});
 		this.add(addButton);
 	}
 
@@ -150,6 +151,7 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 			model.addRow(searchResults[i].split("_"));
 		}
 		;
+
 	}
 
 	public void removeUpdate(DocumentEvent e) {
@@ -161,8 +163,8 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 
 		for (int i = 0; i < searchResults.length; i++) {
 			model.addRow(searchResults[i].split("_"));
-		}
-		;
+		};
+
 	}
 
 	public void changedUpdate(DocumentEvent e) {
@@ -181,7 +183,6 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 		// listFiles - files array
 		// Doing list() reduces unnecessary code
 		String[] FilesInFolder = currentFolder.list();
-
 		// Storage for results
 		ArrayList<String> searchResults = new ArrayList<String>();
 
@@ -210,26 +211,24 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 		}
 		return null;
 	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
-		
-		if (source == this.backButton)
-		{
+
+		if (source == this.backButton) {
 			JFrame sFrame = (JFrame) this.getTopLevelAncestor();
-	        sFrame.dispose();
-	        new Profile(this.username).setVisible(true);
+			sFrame.dispose();
+			new Profile(this.username).setVisible(true);
 		}
-		if (source == this.playButton)
-		{
+		if (source == this.playButton) {
 			int row = this.results.getSelectedRow();
 			if (row != -1) {
-				String songTitle = results.getModel().getValueAt(row, 1).toString();
-				String artist = results.getModel().getValueAt(row, 2).toString();
-				String album = results.getModel().getValueAt(row, 3).toString();
+				String songTitle = results.getModel().getValueAt(row, 0).toString();
+				String artist = results.getModel().getValueAt(row, 1).toString();
+				String album = results.getModel().getValueAt(row, 2).toString();
 				JFrame sFrame = (JFrame) this.getTopLevelAncestor();
 				sFrame.dispose();
-				new PlayButton.PlayFrame(songTitle +"_" + artist + "_" + album, username).setVisible(true);
+				new PlayButton.PlayFrame(songTitle + "_" + artist + "_" + album, username).setVisible(true);
 			} else {
 				responseLabel.setText("No song is being selected");
 				responseLabel.setForeground(Color.RED);
