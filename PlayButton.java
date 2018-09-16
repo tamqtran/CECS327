@@ -41,6 +41,7 @@ public class PlayButton {
 		PlayFrame(String s, String u)
 		{
 			uName = u;
+			playlist = "";
 			song = s;
 			setTitle("Play");
 			setSize(300, 300);
@@ -55,15 +56,15 @@ public class PlayButton {
 		JLabel title = new JLabel("Nirvana - All Apologies");
 		PlayPanel(String u)
 		{
-			ActionListener a = new YActionListener(this);
+			ActionListener a = new XActionListener(this);
 			JPanel p1 = new JPanel();
-			p1.setLayout(new BorderLayout());
+			p1.setLayout(new BorderLayout(1, 1));
 			p1.add(title, BorderLayout.PAGE_START);
 			p1.add(back, BorderLayout.WEST);
 			p1.add(play, BorderLayout.PAGE_END);
-			back.addActionListener(a);
 			play.addActionListener(a);
-			this.setLayout(new BorderLayout(1, 1));
+			back.addActionListener(a);
+			this.setLayout(new BorderLayout());
 			this.add(p1, BorderLayout.CENTER);
 		}
 		PlayPanel(String u, String p)
@@ -123,6 +124,7 @@ public class PlayButton {
 			 * @param e ActionEvent
 			 */
 			public void actionPerformed(ActionEvent e) {
+				
 				// TODO Auto-generated method stub
 				Object o = e.getSource();
 				if(o == panel.play)
@@ -139,10 +141,14 @@ public class PlayButton {
 				{
 					JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 					pFrame.dispose();
-					if(playlist.matches(""))
-						new SearchMenuFrame(uName);
-					else
-						new PlaylistFrame(uName, playlist);
+					if(playlist.isEmpty())
+					{
+						new SearchMenuFrame(uName).setVisible(true);
+					}
+					else 
+					{
+						new PlaylistFrame(uName, playlist).setVisible(true);
+					}
 				}
 			}
 		}
