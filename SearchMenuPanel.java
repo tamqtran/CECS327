@@ -112,6 +112,7 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 					// Reading from JSON
 					JSONObject obj1;
 					String pathname = username + ".json";
+					
 					try (InputStream input = new FileInputStream(pathname)) {
 						obj1 = new JSONObject(new JSONTokener(input));
 
@@ -127,7 +128,12 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 							responseLabel.setText("Invalid! Song is alreadly in the playlist");
 							responseLabel.setForeground(Color.RED);
 						}
-
+						
+						 FileWriter fileWriter = new FileWriter(username+".json");
+						 fileWriter.write(obj1.toString());
+						 fileWriter.flush();
+						 fileWriter.close();
+							
 					} catch (Exception c) {
 						c.printStackTrace();
 					}
