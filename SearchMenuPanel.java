@@ -187,7 +187,7 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 		ArrayList<String> searchResults = new ArrayList<String>();
 
 		for (int i = 0; i < FilesInFolder.length; i++) {
-			if (FilesInFolder[i].endsWith(EXT) && FilesInFolder[i].contains(text))
+			if (FilesInFolder[i].endsWith(EXT) && FilesInFolder[i].toLowerCase().contains(text.toLowerCase()))
 				searchResults.add(FilesInFolder[i].replace(EXT, ""));
 		}
 		;
