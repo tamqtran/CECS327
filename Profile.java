@@ -230,7 +230,7 @@ public class Profile {
 	void getPlaylists(DefaultListModel dm) {
 		dm.clear(); //clear list 
 		JSONObject obj1;
-		String pathname = "allan.json";
+		String pathname = username + ".json";
 		try (InputStream input = new FileInputStream(pathname)) {
 			obj1 = new JSONObject(new JSONTokener(input));
 		    //read playlists

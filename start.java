@@ -1,58 +1,80 @@
 import java.io.FileWriter;
 
-import javax.swing.JFrame;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class start {
-
-	public static void main(String[] args) {
-
+/**
+ * This file is the file that initializes the testing JSON files to use
+ * This file starts the program
+ * @author Tam Tran
+ *
+ */
+public class start 
+{
+	public static void main(String[] args) 
+	{
+		//Create JSON object for account 'allan'
+		JSONObject allan = new JSONObject();
+		allan.put("username", "allan");					// add username
+		allan.put("password", "forever");					// add password
 		
-
-		//Writing to JSON
-		
-		//Create JSON object and add value
-		JSONObject obj = new JSONObject();
-		obj.put("username", "allan");
-		obj.put("password", "forever");
-		
-		JSONArray playlists = new JSONArray();
+		JSONArray playlists = new JSONArray();			// add list of playlists
 		playlists.put("king");
 		playlists.put("queen");
-		obj.put("playlists", playlists);
+		allan.put("playlists", playlists);
 		
-		JSONArray kingSongLists = new JSONArray();
+		JSONArray kingSongLists = new JSONArray();		// add individual playlists with their own songs
 		JSONArray queenSongLists = new JSONArray();
 		kingSongLists.put("Imagine");
 		kingSongLists.put("Money");
 		kingSongLists.put("So Serious");
 		queenSongLists.put("Yellow Submarine");
 		queenSongLists.put("Sgt. Pepper's Lonely Hearts Club Band");
-		
-		obj.put("king", kingSongLists);
-		obj.put("queen", queenSongLists);
-		
+		allan.put("king", kingSongLists);
+		allan.put("queen", queenSongLists);
 		
 		
-		
-		//Write all to json file
-		try {
+		try 											//Write into json file
+		{
 			FileWriter fileWriter = new FileWriter("allan.json");
-			fileWriter.write(obj.toString());
+			fileWriter.write(allan.toString());
 			fileWriter.flush();
 			fileWriter.close();
-		}catch (Exception e) {
+		}catch (Exception e) 							// catch exception
+		{
 			e.printStackTrace();
 		}
 		
-		System.out.println(obj);
-		//System.out.print(obj.getJSONArray("king").toString());
 		
-		// constructing the playlist frame
-		//JFrame playlistFrame = new PlaylistFrame("allan", "king");
-		Login lFrame = new Login();
+		// Create another JSON object for account 'bill' to test out login into different accounts
+		JSONObject bill = new JSONObject();
+		bill.put("username", "bill");					// add username
+		bill.put("password", "pokemon");				// add password
+		
+		JSONArray playlists2 = new JSONArray();			// add list of playlists
+		playlists2.put("Long Beach");
+		bill.put("playlists", playlists2);
+		
+		JSONArray longBeachLists = new JSONArray();		// add individual playlists with their own songs
+		longBeachLists.put("Yellow Submarine");
+		bill.put("Long Beach", longBeachLists);
+		
+		try 											//Write into json file
+		{
+			FileWriter fileWriter = new FileWriter("bill.json");
+			fileWriter.write(bill.toString());
+			fileWriter.flush();
+			fileWriter.close();
+		}catch (Exception e) 							// catch exception
+		{
+			e.printStackTrace();
+		}
+		
+		System.out.println(allan);
+		System.out.println(bill);
+		
+		// call initial Frame to start the program
+		Login begin = new Login();
 	}
 
 }

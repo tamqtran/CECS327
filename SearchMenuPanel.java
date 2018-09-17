@@ -176,7 +176,7 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 	public void changedUpdate(DocumentEvent e) {
 	}
 
-	public String[] search(String text) {
+	public static String[] search(String text) {
 		// Desired Music extension
 		final String EXT = ".wav";
 
