@@ -3,8 +3,12 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JButton;
@@ -22,7 +26,7 @@ public class PlayButton {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		// construct the frame
-		JFrame frame = new PlayFrame("Nirvana - All Apologies", "Cool");
+		JFrame frame = new PlayFrame("Nirvana_All Apologies_In Utero", "Cool");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
@@ -53,15 +57,18 @@ public class PlayButton {
 		
 		JButton play = new JButton("\u25B6");
 		JButton back = new JButton("Back");
-		JLabel title = new JLabel("Nirvana - All Apologies");
+		JButton pause = new JButton("\u23f8");
+		//JLabel title = new JLabel("Nirvana - All Apologies");
 		PlayPanel(String u)
 		{
 			ActionListener a = new XActionListener(this);
 			JPanel p1 = new JPanel();
 			p1.setLayout(new BorderLayout(1, 1));
-			p1.add(title, BorderLayout.PAGE_START);
+			//p1.add(title, BorderLayout.PAGE_START);
 			p1.add(back, BorderLayout.WEST);
+			p1.add(pause, BorderLayout.EAST);
 			p1.add(play, BorderLayout.PAGE_END);
+			pause.addActionListener(a);
 			play.addActionListener(a);
 			back.addActionListener(a);
 			this.setLayout(new BorderLayout());
@@ -72,7 +79,7 @@ public class PlayButton {
 			ActionListener a = new XActionListener(this);
 			JPanel p1 = new JPanel();
 			p1.setLayout(new BorderLayout(1, 1));
-			p1.add(title, BorderLayout.PAGE_START);
+			//p1.add(title, BorderLayout.PAGE_START);
 			p1.add(back, BorderLayout.WEST);
 			p1.add(play, BorderLayout.PAGE_END);
 			play.addActionListener(a);
@@ -82,6 +89,7 @@ public class PlayButton {
 		}
 		class YActionListener implements ActionListener{
 			private PlayPanel panel;
+			Clip current;
 
 			public YActionListener(PlayPanel b)
 			{
@@ -97,23 +105,33 @@ public class PlayButton {
 				if(o == panel.play)
 				{
 					try {
-						PlaySong.play(song + ".wav");
-					} catch (LineUnavailableException | IOException | UnsupportedAudioFileException
-							| InterruptedException e1) {
+						File file = new File(song + ".wav");
+						AudioInputStream player = AudioSystem.getAudioInputStream(file);
+						current = AudioSystem.getClip();
+						current.open(player);
+						current.start();
+					} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				}
 				else if(o == panel.back)
 				{
+					current.setFramePosition(0);
 					JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 					pFrame.dispose();
 					new SearchMenuFrame(uName);
+				}
+				else if(o == panel.pause)
+				{
+					current.stop();
 				}
 			}
 		}
 		class XActionListener implements ActionListener{
 			private PlayPanel panel;
+			Clip current;
+			int pos = 0;
 
 			public XActionListener(PlayPanel b)
 			{
@@ -130,15 +148,20 @@ public class PlayButton {
 				if(o == panel.play)
 				{
 					try {
-						PlaySong.play(song + ".wav");
-					} catch (LineUnavailableException | IOException | UnsupportedAudioFileException
-							| InterruptedException e1) {
+						File file = new File(song + ".wav");
+						AudioInputStream player = AudioSystem.getAudioInputStream(file);
+						current = AudioSystem.getClip();
+						current.open(player);
+						current.setFramePosition(pos);
+						current.start();
+					} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				}
 				else if(o == panel.back)
 				{
+					current.setFramePosition(0);
 					JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 					pFrame.dispose();
 					if(playlist.isEmpty())
@@ -149,6 +172,11 @@ public class PlayButton {
 					{
 						new PlaylistFrame(uName, playlist).setVisible(true);
 					}
+				}
+				else if(o == panel.pause)
+				{
+					pos = current.getFramePosition();
+					current.stop();
 				}
 			}
 		}
