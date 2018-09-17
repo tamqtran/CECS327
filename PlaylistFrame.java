@@ -11,7 +11,7 @@ public class PlaylistFrame extends JFrame
 	{
 		setTitle("Playlist Page");
 		setResizable(false);
-		setSize(700, 700);
+		setSize(700, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.panel = new PlaylistPanel(username, playlist);
 		this.add(panel);
