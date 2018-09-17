@@ -90,6 +90,7 @@ public class PlayButton {
 		class YActionListener implements ActionListener{
 			private PlayPanel panel;
 			Clip current;
+			int pos = 0;
 
 			public YActionListener(PlayPanel b)
 			{
@@ -109,6 +110,7 @@ public class PlayButton {
 						AudioInputStream player = AudioSystem.getAudioInputStream(file);
 						current = AudioSystem.getClip();
 						current.open(player);
+						current.setFramePosition(pos);
 						current.start();
 					} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
 						// TODO Auto-generated catch block
@@ -117,14 +119,28 @@ public class PlayButton {
 				}
 				else if(o == panel.back)
 				{
-					current.setFramePosition(0);
+					if(current != null)
+					{
+						if(current.isActive())
+						{
+							current.stop();
+						}
+						current.setFramePosition(0);
+					}
 					JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 					pFrame.dispose();
 					new SearchMenuFrame(uName);
 				}
 				else if(o == panel.pause)
 				{
-					current.stop();
+					if(current != null)
+					{
+						if(current.isActive())
+						{
+							pos = current.getFramePosition();
+							current.stop();
+						}
+					}
 				}
 			}
 		}
@@ -161,7 +177,14 @@ public class PlayButton {
 				}
 				else if(o == panel.back)
 				{
-					current.setFramePosition(0);
+					if(current != null)
+					{
+						if(current.isActive())
+						{
+							current.stop();
+						}
+						current.setFramePosition(0);
+					}
 					JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 					pFrame.dispose();
 					if(playlist.isEmpty())
@@ -175,8 +198,15 @@ public class PlayButton {
 				}
 				else if(o == panel.pause)
 				{
-					pos = current.getFramePosition();
-					current.stop();
+					if(current!= null)
+					{
+						if(current.isActive())
+						{
+							pos = current.getFramePosition();
+							current.stop();
+						}
+					}
+					
 				}
 			}
 		}
