@@ -25,11 +25,11 @@ public class start
 		
 		JSONArray kingSongLists = new JSONArray();		// add individual playlists with their own songs
 		JSONArray queenSongLists = new JSONArray();
-		kingSongLists.put("Imagine");
 		kingSongLists.put("Money");
 		kingSongLists.put("So Serious");
+		kingSongLists.put("Hello Goodbye");
+		queenSongLists.put("Shadows");
 		queenSongLists.put("Yellow Submarine");
-		queenSongLists.put("Sgt. Pepper's Lonely Hearts Club Band");
 		allan.put("king", kingSongLists);
 		allan.put("queen", queenSongLists);
 		
