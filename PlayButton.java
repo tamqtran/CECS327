@@ -109,19 +109,22 @@ public class PlayButton {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				Object o = e.getSource();
-				if(o == panel.play)
+				if(o == panel.play )
 				{
-					try {
-						System.out.println(song);
-						File file = new File(song + ".wav");
-						AudioInputStream player = AudioSystem.getAudioInputStream(file);
-						current = AudioSystem.getClip();
-						current.open(player);
-						current.setFramePosition(pos);
-						current.start();
-					} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					if((current == null) || (current!=null && (!(current.isActive()))))
+					{
+						try {
+							System.out.println(song + ".wav");
+							File file = new File(song + ".wav");
+							AudioInputStream player = AudioSystem.getAudioInputStream(file);
+							current = AudioSystem.getClip();
+							current.open(player);
+							current.setFramePosition(pos);
+							current.start();
+						} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
 				}
 				else if(o == panel.back)
@@ -172,7 +175,7 @@ public class PlayButton {
 				Object o = e.getSource();
 				if(o == panel.play )
 				{
-					if((current == null) || (current!=null && (current.isActive())))
+					if((current == null) || (current!=null && (!(current.isActive()))))
 					{
 						try {
 							System.out.println(song + ".wav");
