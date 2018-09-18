@@ -1,7 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,13 +18,16 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
+/**
+ * @author Luciano Vega
+   Playbutton handles songs and adds the features to play and pause a song.
+ */
 public class PlayButton {
-	static String uName = "";
-	static String song = "";
-	static String playlist = "";
+	static String uName = "";//used for the username
+	static String song = "";//used for song being played
+	static String playlist = "";//used for the name of playlist
 
-	public static void main(String[] args) {
+	public static void main(String[] args) {//used to test this frame on its own.
 		// TODO Auto-generated method stub
 		// construct the frame
 		JFrame frame = new PlayFrame("Nirvana_All Apologies_In Utero", "Cool");
@@ -34,6 +36,12 @@ public class PlayButton {
 	}
 	static class PlayFrame extends JFrame{
 
+		/**
+		 * Playframe constructor that takes in song name, username, and playlist name
+		 * @param s
+		 * @param u
+		 * @param pL
+		 */
 		PlayFrame(String s, String u, String pL)
 		{
 			uName = u;
@@ -44,6 +52,11 @@ public class PlayButton {
 			JPanel p = new PlayPanel(u, pL);
 			this.add(p);
 		}
+		/**
+		 * Play frame that takes in a song name and username
+		 * @param s
+		 * @param u
+		 */
 		PlayFrame(String s, String u)
 		{
 			uName = u;
@@ -57,17 +70,15 @@ public class PlayButton {
 	}
 	static class PlayPanel extends JPanel{
 		
-		JButton play = new JButton("\u25B6");
-		JButton back = new JButton("Back");
-		JButton pause = new JButton("\u25F8");
-		//JLabel title = new JLabel("Nirvana - All Apologies");
-		PlayPanel(String u)
+		JButton play = new JButton("\u25B6");//play button
+		JButton back = new JButton("Back");//back button
+		JButton pause = new JButton("\u25F8");//pause button
+		PlayPanel(String u)//panel for playing a song from search menu
 		{
 			play.setFont(new Font("Dialog", Font.PLAIN, 30));
 			ActionListener a = new YActionListener(this);
 			JPanel p1 = new JPanel();
 			p1.setLayout(new BorderLayout(1, 1));
-			//p1.add(title, BorderLayout.PAGE_START);
 			p1.add(back, BorderLayout.WEST);
 			p1.add(pause, BorderLayout.EAST);
 			p1.add(play, BorderLayout.CENTER);
@@ -77,7 +88,7 @@ public class PlayButton {
 			this.setLayout(new BorderLayout());
 			this.add(p1, BorderLayout.CENTER);
 		}
-		PlayPanel(String u, String p)
+		PlayPanel(String u, String p)//panel for playing song from playlist
 		{
 			play.setFont(new Font("Dialog", Font.PLAIN, 30));
 			ActionListener a = new XActionListener(this);
@@ -93,7 +104,7 @@ public class PlayButton {
 			this.setLayout(new BorderLayout());
 			this.add(p1, BorderLayout.CENTER);
 		}
-		class YActionListener implements ActionListener{
+		class YActionListener implements ActionListener{//Action listener for songs played from search menu
 			private PlayPanel panel;
 			Clip current;
 			int pos = 0;
@@ -111,7 +122,7 @@ public class PlayButton {
 				Object o = e.getSource();
 				if(o == panel.play )
 				{
-					if((current == null) || (current!=null && (!(current.isActive()))))
+					if((current == null) || (current!=null && (!(current.isActive()))))//checks if song is either not started or if the song was paused
 					{
 						try {
 							System.out.println(song + ".wav");
@@ -127,7 +138,7 @@ public class PlayButton {
 						}
 					}
 				}
-				else if(o == panel.back)
+				else if(o == panel.back)//stops song if still playing and goes back to search menu
 				{
 					if(current != null)
 					{
@@ -143,7 +154,7 @@ public class PlayButton {
 					pFrame.dispose();
 					new SearchMenuFrame(uName).setVisible(true);
 				}
-				else if(o == panel.pause)
+				else if(o == panel.pause)//pauses song if song is active and saves frame position to resume in play
 				{
 					if(current != null)
 					{
@@ -156,7 +167,7 @@ public class PlayButton {
 				}
 			}
 		}
-		class XActionListener implements ActionListener{
+		class XActionListener implements ActionListener{//
 			private PlayPanel panel;
 			Clip current;
 			int pos = 0;
@@ -169,13 +180,13 @@ public class PlayButton {
 			 * Implement ActionListener
 			 * @param e ActionEvent
 			 */
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) {//action listener for songs played from playlist
 				
 				// TODO Auto-generated method stub
 				Object o = e.getSource();
 				if(o == panel.play )
 				{
-					if((current == null) || (current!=null && (!(current.isActive()))))
+					if((current == null) || (current!=null && (!(current.isActive()))))//checks if song has not started playing or if it is paused
 					{
 						try {
 							System.out.println(song + ".wav");
@@ -191,7 +202,7 @@ public class PlayButton {
 						}
 					}
 				}
-				else if(o == panel.back)
+				else if(o == panel.back)//stops song if it is playing and returns to playlist
 				{
 					if(current != null)
 					{
@@ -214,7 +225,7 @@ public class PlayButton {
 						new PlaylistFrame(uName, playlist).setVisible(true);
 					}
 				}
-				else if(o == panel.pause)
+				else if(o == panel.pause)//pauses song is song is playing
 				{
 					if(current!= null)
 					{
