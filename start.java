@@ -4,7 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * This file is the file that initializes the testing JSON files to use
+ * This file is the file that initializes the testing JSON files to start
  * This file starts the program
  * @author Tam Tran
  *
@@ -16,7 +16,7 @@ public class start
 		//Create JSON object for account 'allan'
 		JSONObject allan = new JSONObject();
 		allan.put("username", "allan");					// add username
-		allan.put("password", "forever");					// add password
+		allan.put("password", "forever");				// add password
 		
 		JSONArray playlists = new JSONArray();			// add list of playlists
 		playlists.put("king");
@@ -59,7 +59,7 @@ public class start
 		longBeachLists.put("Yellow Submarine");
 		bill.put("Long Beach", longBeachLists);
 		
-		try 											//Write into json file
+		try 											// Write into json file
 		{
 			FileWriter fileWriter = new FileWriter("bill.json");
 			fileWriter.write(bill.toString());
