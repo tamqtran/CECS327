@@ -112,6 +112,7 @@ public class PlayButton {
 				if(o == panel.play)
 				{
 					try {
+						System.out.println(song);
 						File file = new File(song + ".wav");
 						AudioInputStream player = AudioSystem.getAudioInputStream(file);
 						current = AudioSystem.getClip();
@@ -131,11 +132,13 @@ public class PlayButton {
 						{
 							current.stop();
 						}
-						current.setFramePosition(0);
+						current.flush();
+						current.close();
+						
 					}
 					JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 					pFrame.dispose();
-					new SearchMenuFrame(uName);
+					new SearchMenuFrame(uName).setVisible(true);
 				}
 				else if(o == panel.pause)
 				{
@@ -172,6 +175,7 @@ public class PlayButton {
 					if((current == null) || (current!=null && (current.isActive())))
 					{
 						try {
+							System.out.println(song + ".wav");
 							File file = new File(song + ".wav");
 							AudioInputStream player = AudioSystem.getAudioInputStream(file);
 							current = AudioSystem.getClip();
@@ -193,6 +197,8 @@ public class PlayButton {
 							current.stop();
 						}
 						current.setFramePosition(0);
+						current.flush();
+						current.close();
 					}
 					JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 					pFrame.dispose();
