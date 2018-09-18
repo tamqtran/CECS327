@@ -1,6 +1,8 @@
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -38,7 +40,7 @@ public class PlayButton {
 			playlist = pL;
 			song = s;
 			setTitle("Play");
-			setSize(300, 300);
+			setSize(500, 200);
 			JPanel p = new PlayPanel(u, pL);
 			this.add(p);
 		}
@@ -48,7 +50,7 @@ public class PlayButton {
 			playlist = "";
 			song = s;
 			setTitle("Play");
-			setSize(300, 300);
+			setSize(500, 200);
 			JPanel p = new PlayPanel(u);
 			this.add(p);
 		}
@@ -57,17 +59,18 @@ public class PlayButton {
 		
 		JButton play = new JButton("\u25B6");
 		JButton back = new JButton("Back");
-		JButton pause = new JButton("\u23f8");
+		JButton pause = new JButton("\u25F8");
 		//JLabel title = new JLabel("Nirvana - All Apologies");
 		PlayPanel(String u)
 		{
-			ActionListener a = new XActionListener(this);
+			play.setFont(new Font("Dialog", Font.PLAIN, 30));
+			ActionListener a = new YActionListener(this);
 			JPanel p1 = new JPanel();
 			p1.setLayout(new BorderLayout(1, 1));
 			//p1.add(title, BorderLayout.PAGE_START);
 			p1.add(back, BorderLayout.WEST);
 			p1.add(pause, BorderLayout.EAST);
-			p1.add(play, BorderLayout.PAGE_END);
+			p1.add(play, BorderLayout.CENTER);
 			pause.addActionListener(a);
 			play.addActionListener(a);
 			back.addActionListener(a);
@@ -76,13 +79,16 @@ public class PlayButton {
 		}
 		PlayPanel(String u, String p)
 		{
+			play.setFont(new Font("Dialog", Font.PLAIN, 30));
 			ActionListener a = new XActionListener(this);
 			JPanel p1 = new JPanel();
 			p1.setLayout(new BorderLayout(1, 1));
 			//p1.add(title, BorderLayout.PAGE_START);
 			p1.add(back, BorderLayout.WEST);
-			p1.add(play, BorderLayout.PAGE_END);
+			p1.add(pause, BorderLayout.EAST);
+			p1.add(play, BorderLayout.CENTER);
 			play.addActionListener(a);
+			pause.addActionListener(a);
 			back.addActionListener(a);
 			this.setLayout(new BorderLayout());
 			this.add(p1, BorderLayout.CENTER);
@@ -161,18 +167,21 @@ public class PlayButton {
 				
 				// TODO Auto-generated method stub
 				Object o = e.getSource();
-				if(o == panel.play)
+				if(o == panel.play )
 				{
-					try {
-						File file = new File(song + ".wav");
-						AudioInputStream player = AudioSystem.getAudioInputStream(file);
-						current = AudioSystem.getClip();
-						current.open(player);
-						current.setFramePosition(pos);
-						current.start();
-					} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					if((current == null) || (current!=null && (current.isActive())))
+					{
+						try {
+							File file = new File(song + ".wav");
+							AudioInputStream player = AudioSystem.getAudioInputStream(file);
+							current = AudioSystem.getClip();
+							current.open(player);
+							current.setFramePosition(pos);
+							current.start();
+						} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
 				}
 				else if(o == panel.back)

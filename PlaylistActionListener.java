@@ -70,7 +70,7 @@ public class PlaylistActionListener implements ActionListener
 			// close and open new JFrame
 			JFrame sFrame = (JFrame) panel.getTopLevelAncestor();
 			sFrame.dispose();
-			new PlayButton.PlayFrame(songTitle + "_" + artist + "_" + album, panel.username).setVisible(true);
+			new PlayButton.PlayFrame(songTitle + "_" + artist + "_" + album, panel.username, panel.playlist).setVisible(true);
 		}
 		
 		// delete song button will delete song from JSON file and update JList in Playlist JPanel
