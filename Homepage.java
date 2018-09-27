@@ -7,6 +7,8 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -20,25 +22,28 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class Homepage {
-	private String userName;
-	private JFrame frame;
-	protected JTextField searchField;
-	private JPanel HIGH_panel, 
-					Playlist_Panel, 
-					 PlaylistTitle,
-					 UserSavedPanel, 
-					 PlaylistOptions,
-					Explore_Panel, 
-					 TopPanel, _SearchPanel, _HistoryPanel, _ProfilePanel,
-					 ShiftingPanel,
-				   LOW_panel, 
-				   	Description_Panel, 
-				   	Song_Panel, SongOptions;
-	private JButton createPlaylist_, removePlaylist_, searchQuery_, logout_, previousSong_, playPause_, nextSong_; 
-	private JLabel playlist_, username_, title_, artist_, album_;
+	private String 			userName;
+	private JFrame 			frame;
+	protected JTextField 	searchField;
+	private JPanel 			HIGH_panel, 
+							Playlist_Panel, 
+							 PlaylistTitle,
+							 UserSavedPanel, 
+							 PlaylistOptions,
+							Explore_Panel, 
+							 TopPanel, _SearchPanel, _HistoryPanel, _ProfilePanel,
+							 ShiftingPanel,
+				  			LOW_panel, 
+				   			 Description_Panel, 
+				   			 Song_Panel, SongOptions;
+	private JButton 		createPlaylist_, removePlaylist_, 
+							searchQuery_, logout_, 
+							previousSong_, playPause_, nextSong_; 
+	private JLabel 			playlist_, username_, 
+							title_, artist_, album_;
 	
 	
-	private boolean isSongPlaying = false;
+	private boolean isSongPlaying = false; //starts false
 	
 	public static void main(String[] args) {
 		new Homepage("allan");
@@ -93,10 +98,11 @@ public class Homepage {
 			}
 		});
 		
-		PlaylistOptions.add(Box.createRigidArea(new Dimension(20,20)));
+		PlaylistOptions.add(Box.createRigidArea(new Dimension(10,10)));
 		PlaylistOptions.add(createPlaylist_);
 		PlaylistOptions.add(Box.createRigidArea(new Dimension(5,5)));
 		PlaylistOptions.add(removePlaylist_);
+		PlaylistOptions.add(Box.createRigidArea(new Dimension(10,10)));
 		
 		Playlist_Panel.add(PlaylistTitle);
 		Playlist_Panel.add(UserSavedPanel);
@@ -116,6 +122,7 @@ public class Homepage {
 //		TopPanel.setLayout(new BorderLayout());
 		TopPanel.setLayout(new BoxLayout(TopPanel, BoxLayout.X_AXIS));
 		
+		
 		_SearchPanel = new JPanel();
 		_SearchPanel.setLayout(new FlowLayout());
 		searchField = new JTextField();
@@ -126,6 +133,7 @@ public class Homepage {
 		
 		_SearchPanel.add(searchField);
 		_SearchPanel.add(searchQuery_);
+		_SearchPanel.setBorder(BorderFactory.createLineBorder(Color.GREEN));
 		
 //		_HistoryPanel (worry about this later)
 		_HistoryPanel = new JPanel();
@@ -143,12 +151,13 @@ public class Homepage {
 		
 		_ProfilePanel.add(username_);
 		_ProfilePanel.add(logout_);
+		_ProfilePanel.setBorder(BorderFactory.createLineBorder(Color.MAGENTA));
 		
 		TopPanel.add(_SearchPanel);
 		TopPanel.add(Box.createGlue());
 		TopPanel.add(_ProfilePanel);
-		TopPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
+		TopPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
 //		ShiftingPanel (the one that keeps changing) //jscrollpane?
 		ShiftingPanel = new JPanel();
