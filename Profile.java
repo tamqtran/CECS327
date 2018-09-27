@@ -126,6 +126,7 @@ public class Profile {
 		//ADD LIST TO DEFAULT MODEL
 		list_1.setModel(dm);
 		getPlaylists(dm);
+		
 		//MOVE TO SEARCH SONG BY ALBUM/NAME...
 		btnSearchMenuButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

@@ -28,7 +28,7 @@ public class Login implements ActionListener {
 	protected JTextField usernameField;
 	protected JPasswordField passwordField;
 	private JLabel nLabel, pLabel, eLabel;
-	protected JButton loginButton;
+	private JButton loginButton;
 	private String message;
 	private JPanel userPanel, passPanel, errorPanel, buttonPanel;
 	private String specials = "[!@#$%&*()_+=|<>?{}\\[\\]~-]";
