@@ -128,11 +128,11 @@ public class Homepage {
 		searchField = new JTextField();
 		searchField.setText("Search for...	");
 		searchField.setSize(searchField.getPreferredSize()); 
-		searchField.setMaximumSize(searchField.getPreferredSize());
 		searchQuery_ = new JButton("Search");
 		
 		_SearchPanel.add(searchField);
 		_SearchPanel.add(searchQuery_);
+		_SearchPanel.setMaximumSize(new Dimension(100,40));
 		_SearchPanel.setBorder(BorderFactory.createLineBorder(Color.GREEN));
 		
 //		_HistoryPanel (worry about this later)
@@ -151,10 +151,11 @@ public class Homepage {
 		
 		_ProfilePanel.add(username_);
 		_ProfilePanel.add(logout_);
+		_ProfilePanel.setMaximumSize(new Dimension(100,40));
 		_ProfilePanel.setBorder(BorderFactory.createLineBorder(Color.MAGENTA));
 		
 		TopPanel.add(_SearchPanel);
-		TopPanel.add(Box.createGlue());
+		TopPanel.add(Box.createHorizontalGlue());
 		TopPanel.add(_ProfilePanel);
 		
 		TopPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
