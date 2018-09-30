@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -19,7 +20,9 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.border.BevelBorder;
 
 
 public class Homepage {
@@ -28,26 +31,22 @@ public class Homepage {
 	protected JTextField 		searchField;
 	private JPanel 				HIGH_panel, 
 								Playlist_Panel, 
-								 PlaylistTitle, /*UserSavedPanel,*/ PlaylistOptions,
+								 PlaylistTitle, PlaylistOptions,
 								Explore_Panel, 
 								 TopPanel, _SearchPanel, _HistoryPanel, _ProfilePanel,
-//								 /*
-								  ShiftingPanel,
-//								  * */ //maybe?
 				  				LOW_panel, 
 				   				 Description_Panel, 
-				   				 Song_Panel, SongBar, SongOptions, _SongTime, _SongButtons;
+				   				 Song_Panel, _SongBar, _SongButtons;
 	private JButton 			createPlaylist_, removePlaylist_, 
 								searchQuery_, logout_, 
 								previousSong_, playPause_, nextSong_; 
 	private JLabel 				playlist_, username_, 
 								title_, artist_, album_,
-								currentTime_, divide_, songTime_;
+								currentTime_, songTime_;
 	private DefaultListModel 	dm;
 	private JList				playlist_List;
-	private JScrollPane			UserSavedPanel 
-//							    , ShiftingPanel /*maybe*/ 
-							    ;
+	private JScrollPane			UserSavedPanel, ShiftingPanel;
+	private JSlider				timedSlider;
 	
 	private boolean isSongPlaying = false; //starts false
 	
@@ -78,19 +77,19 @@ public class Homepage {
 	
 	public void addHighComponentsToHome(Container pane) {
 		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+		pane.add(Box.createRigidArea(new Dimension(1,1)));
 		
 		HIGH_panel = new JPanel();
 		HIGH_panel.setLayout(new BoxLayout(HIGH_panel, BoxLayout.X_AXIS));
 		
 		Playlist_Panel = new JPanel();
 		Playlist_Panel.setLayout(new BoxLayout(Playlist_Panel, BoxLayout.Y_AXIS));
-		Playlist_Panel.setMaximumSize(new Dimension(150,10000));
+		Playlist_Panel.setMaximumSize(new Dimension(200,10000));
 		
 		PlaylistTitle = new JPanel();
 		PlaylistTitle.setMaximumSize(new Dimension(100,10));
-		playlist_ = new JLabel("My Playlists");
+		playlist_ = new JLabel("My Playlists"); playlist_.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		PlaylistTitle.add(playlist_);
-//		PlaylistTitle.setBorder(BorderFactory.createLineBorder(Color.GREEN));
 		
 //		inspiration for borders/box.glue: http://www.java2s.com/Code/Java/Swing-JFC/BoxLayoutGlueSample.htm
 		
@@ -117,22 +116,22 @@ public class Homepage {
 			}
 		});
 		
-		PlaylistOptions.add(Box.createRigidArea(new Dimension(10,10)));
+		PlaylistOptions.add(Box.createRigidArea(new Dimension(6,6)));
 		PlaylistOptions.add(createPlaylist_);
 		PlaylistOptions.add(Box.createRigidArea(new Dimension(5,5)));
 		PlaylistOptions.add(removePlaylist_);
 		PlaylistOptions.add(Box.createRigidArea(new Dimension(10,10)));
 		
-		Playlist_Panel.add(Box.createRigidArea(new Dimension(5,5)));
+		Playlist_Panel.add(Box.createRigidArea(new Dimension(3,3)));
 		Playlist_Panel.add(PlaylistTitle);
-		Playlist_Panel.add(Box.createRigidArea(new Dimension(5,5)));
+		Playlist_Panel.add(Box.createRigidArea(new Dimension(4,4)));
 		Playlist_Panel.add(UserSavedPanel);
-		Playlist_Panel.add(Box.createRigidArea(new Dimension(5,5)));
+		Playlist_Panel.add(Box.createRigidArea(new Dimension(3,3)));
 		Playlist_Panel.add(PlaylistOptions);
-		Playlist_Panel.add(Box.createRigidArea(new Dimension(5,5)));
+		Playlist_Panel.add(Box.createRigidArea(new Dimension(3,3)));
 		
-//		Playlist_Panel.setBorder(BorderFactory.createLineBorder(Color.RED));
-				
+		Playlist_Panel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+		
 //		large song album cover (e_CoverPanel) can go here later
 		
 //		Explore_Panel
@@ -146,13 +145,12 @@ public class Homepage {
 		_SearchPanel.setLayout(new FlowLayout());
 		searchField = new JTextField();
 		searchField.setText("Search for...	");
-		searchField.setSize(searchField.getPreferredSize()); 
+		searchField.setColumns(15);
 		searchQuery_ = new JButton("Search");
 		
 		_SearchPanel.add(searchField);
 		_SearchPanel.add(searchQuery_);
 		_SearchPanel.setMaximumSize(new Dimension(200,40));
-//		_SearchPanel.setBorder(BorderFactory.createLineBorder(Color.GREEN));
 		
 //		_HistoryPanel (worry about this later)
 		_HistoryPanel = new JPanel();
@@ -172,25 +170,24 @@ public class Homepage {
 		_ProfilePanel.add(username_);
 		_ProfilePanel.add(logout_);
 		_ProfilePanel.setMaximumSize(new Dimension(100,40));
-//		_ProfilePanel.setBorder(BorderFactory.createLineBorder(Color.MAGENTA));
 		
 		TopPanel.add(_SearchPanel);
 //		a horizontal box, then _HistoryPanel would go here
 		TopPanel.add(Box.createHorizontalGlue());
 		TopPanel.add(_ProfilePanel);
-//		TopPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		TopPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
-//		ShiftingPanel (the one that keeps changing) //jscrollpane?
-		ShiftingPanel = new JPanel();
-		ShiftingPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+//		ShiftingPanel (the one that keeps changing)
+		ShiftingPanel = new JScrollPane();
+		ShiftingPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
+//		Explore_Panel.add(Box.createHorizontalStrut(1)); 
 		Explore_Panel.add(TopPanel); Explore_Panel.add(ShiftingPanel);
 		
-		HIGH_panel.add(Box.createRigidArea(new Dimension(5,5)));
+		HIGH_panel.add(Box.createRigidArea(new Dimension(1,1)));
 		HIGH_panel.add(Playlist_Panel);
-		HIGH_panel.add(Box.createRigidArea(new Dimension(5,5)));
+		HIGH_panel.add(Box.createRigidArea(new Dimension(1,1)));
 		HIGH_panel.add(Explore_Panel);
-//		HIGH_panel.add(Box.createRigidArea(new Dimension(5,5)));
 		
 		pane.add(HIGH_panel);
 	}
@@ -198,7 +195,7 @@ public class Homepage {
 	public void addLowComponentsToHome(Container pane) {
 		LOW_panel = new JPanel();
 		LOW_panel.setLayout(new BoxLayout(LOW_panel, BoxLayout.X_AXIS));
-		LOW_panel.setMaximumSize(new Dimension(15000,300));
+		LOW_panel.setMaximumSize(new Dimension(15000,100));
 		LOW_panel.add(Box.createHorizontalStrut(4));
 		
 		// small song album cover (m_CoverPanel) can go here later
@@ -221,31 +218,22 @@ public class Homepage {
 		
 		Description_Panel.setMinimumSize(new Dimension(175,200));
 		Description_Panel.setPreferredSize(new Dimension(175,60));
-		Description_Panel.setMaximumSize(new Dimension(175,200));
-		
-//		Description_Panel.setBorder(BorderFactory.createLineBorder(Color.CYAN));
-						
+		Description_Panel.setMaximumSize(new Dimension(175,200));						
 		
 		Song_Panel = new JPanel();
 		Song_Panel.setLayout(new BoxLayout(Song_Panel, BoxLayout.Y_AXIS));
 		
 //		SongBar goes here
-		
-		SongOptions = new JPanel();
-		SongOptions.setLayout(new BoxLayout(SongOptions, BoxLayout.X_AXIS));
-		
-		_SongTime = new JPanel();
-		_SongTime.setLayout(new FlowLayout());
+		_SongBar = new JPanel();
+		_SongBar.setLayout(new FlowLayout());
 		currentTime_ = new JLabel("current");
-		divide_ = new JLabel(" /|/ ");
-		songTime_ = new JLabel("Song");
-//		currentTime_ responds to where the song is on SongBar, songTime_ responds to what the total time of the song is
-		_SongTime.add(currentTime_);
-		_SongTime.add(divide_);
-		_SongTime.add(songTime_);
+		timedSlider= new JSlider(0,100);
+		songTime_ = new JLabel("total");
 		
-		_SongTime.setMaximumSize(new Dimension(20,50));
-		
+		_SongBar.add(currentTime_);
+		_SongBar.add(timedSlider);
+		_SongBar.add(songTime_);
+							
 		_SongButtons = new JPanel();
 		_SongButtons.setLayout(new FlowLayout());
 		
@@ -281,23 +269,20 @@ public class Homepage {
 	
 		// all three buttons initialize as un-clickables 
 		// 'if there is a song chosen,' it will unlock and play automatically
-		_SongButtons.add(previousSong_); 
-		_SongButtons.add(playPause_); 
-		_SongButtons.add(nextSong_);
+		_SongButtons.add(previousSong_); 	_SongButtons.add(playPause_); 	_SongButtons.add(nextSong_);
 		
-		SongOptions.add(_SongTime);
-		SongOptions.add(_SongButtons);
+		Song_Panel.add(_SongBar);
+		Song_Panel.add(_SongButtons);
 		
-
-		
-//		SongBar gets added here
-		Song_Panel.add(SongOptions);
-		
+//		Song_Panel.setBorder(BorderFactory.createLineBorder(Color.RED));
 				
+		LOW_panel.add(Box.createRigidArea(new Dimension(1,1)));
 		LOW_panel.add(Description_Panel);
+		LOW_panel.add(Box.createRigidArea(new Dimension(2,2)));
 		LOW_panel.add(Song_Panel);
+		LOW_panel.add(Box.createRigidArea(new Dimension(1,1)));
 		
-		LOW_panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));				
+		LOW_panel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));				
 		
 		
 		pane.add(LOW_panel);
