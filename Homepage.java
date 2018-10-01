@@ -24,8 +24,10 @@ import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 
-
 public class Homepage {
+	
+	private String specials = "[!@#$%&*()_+=|<>?{}\\[\\]~-]";
+	
 	private String 				userName;
 	private JFrame 				frame;
 	protected JTextField 		searchField;
@@ -43,12 +45,13 @@ public class Homepage {
 	private JLabel 				playlist_, username_, 
 								title_, artist_, album_,
 								currentTime_, songTime_;
-	private DefaultListModel 	dm;
-	private JList				playlist_List;
+	@SuppressWarnings("rawtypes")	private DefaultListModel 	dm;
+	@SuppressWarnings("rawtypes")	private JList				playlist_List;
 	private JScrollPane			UserSavedPanel, ShiftingPanel;
 	private JSlider				timedSlider;
 	
-	private boolean isSongPlaying = false; //starts false
+	private boolean isSongPlaying = false, //starts false
+					isThereASong = false;
 	
 	public static void main(String[] args) {
 		new Homepage("allan");
@@ -59,7 +62,7 @@ public class Homepage {
 		initialize();
 	}
 	
-	public void initialize() {
+	private void initialize() {
 		frame = new JFrame("MusicService -- " + userName);
 		frame.setMinimumSize(new Dimension(675,400));		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -75,7 +78,8 @@ public class Homepage {
 		frame.setVisible(true);
 	}
 	
-	public void addHighComponentsToHome(Container pane) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void addHighComponentsToHome(Container pane) {
 		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
 		pane.add(Box.createRigidArea(new Dimension(1,1)));
 		
@@ -148,6 +152,36 @@ public class Homepage {
 		searchField.setColumns(15);
 		searchQuery_ = new JButton("Search");
 		
+		
+		//CONTAINS CODE THAT IS DEBUG ONLY; DOES NOT REFLECT FINAL PRODUCT
+		searchQuery_.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+				//DEBUG ONLY; DOES NOT REFLECT FINAL PRODUCT
+				isThereASong = !isThereASong; 								//
+				System.out.println("is there a song? " + isThereASong);		//
+				if (isThereASong) {											//
+					previousSong_.setText("\u2758" + "\u23F4");				//
+					playPause_.setText("\u2758" + "\u2758");				//
+					nextSong_.setText("\u23F5" + "\u2758");					//
+				} else {													//
+					previousSong_.setText("\u274C");						//
+					playPause_.setText("\u274C");							//
+					nextSong_.setText("\u274C");							//
+				}															//
+				previousSong_.setEnabled(isThereASong);						//
+				playPause_.setEnabled(isThereASong);						//
+				nextSong_.setEnabled(isThereASong);							//
+				currentTime_.setVisible(isThereASong);						//
+				timedSlider.setEnabled(isThereASong);						//
+				songTime_.setVisible(isThereASong);							//
+				//DEBUG ONLY; DOES NOT REFLECT FINAL PRODUCT
+			}
+		});
+		//CONTAINS CODE THAT IS DEBUG ONLY; DOES NOT REFLECT FINAL PRODUCT
+		
 		_SearchPanel.add(searchField);
 		_SearchPanel.add(searchQuery_);
 		_SearchPanel.setMaximumSize(new Dimension(200,40));
@@ -192,7 +226,7 @@ public class Homepage {
 		pane.add(HIGH_panel);
 	}
 	
-	public void addLowComponentsToHome(Container pane) {
+	private void addLowComponentsToHome(Container pane) {
 		LOW_panel = new JPanel();
 		LOW_panel.setLayout(new BoxLayout(LOW_panel, BoxLayout.X_AXIS));
 		LOW_panel.setMaximumSize(new Dimension(15000,100));
@@ -227,8 +261,13 @@ public class Homepage {
 		_SongBar = new JPanel();
 		_SongBar.setLayout(new FlowLayout());
 		currentTime_ = new JLabel("current");
-		timedSlider= new JSlider(0,100);
+		timedSlider = new JSlider(0,100,0);
+		// un-movable on initialization, movable when there is a song 'queued' (is that the word for it?)
 		songTime_ = new JLabel("total");
+		
+		currentTime_.setVisible(isThereASong);
+		timedSlider.setEnabled(isThereASong);
+		songTime_.setVisible(isThereASong);
 		
 		_SongBar.add(currentTime_);
 		_SongBar.add(timedSlider);
@@ -237,38 +276,50 @@ public class Homepage {
 		_SongButtons = new JPanel();
 		_SongButtons.setLayout(new FlowLayout());
 		
-		previousSong_ = new JButton("Previous Song");
+		previousSong_ = new JButton("\u2758" + "\u23F4");
 		previousSong_.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
 				System.out.println("Moving to previous song...");
 				// do things here
+				
+				playPause_.setText("\u2758" + "\u2758");
+				isSongPlaying = true;		// the song is playing when it's all over
 			}
 		});
-		playPause_ = new JButton("Paused");
+		playPause_ = new JButton("\u274C");
 		playPause_.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent arg0) {
 				isSongPlaying = !isSongPlaying;
-				if (isSongPlaying) { 
-					playPause_.setText("Playing");
+				if (isSongPlaying) {
 					System.out.println("Song is playing");
 					// do things here
+					
+					playPause_.setText("\u2758" + "\u2758");		
 				} else {
-					playPause_.setText("Paused");
 					System.out.println("Song is paused");
 					// do things here
+					
+					playPause_.setText("\u25B6");
 				}
 			}
 		});
-		nextSong_ = new JButton("Next Song");
+		nextSong_ = new JButton("\u23F5" + "\u2758");
 		nextSong_.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {			
 				System.out.println("Moving to next song...");
 				//do things here
+				
+				playPause_.setText("\u2758" + "\u2758");
+				isSongPlaying = true;		// the song is playing when it's all over			
 			}
 		});
 	
-		// all three buttons initialize as un-clickables 
-		// 'if there is a song chosen,' it will unlock and play automatically
+		// all three buttons initialize as un-clickables
+		previousSong_.setEnabled(isThereASong);
+		playPause_.setEnabled(isThereASong);
+		nextSong_.setEnabled(isThereASong);
+		
+		// if there is a song, it will unlock and play automatically
 		_SongButtons.add(previousSong_); 	_SongButtons.add(playPause_); 	_SongButtons.add(nextSong_);
 		
 		Song_Panel.add(_SongBar);
@@ -284,8 +335,30 @@ public class Homepage {
 		
 		LOW_panel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));				
 		
-		
 		pane.add(LOW_panel);
 	}
 
+	
+	
+	/**
+	 * A boolean method that abhors code injections.
+	 * @param input: A string, either username or password
+	 * @return false if any special characters are found in input; true otherwise
+	 */
+	private boolean codeDenial (String input) {
+		//denies if input has the following: "[!@#$%&*()_+=|<>?{}\\[\\]~-]" (code injection prevention)
+		for (char c : input.toCharArray()) {
+			for (char s : specials.toCharArray())
+				if (s == c) return false;
+		} return true;
+	}
+	
+	/**
+	 * A void method that can make a frame visible.
+	 * @param b boolean (true/false) that determines visibility of the frame (where true makes it visible, and false makes it not visible
+	 */
+	public void setVisible(boolean b) {
+		// TODO Auto-generated method stub
+		frame.setVisible(b);
+	}
 }

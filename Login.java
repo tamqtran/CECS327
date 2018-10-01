@@ -118,7 +118,9 @@ public class Login implements ActionListener {
 				if (codeDenial(pass) && confirmPassword(user, pass)) {
 					System.out.println("Success. Redirecting..."); //debug
 					frame.dispose(); 					//close the login
-					new Profile(user).setVisible(true); //then redirect to homepage with their data
+					//then redirect to homepage with their data
+//					new Profile(user).setVisible(true); 	//version 1
+					new Homepage(user).setVisible(true);	//version 2
 				} else message = "Incorrect password; try again.";
 			} else message = "No such user; try again.";
 		} else message = "Fill out both boxes.";
