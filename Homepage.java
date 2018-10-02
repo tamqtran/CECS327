@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -26,7 +27,7 @@ import javax.swing.border.BevelBorder;
 
 public class Homepage {
 	
-	private String specials = "[!@#$%&*()_+=|<>?{}\\[\\]~-]";
+	private String specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]";
 	
 	private String 				userName;
 	private JFrame 				frame;
@@ -49,6 +50,8 @@ public class Homepage {
 	@SuppressWarnings("rawtypes")	private JList				playlist_List;
 	private JScrollPane			UserSavedPanel, ShiftingPanel;
 	private JSlider				timedSlider;
+	
+	private CreatePlaylistDialog playlistCreation;
 	
 	private boolean isSongPlaying = false, //starts false
 					isThereASong = false;
@@ -76,6 +79,9 @@ public class Homepage {
 		frame.setLocationRelativeTo(null);
 		
 		frame.setVisible(true);
+		
+		playlistCreation = new CreatePlaylistDialog(frame);
+		playlistCreation.pack();
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -110,7 +116,21 @@ public class Homepage {
 		createPlaylist_ = new JButton("Create");
 		createPlaylist_.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
-				System.out.print("Open subwindow displaying instructions for name of new playlist...");
+				System.out.println("Opening subwindow for playlist naming...");
+//				String s = (String) JOptionPane.showInputDialog(frame, "Name the new playlist:\n", 
+//				"Playlist Creation", JOptionPane.PLAIN_MESSAGE, null, null, null);
+//				if (s != null && codeDenial(s))
+//				{
+//					// check if this name is unique from their list of personal playlists
+//					// if it isn't, error message - "This name has already been used by you. Try another name."
+//					System.out.print("Authorized - ");
+//				} else {
+//					// error message - "This has special characters that are not allowed here. Try another name."
+//					System.out.print("Denied - ");
+//				} System.out.println("Playlist name: " + s);
+				
+				playlistCreation.setLocationRelativeTo(frame);
+				playlistCreation.setVisible(true);
 			}
 		});
 		removePlaylist_ = new JButton("Remove");
@@ -338,8 +358,7 @@ public class Homepage {
 		pane.add(LOW_panel);
 	}
 
-	
-	
+		
 	/**
 	 * A boolean method that abhors code injections.
 	 * @param input: A string, either username or password

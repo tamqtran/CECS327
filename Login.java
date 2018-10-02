@@ -31,7 +31,7 @@ public class Login implements ActionListener {
 	private JButton loginButton;
 	private String message;
 	private JPanel userPanel, passPanel, errorPanel, buttonPanel;
-	private String specials = "[!@#$%&*()_+=|<>?{}\\[\\]~-]";
+	private String specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]";
 	
 	
 	/*
@@ -173,7 +173,7 @@ public class Login implements ActionListener {
 	 * @return false if any special characters are found in input; true otherwise
 	 */
 	private boolean codeDenial (String input) {
-		//denies if input has the following: "[!@#$%&*()_+=|<>?{}\\[\\]~-]" (code injection prevention)
+		//denies if input has the following: "[!@#$%&*()+=|<>?{}\\[\\]~-]" (code injection prevention)
 		for (char c : input.toCharArray()) {
 			for (char s : specials.toCharArray())
 				if (s == c) return false;
