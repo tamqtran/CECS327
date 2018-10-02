@@ -1,4 +1,4 @@
-package Server;
+//package Server;
 
 import java.util.UUID;
 
@@ -18,6 +18,25 @@ public class Method {
 	public Method() {
 		
 	}
+	
+	/**
+	 * Get user's name
+	 * @param username user making request
+	 * @return user's name 
+	 */
+	public Boolean checkLogin(String username,String password) {
+		String sPassword = null;
+		try (InputStream input = new FileInputStream(username+".json")) {
+			JSONObject obj1 = new JSONObject(new JSONTokener(input));
+			sPassword = obj1.get("password").toString();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		if(password.equals(sPassword))
+			return true;
+		return false;
+	}
+	
 	/**
 	 * Get user's name
 	 * @param username user making request
@@ -25,7 +44,7 @@ public class Method {
 	 */
 	public String getName(String username) {
 		String name = null;
-		try (InputStream input = new FileInputStream("allan"+".json")) {
+		try (InputStream input = new FileInputStream(username+".json")) {
 			JSONObject obj1 = new JSONObject(new JSONTokener(input));
 			name = obj1.get("name").toString();
 		}catch (Exception e) {

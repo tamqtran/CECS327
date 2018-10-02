@@ -1,4 +1,4 @@
-package Client;
+//package Client;
 
 import java.net.*;
 import java.util.Scanner;
@@ -34,7 +34,7 @@ public static void main(String args[]){
 		
 		//Request
 		String [] arguments = {"allan","new"};
-		m = JSONRequest("removePlaylist",arguments).toString().getBytes("utf-8");
+		m = JSONRequest("addPlaylist",arguments).toString().getBytes("utf-8");
 		DatagramPacket request = new DatagramPacket(m, m.length, aHost, serverPort);
 		aSocket.send(request);
 		

@@ -1,4 +1,4 @@
-package Server;
+//package Server;
 import java.net.*;
 import java.util.UUID;
 
@@ -9,7 +9,7 @@ import java.io.*;
 
 public class UDPServer{
 
-public static void main(String args[]){
+public static void main(String args[]) throws SocketException{
 	Method json = new Method();
 	
 	//Removable Testing
@@ -28,13 +28,12 @@ public static void main(String args[]){
         e.printStackTrace();
     }
     */
-    
-	DatagramSocket aSocket = null;
 	int port = 6733;
+	final DatagramSocket aSocket = new DatagramSocket(port);
 	
 	try{
 		
-		aSocket = new DatagramSocket(6733);
+		//aSocket = new DatagramSocket(6733);
 		System.out.println("Server started on port: "+port);
 		byte[] buffer = new byte[1000];
 		
@@ -45,6 +44,10 @@ public static void main(String args[]){
 			aSocket.receive(request);
 			System.out.println("Request from port: "+ request.getPort());
 			System.out.println("Request: "+new String(request.getData()));
+			
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
 			JSONObject JsonRequest=new JSONObject(new String(request.getData()));
 			
 			//Request Data
@@ -52,6 +55,7 @@ public static void main(String args[]){
 			String method = JsonRequest.get("method").toString();
 			String param = JsonRequest.get("arguments").toString();
 			String [] arguments = param.substring(2, param.length() - 2).split("\",\"");
+			
 			
 			//Printing out request
 			/*System.out.println("ID: "+ID);
@@ -73,11 +77,23 @@ public static void main(String args[]){
 			}
 			
 			//Reply
-			byte [] rep = JSONReply(method,arguments,result).toString().getBytes("utf-8");
-			DatagramPacket reply = new DatagramPacket(rep, rep.length, request.getAddress(), request.getPort());
-			
-			aSocket.send(reply);
-
+			byte[] rep = null;
+			try {
+				rep = JSONReply(method,arguments,result).toString().getBytes("utf-8");
+				DatagramPacket reply = new DatagramPacket(rep, rep.length, request.getAddress(), request.getPort());
+				aSocket.send(reply);
+			} catch (UnsupportedEncodingException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				}
+			}).start();
 		}
 
 	}catch (SocketException e){
@@ -91,6 +107,7 @@ public static void main(String args[]){
 		if(aSocket != null) 
 			aSocket.close();
 		}
+	
 	}
 static JSONObject JSONReply(String method, Object[] args, Object reply) throws JSONException
 {
