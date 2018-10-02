@@ -1,8 +1,14 @@
-
+package Client;
 
 import java.net.*;
 import java.util.Scanner;
 import java.io.*;
+import java.util.UUID;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.json.JSONException;
 
 public class UDPClient{
 
@@ -11,30 +17,39 @@ public static void main(String args[]){
 // args give message contents and server hostname
 
 	DatagramSocket aSocket = null;
-	
-	while(true) {
+	Scanner sc = new Scanner(System.in);
+
 	try {
-
 		aSocket = new DatagramSocket();
-
-		byte [] m = "snfndk".getBytes();
-
+		System.out.println("Client started on port: "+aSocket.getPort());
+		byte [] m;
+		
+		System.out.println("Type a message to send or x to exit.");
+		String cont = sc.nextLine();
+		while(!cont.equals("x")) {
+			m = cont.getBytes();
 		InetAddress aHost = InetAddress.getByName("localhost");
-
-		int serverPort = 6789;
-
+		
+		int serverPort = 6733;
+		
+		//Request
+		String [] arguments = {"allan","new"};
+		m = JSONRequest("removePlaylist",arguments).toString().getBytes("utf-8");
 		DatagramPacket request = new DatagramPacket(m, m.length, aHost, serverPort);
-
 		aSocket.send(request);
-
+		
+		//Reply
 		byte[] buffer = new byte[1000];
-
+		
 		DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
-
+		
 		aSocket.receive(reply);
 
 		System.out.println("Reply: " + new String(reply.getData()));
-
+		System.out.println("Type a message to send or x to exit.");
+		cont = sc.nextLine();
+		}
+		
 	}catch (SocketException e){
 		System.out.println("Socket: " + e.getMessage());
 
@@ -47,6 +62,29 @@ public static void main(String args[]){
 		}
 
 	}
+
+static JSONObject JSONRequest(String method, Object[] args) throws JSONException
+{
+        //Arguments
+        JSONArray jsonArgs = new JSONArray();
+        for (int i=0; i<args.length; i++)
+        {
+        	jsonArgs.put(args[i]);
+        }
+
+        //Json Object
+        JSONObject jsonRequest = new JSONObject();
+        try 
+        {
+                jsonRequest.put("id", UUID.randomUUID().hashCode());
+                jsonRequest.put("method", method);
+                jsonRequest.put("arguments", jsonArgs);
+        }
+        catch (JSONException e)
+        {
+                System.out.println(e);
+        }
+        return jsonRequest;
 }
 
 }
