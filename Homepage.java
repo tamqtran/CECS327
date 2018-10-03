@@ -143,10 +143,15 @@ public class Homepage {
 				// the premise would be that the list of options would be based on the user's personal playlists				
 				
 				Object[] possibilities = dm.toArray(); // each playlist name would be listed here
-				String rp = (String) JOptionPane.showInputDialog(frame, "Which playlist are you removing? (No going back once you do)", 
-						"Playlist Removal", JOptionPane.PLAIN_MESSAGE, null, possibilities, null);
-				removePlaylist(rp, userName);	// the variable rp would represent the playlist name to be deleted
-				getPlaylists(dm); // update the model (and thus the gui) afterwards				
+				String rp = (String) JOptionPane.showInputDialog(frame, "Which playlist are you removing?\n"
+						+ "(There's no going back once you do.)", "Playlist Removal", JOptionPane.PLAIN_MESSAGE, null, possibilities, null);
+				if (rp == null) {
+					System.out.println("No playlist was removed in the end..."); //the dialog was exited one way or another
+				} else {
+					removePlaylist(rp, userName);	// the variable rp would represent the playlist name to be deleted
+					getPlaylists(dm); // update the model (and thus the gui) afterwards
+					System.out.println("The playlist --" + rp + "-- was removed."); // system announcement
+				}
 			}
 		});
 		
@@ -377,7 +382,7 @@ public class Homepage {
 	}
 
 		
-	/**
+	/** ORIGIN: Login.java
 	 * A boolean method that abhors code injections.
 	 * @param input: A string, either username or password
 	 * @return false if any special characters are found in input; true otherwise
@@ -399,7 +404,7 @@ public class Homepage {
 		frame.setVisible(b);
 	}
 	
-	/**
+	/** ORIGIN: Profile.java
 	 * Read playlists array from json file and add to gui list
 	 * @param dm defaultlistModel
 	 */
@@ -423,7 +428,7 @@ public class Homepage {
 		}
 	}
 	
-	/**
+	/** ORIGIN: Profile.java
 	 * Remove playlist from JSON FiLE
 	 * @param playlist playlist to be removed
 	 * @param username current login user
