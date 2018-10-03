@@ -37,39 +37,34 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 	
 	public CreatePlaylistDialog(Frame homeFrame, String user, DefaultListModel dm) {
 		super(homeFrame, true);
-		username_ = user;			// assign locally the user's username
-		dlm = dm;					// assign locally, still references dm (in Homepage)
+		username_ = user;									// assign locally the user's username
+		dlm = dm;											// assign locally the defaultlistmodel, still references dm (in Homepage)
 		
-		textField = new JTextField(15);		// initialize text field
-		String msgString = "Name this new playlist:"; // initialize given message string
+		textField = new JTextField(15);								// initialize text field
+		String msgString = "Name this new playlist:"; 				// initialize given message string
 		
-		Object[] array = {msgString, textField}; // initialize object arrays with objects and strings
+		Object[] array = {msgString, textField}; 					// initialize object arrays with objects and strings
 		Object[] options = {button1, button2};
 		
-		optionPane = new JOptionPane(array, JOptionPane.PLAIN_MESSAGE, // initialize optionPane using
-				JOptionPane.YES_NO_OPTION, null, options, options[0]); // object arrays
+		optionPane = new JOptionPane(array, JOptionPane.PLAIN_MESSAGE, 	// initialize optionPane using
+				JOptionPane.YES_NO_OPTION, null, options, options[0]); 	// object arrays
 		
-		setContentPane(optionPane); // set the content pane to optionPane
-		
-		setTitle("Playlist Creation"); // set the title of the pane
-		
-			
-		
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE); // handles when the window actually closes
+		setContentPane(optionPane); 									// set the content pane to optionPane
+		setTitle("Playlist Creation"); 									// set the title of the pane
+				
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE); 					// handles when the window actually closes
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent we) {
 				optionPane.setValue(new Integer(JOptionPane.CLOSED_OPTION));
-			}
-		});
+		}	});
 		
-		addComponentListener(new ComponentAdapter() {	// handles the focus to the text field on initialization
+		addComponentListener(new ComponentAdapter() {					// handles the focus to the text field on initialization
 			public void componentShown(ComponentEvent ce) {
 				textField.requestFocusInWindow();
-			}
-		});
+		}	});
 		
-		textField.addActionListener(this);		// assigns the action listener defined in this class to the text field
-		optionPane.addPropertyChangeListener(this);	// assigns the property change listener defined in this class to the option pane
+		textField.addActionListener(this);							// assigns the action listener defined in this class to the text field
+		optionPane.addPropertyChangeListener(this);				// assigns the property change listener defined in this class to the option pane
 	}
 	
 	@Override
@@ -77,42 +72,40 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 		// TODO Auto-generated method stub
 		String prop = e.getPropertyName();
 		if (isVisible() && (e.getSource() == optionPane) && ( JOptionPane.VALUE_PROPERTY.equals(prop) || 
-				 JOptionPane.INPUT_VALUE_PROPERTY.equals(prop) )) { // if the pane's property was changed in any way...
-			Object value = optionPane.getValue();					// ...then find out what the user did
+				 JOptionPane.INPUT_VALUE_PROPERTY.equals(prop) )) { 					// if the pane's property was changed in any way...
+			Object value = optionPane.getValue();										// ...then find out what the user did
 			
-			if (value == JOptionPane.UNINITIALIZED_VALUE) return;	// this case means the user hasn't done anything yet
+			if (value == JOptionPane.UNINITIALIZED_VALUE) return;						// this case means the user hasn't done anything yet
 			
-			optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE); 	// reset of value; allows for repeatable tries
+			optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE); 						// reset of value; allows for repeatable tries
 			
-			if (button1.equals(value)) {				// if the user hit the enter button...
-				typedText = textField.getText();		// ... get what the user said
-				if (!codeDenial(typedText)) {			// ... and run checks (safety check)
+			if (button1.equals(value)) {												// if the user hit the enter button...
+				typedText = textField.getText();										// ... get what the user said
+				if (!codeDenial(typedText)) {											// ... and run checks (safety check)
 					textField.selectAll();
 					JOptionPane.showMessageDialog(CreatePlaylistDialog.this, "This (" + typedText +
 							") has unallowed special characters", "Try again", JOptionPane.ERROR_MESSAGE);
-					System.out.println("Special characters found. Attempting again..."); // this will proc if there are special characters 
+					System.out.println("Special characters found. Attempting again..."); 	// this will proc if there are special characters 
 					typedText = null;													//  found in typedText(refer to 'specials' for full list)
-					textField.requestFocusInWindow();									// resets typedText, re-focuses on text field
+					textField.requestFocusInWindow();										// resets typedText, re-focuses on text field
 				} else if (checkPlaylistNameUniqueness(typedText, username_)) {
-					addPlaylist(typedText, username_);		// this will proc if typedText is unique to the user's list
-					getPlaylists(dlm);						// the playlist is added to the user's json file, then the gui updates with this change
-					System.out.println("The new playlist --" + typedText + "-- has been created. Returning...");
-					typedText = null;				// typedText is nulled out
-					clearAndHide();					// the window is cleared and hidden away (not deleted)
+					addPlaylist(typedText, username_);					// this will proc if typedText is unique to the user's list
+					getPlaylists(dlm);											// the playlist is added to the user's json file, 
+					System.out.println("The new playlist --" +					// then the gui updates with this change
+					typedText + "-- has been created. Returning...");
+					typedText = null;										// typedText is nulled out
+					clearAndHide();											// the window is cleared and hidden away (not deleted)
 				} else {
-					textField.selectAll();			// this will proc if typedText matches an existing playlist name
+					textField.selectAll();							// this will proc if typedText matches an existing playlist name
 					JOptionPane.showMessageDialog(CreatePlaylistDialog.this, 
 						"This ("+ typedText + ") is not unique", "Try again", JOptionPane.ERROR_MESSAGE);
 					System.out.println("This ("+ typedText + ") is not unique");
-					typedText = null;					// typedText is reset, re-focuses on text field
+					typedText = null;												// typedText is reset, re-focuses on text field
 					textField.requestFocusInWindow();
-				}
-			} else { // this procs if the window is exited out (either by the big x on the upper right of the dialog, or the cancel button
-				typedText = null; 	// null typedText
-				clearAndHide();		// clears out the dialog and hides itself
+			}	} else { 																	// procs if the window is exited out
+				clearAndHide();															// clears out the dialog and hides itself
 				System.out.println("Creation subwindow has been hidden away...");
-			}
-		}
+		}	}
 	}
 
 	@Override
@@ -135,12 +128,10 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 		    currentList.put(playlist);
 		    obj1.put(playlist, new JSONArray()); //empty song list for this array
 		    
-		    
 		    FileWriter fileWriter = new FileWriter(username+".json");
 			fileWriter.write(obj1.toString());
 			fileWriter.flush();
 			fileWriter.close();
-		    
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -159,13 +150,10 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 		try (InputStream input = new FileInputStream(username+".json")) {
 			JSONObject obj1 = new JSONObject(new JSONTokener(input));
 			currentList = obj1.getJSONArray("playlists");
-			if (!currentList.toList().contains(playlist)) {
-				return true;
-			}
+			if (!currentList.toList().contains(playlist)) return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		return false;
+		} return false;
 	}
 	
 	public void clearAndHide() {
@@ -184,15 +172,11 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 		try (InputStream input = new FileInputStream(pathname)) {
 			obj1 = new JSONObject(new JSONTokener(input));
 		    //read playlists
-		    String playlist = obj1.get("playlists").toString();
-		    
-		    System.out.println(playlist);
-		    
+		    String playlist = obj1.get("playlists").toString();		    
 		    String [] playlistArray = playlist.substring(2, playlist.length() - 2).split("\",\"");
 		    //add playlist to default list
-		    for(int i = 0; i < playlistArray.length; i++)
-		    	dm.addElement(playlistArray[i]);
-		}catch (Exception e) {
+		    for(int i = 0; i < playlistArray.length; i++) dm.addElement(playlistArray[i]);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

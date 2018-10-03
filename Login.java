@@ -144,8 +144,7 @@ public class Login implements ActionListener {
 		    return username.equals(user);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		return false;
+		} return false;
 	}
 	/**
 	 * A boolean method that checks if a given user exists in the list of accounts logged by the service, and is authentically
@@ -163,8 +162,7 @@ public class Login implements ActionListener {
 		    return password.equals(pass);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		return false;
+		} return false;
 	}
 	
 	/**
