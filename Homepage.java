@@ -57,7 +57,7 @@ public class Homepage {
 								currentTime_, songTime_;
 	private DefaultListModel 	dm;
 	private JList				playlist_List;
-	private JScrollPane			UserSavedPanel, ShiftingPanel;
+	private JScrollPane			UserSavedPanel, ShiftingPanel; //ShiftingPanel is the big one
 	private JSlider				timedSlider;
 	
 	private CreatePlaylistDialog playlistCreation;
