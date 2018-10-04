@@ -1,5 +1,6 @@
 // This file has been created by Austin Tao on 10/2/2018.
 // Inspired by Oracle's CustomDialog.java example.
+
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -69,7 +70,6 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 	
 	@Override
 	public void propertyChange(PropertyChangeEvent e) {
-		// TODO Auto-generated method stub
 		String prop = e.getPropertyName();
 		if (isVisible() && (e.getSource() == optionPane) && ( JOptionPane.VALUE_PROPERTY.equals(prop) || 
 				 JOptionPane.INPUT_VALUE_PROPERTY.equals(prop) )) { 					// if the pane's property was changed in any way...
@@ -110,7 +110,6 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		optionPane.setValue(button1);		// this sets the action of the text field to the enter button
 	}
 	

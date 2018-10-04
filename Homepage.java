@@ -48,10 +48,13 @@ public class Homepage {
 								 TopPanel, _SearchPanel, _HistoryPanel, _ProfilePanel,
 				  				LOW_panel, 
 				   				 Description_Panel, 
-				   				 Song_Panel, _SongBar, _SongButtons;
+				   				 Song_Panel, 
+				   				  _SongBar, _SongButtons;
 	private JButton 			createPlaylist_, removePlaylist_, 
 								searchQuery_, logout_, 
-								previousSong_, playPause_, nextSong_; 
+								previousSong_, playPause_, nextSong_
+								//, addSong_, removeSong_					// add these to _SongButtons
+								;	// addSong_ adds to a chosen playlist, removeSong_ removes the song from that playlist ONLY
 	private JLabel 				playlist_, username_, 
 								title_, artist_, album_,
 								currentTime_, songTime_;
@@ -195,17 +198,23 @@ public class Homepage {
 				isThereASong = !isThereASong; 								//
 				System.out.println("is there a song? " + isThereASong);		//
 				if (isThereASong) {											//
+					// addSong_
 					previousSong_.setText("\u2758" + "\u23F4");				//
 					playPause_.setText("\u2758" + "\u2758");				//
 					nextSong_.setText("\u23F5" + "\u2758");					//
+					// removeSong_
 				} else {													//
+					// addSong_
 					previousSong_.setText("\u274C");						//
 					playPause_.setText("\u274C");							//
 					nextSong_.setText("\u274C");							//
+					// removeSong_
 				}															//
+				// addSong_
 				previousSong_.setEnabled(isThereASong);						//
 				playPause_.setEnabled(isThereASong);						//
 				nextSong_.setEnabled(isThereASong);							//
+				// removeSong_
 				currentTime_.setVisible(isThereASong);						//
 				timedSlider.setEnabled(isThereASong);						//
 				songTime_.setVisible(isThereASong);							//
@@ -313,6 +322,8 @@ public class Homepage {
 		_SongButtons = new JPanel(); 								// initialize _SongButtons and set layout
 		_SongButtons.setLayout(new FlowLayout());
 		
+//		addSong_ goes here
+		
 		previousSong_ = new JButton("\u2758" + "\u23F4"); 			// initialize previousSong_ and add an
 		previousSong_.addActionListener(new ActionListener() { 		// action listener to previousSong_
 			@Override public void actionPerformed(ActionEvent e) {
@@ -347,10 +358,14 @@ public class Homepage {
 				isSongPlaying = true;							// the song will begin playing when it's all over			
 		}	});
 	
-		// all three buttons initialize as un-clickables
+//		add removeSong_ here
+		
+		// all these buttons initialize as un-clickables
+		// addSong_
 		previousSong_.setEnabled(isThereASong);
 		playPause_.setEnabled(isThereASong);
 		nextSong_.setEnabled(isThereASong);
+		// removeSong_
 		// if there is a song, it will unlock and play automatically. but until then...
 		
 		_SongButtons.add(previousSong_); 						// add buttons to _SongButtons
