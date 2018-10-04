@@ -6,8 +6,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -30,10 +28,10 @@ public class Login implements ActionListener {
 	protected JTextField usernameField;
 	protected JPasswordField passwordField;
 	private JLabel nLabel, pLabel, eLabel;
-	protected JButton loginButton;
+	private JButton loginButton;
 	private String message;
 	private JPanel userPanel, passPanel, errorPanel, buttonPanel;
-	private String specials = "[!@#$%&*()_+=|<>?{}\\[\\]~-]";
+	private String specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]";
 	
 	
 	/*
@@ -120,7 +118,9 @@ public class Login implements ActionListener {
 				if (codeDenial(pass) && confirmPassword(user, pass)) {
 					System.out.println("Success. Redirecting..."); //debug
 					frame.dispose(); 					//close the login
-					new Profile(user).setVisible(true); //then redirect to homepage with their data
+					//then redirect to homepage with their data
+//					new Profile(user).setVisible(true); 	//version 1
+					new Homepage(user).setVisible(true);	//version 2
 				} else message = "Incorrect password; try again.";
 			} else message = "No such user; try again.";
 		} else message = "Fill out both boxes.";
@@ -144,8 +144,7 @@ public class Login implements ActionListener {
 		    return username.equals(user);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		return false;
+		} return false;
 	}
 	/**
 	 * A boolean method that checks if a given user exists in the list of accounts logged by the service, and is authentically
@@ -163,8 +162,7 @@ public class Login implements ActionListener {
 		    return password.equals(pass);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		return false;
+		} return false;
 	}
 	
 	/**
@@ -173,7 +171,7 @@ public class Login implements ActionListener {
 	 * @return false if any special characters are found in input; true otherwise
 	 */
 	private boolean codeDenial (String input) {
-		//denies if input has the following: "[!@#$%&*()_+=|<>?{}\\[\\]~-]" (code injection prevention)
+		//denies if input has the following: "[!@#$%&*()+=|<>?{}\\[\\]~-]" (code injection prevention)
 		for (char c : input.toCharArray()) {
 			for (char s : specials.toCharArray())
 				if (s == c) return false;
