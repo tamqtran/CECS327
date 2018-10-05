@@ -13,7 +13,13 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.util.UUID;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -32,6 +38,7 @@ import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -71,15 +78,22 @@ public class Homepage
 	private boolean isSongPlaying = false, // starts false
 					isThereASong = false;
 	
+	//For server connection
+	DatagramSocket aSocket;
+	int serverPort;
+	
 	public static void main(String[] args) 
 	{ // test
-		new Homepage("allan");
+		new Homepage("allan",null, 6733);
 	}
 	
-	public Homepage(String user) 
+	public Homepage(String user, DatagramSocket aSocket, int serverPort) 
 	{								// main constructor
 		userName = user; 										// takes the username from input
+		this.aSocket = aSocket;
+		this.serverPort = serverPort;
 		initialize();
+		
 	}
 	
 	private void initialize() 
@@ -98,7 +112,7 @@ public class Homepage
 		
 		frame.setVisible(true); 											// make the frame visible
 		
-		playlistCreation = new CreatePlaylistDialog(frame, userName, dm); // create playlist creation dialog
+		playlistCreation = new CreatePlaylistDialog(frame, userName, dm, aSocket, serverPort); // create playlist creation dialog
 		playlistCreation.pack(); 											// pack playlist creation dialog
 	}
 	
@@ -270,7 +284,7 @@ public class Homepage
 			public void actionPerformed(ActionEvent e) 
 			{
 				frame.dispose();							// disposes of current frame
-		        new Login().setVisible(true); 				// creates new Login() object
+		        new Login(aSocket, serverPort).setVisible(true); 				// creates new Login() object
 		        System.out.println("Logging out..."); 		// system announcement
 			}	
 		});
@@ -471,8 +485,24 @@ public class Homepage
 	void getPlaylists(DefaultListModel dm) 
 	{
 		dm.clear(); //clear list 
+
 		
-		try (InputStream input = new FileInputStream(userName + ".json")) 
+//		try (InputStream input = new FileInputStream(userName + ".json")) {
+
+		//JSONObject obj1;
+		//String pathname = userName + ".json";
+		String [] arguments = {userName};
+		JSONObject obj = UDPRequestReply("getPlaylists",arguments);
+		//read playlists
+		String playlist = obj.get("result").toString();	
+		
+	    String [] playlistArray = playlist.substring(2, playlist.length() - 2).split("\",\"");
+	    //add playlist to default list
+	    for(int i = 0; i < playlistArray.length; i++) 
+	    	dm.addElement(playlistArray[i]);
+		/*}
+		try (InputStream input = new FileInputStream(pathname)) 
+>>>>>>> 3b5fdf9c21f180404e1997b9bb46b157e1c0be56
 		{
 			JSONObject obj1 = new JSONObject(new JSONTokener(input));
 		    //read playlists
@@ -484,7 +514,7 @@ public class Homepage
 		catch (Exception e) 
 		{
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 	/** ORIGIN: Profile.java
@@ -494,7 +524,11 @@ public class Homepage
 	 */
 	 void removePlaylist(String playlist, String username) 
 	 {
-		try (InputStream input = new FileInputStream(username+".json")) 
+		//Server side playlist removal
+		String [] arguments = {username,playlist};
+		JSONObject obj = UDPRequestReply("removePlaylist",arguments);
+		
+		/*try (InputStream input = new FileInputStream(username+".json")) 
 		{
 		    JSONObject obj1 = new JSONObject(new JSONTokener(input));
 		    
@@ -511,6 +545,83 @@ public class Homepage
 		catch (Exception e) 
 		{
 			e.printStackTrace();
-		}
+		}*/
 	}
+	 
+	 /**
+		 * Format request into JSON Object
+		 * @param method call method
+		 * @param args argument of the method
+		 * @return return json object
+		 * @throws JSONException
+		 */
+		JSONObject JSONRequestObject(String method, Object[] args) throws JSONException
+		{
+		        //Arguments
+		        JSONArray jsonArgs = new JSONArray();
+		        for (int i=0; i<args.length; i++)
+		        {
+		        	jsonArgs.put(args[i]);
+		        }
+		
+		        //Json Object
+		        JSONObject jsonRequest = new JSONObject();
+		        try 
+		        {
+		                jsonRequest.put("id", UUID.randomUUID().hashCode());
+		                jsonRequest.put("method", method);
+		                jsonRequest.put("arguments", jsonArgs);
+		        }
+		        catch (JSONException e)
+		        {
+		                System.out.println(e);
+		        }
+		        return jsonRequest;
+		}
+		/**
+		 * UDP request and reply 
+		 * @param method method to call
+		 * @param param arguments for the method
+		 * @return JSONObject reply from server
+		 */
+		JSONObject UDPRequestReply(String method,String[] param) {
+			JSONObject JsonReply = null;
+			try 
+			{
+				byte [] m;
+							
+				// opening client side
+				//Login user1 = new Login();
+					
+				InetAddress aHost = InetAddress.getByName("localhost");
+					
+				//Request
+				String [] arguments = param;
+				m = JSONRequestObject(method,arguments).toString().getBytes("utf-8");
+				DatagramPacket request = new DatagramPacket(m, m.length, aHost, serverPort);
+				aSocket.send(request);
+					
+				//Reply
+				byte[] buffer = new byte[1000];
+				
+				DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+					
+				aSocket.receive(reply);
+				
+				//Format datagram reply into JSONObject
+				JsonReply=new JSONObject(new String(reply.getData()));
+				
+				System.out.println("Reply: " + new String(reply.getData()));
+				System.out.println("Type a message to send or x to exit.");
+			}
+			catch (SocketException e)
+			{
+				System.out.println("Socket: " + e.getMessage());
+			}
+			catch (IOException e)
+			{
+				System.out.println("IO: " + e.getMessage());
+			}
+			return JsonReply;
+		}
 }

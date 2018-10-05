@@ -1,7 +1,14 @@
-import java.io.FileWriter;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.net.*;
+import java.util.Scanner;
+import java.io.*;
+import java.util.UUID;
+
+import org.json.JSONTokener;
+import org.json.JSONException;
+
 
 /**
  * This file is the file that initializes the testing JSON files to start
@@ -13,6 +20,28 @@ public class start
 {
 	public static void main(String[] args) 
 	{
+		/*Start Client*/
+		int serverPort = 6733;
+		DatagramSocket aSocket = null;
+		Scanner sc = new Scanner(System.in);
+	
+		// loop for client to send messages in
+		// INFINITE LOOP FOR NOW
+		
+		try 
+		{
+			aSocket = new DatagramSocket();
+			System.out.println("Client started on port: "+aSocket.getPort());
+		}
+		catch (SocketException e)
+		{
+			System.out.println("Socket: " + e.getMessage());
+		}
+		
+		/*End Client*/
+		
+		
+		
 		//Create JSON object for account 'allan'
 		JSONObject allan = new JSONObject();
 		allan.put("username", "allan");					// add username
@@ -74,7 +103,10 @@ public class start
 		System.out.println(bill);
 		
 		// call initial Frame to start the program
-		Login begin = new Login();
+		Login begin = new Login(aSocket,serverPort);
+		
+		
 	}
+	
 
 }

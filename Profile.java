@@ -139,7 +139,7 @@ public class Profile {
 		btnLogout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-		        new Login().setVisible(true); 
+//		        new Login().setVisible(true); 
 			}
 		});
 		//Check if a playlist is selected and move to playlist frame, pass username and playlist as arguments

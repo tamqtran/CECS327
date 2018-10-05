@@ -7,7 +7,13 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.util.UUID;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -20,6 +26,8 @@ import javax.swing.JTextField;
 //import java.awt.event.MouseAdapter;
 //import java.awt.event.MouseEvent;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -33,19 +41,23 @@ public class Login implements ActionListener {
 	private JPanel userPanel, passPanel, errorPanel, buttonPanel;
 	private String specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]";
 	
+	//for Server connection
+	DatagramSocket aSocket;
+	int serverPort;
 	
 	/*
 	 * The driver. When run, the system calls the Login() constructor.
 	 * NOTE: Can be commented out if need be.
 	 */
 	public static void main (String[] args) {
-		new Login();
+		//testing only
+		new Login(null,6733);
 	}
 	
 	/*
 	 * The main constructor. Constructs the frame for the login.
 	 */
-	public Login() {
+	public Login(DatagramSocket aSocket, int serverPort) {
 		frame = new JFrame("'MusicService' Login");
 		frame.setSize(300,175);
 		
@@ -56,6 +68,9 @@ public class Login implements ActionListener {
 		addComponentsToPane(frame.getContentPane());
 		frame.getRootPane().setDefaultButton(loginButton); //'ENTER' keystroke functionality set to loginButton
 		frame.setVisible(true);
+		
+		this.aSocket = aSocket;
+		this.serverPort = serverPort;
 	}
 	
 	/*
@@ -120,7 +135,7 @@ public class Login implements ActionListener {
 					frame.dispose(); 					//close the login
 					//then redirect to homepage with their data
 //					new Profile(user).setVisible(true); 	//version 1
-					new Homepage(user).setVisible(true);	//version 2
+					new Homepage(user,aSocket, serverPort).setVisible(true);	//version 2
 				} else message = "Incorrect password; try again.";
 			} else message = "No such user; try again.";
 		} else message = "Fill out both boxes.";
@@ -156,13 +171,18 @@ public class Login implements ActionListener {
 	private boolean confirmPassword (String user, String pass) {
 		//find the user that has this username and this password from whatever json file they're stored in
 		//if pass == json.username_pass then true
-		try (InputStream input = new FileInputStream(user + ".json")) {
+		/*try (InputStream input = new FileInputStream(user + ".json")) {
 			JSONObject obj = new JSONObject(new JSONTokener(input));
 		    String password = obj.get("password").toString();
 		    return password.equals(pass);
 		} catch (Exception e) {
 			e.printStackTrace();
-		} return false;
+		} return false;*/
+		String [] arguments = {user,pass};
+		JSONObject obj = UDPRequestReply("checkLogin",arguments);
+		if(obj.get("result").equals(true))
+			return true;
+		return false;
 	}
 	
 	/**
@@ -185,5 +205,82 @@ public class Login implements ActionListener {
 	public void setVisible(boolean b) {
 		// TODO Auto-generated method stub
 		frame.setVisible(b);
+	}
+	
+	/**
+	 * Format request into JSON Object
+	 * @param method call method
+	 * @param args argument of the method
+	 * @return return json object
+	 * @throws JSONException
+	 */
+	JSONObject JSONRequestObject(String method, Object[] args) throws JSONException
+	{
+	        //Arguments
+	        JSONArray jsonArgs = new JSONArray();
+	        for (int i=0; i<args.length; i++)
+	        {
+	        	jsonArgs.put(args[i]);
+	        }
+	
+	        //Json Object
+	        JSONObject jsonRequest = new JSONObject();
+	        try 
+	        {
+	                jsonRequest.put("id", UUID.randomUUID().hashCode());
+	                jsonRequest.put("method", method);
+	                jsonRequest.put("arguments", jsonArgs);
+	        }
+	        catch (JSONException e)
+	        {
+	                System.out.println(e);
+	        }
+	        return jsonRequest;
+	}
+	/**
+	 * UDP request and reply 
+	 * @param method method to call
+	 * @param param arguments for the method
+	 * @return JSONObject reply from server
+	 */
+	JSONObject UDPRequestReply(String method,String[] param) {
+		JSONObject JsonReply = null;
+		try 
+		{
+			byte [] m;
+						
+			// opening client side
+			//Login user1 = new Login();
+				
+			InetAddress aHost = InetAddress.getByName("localhost");
+				
+			//Request
+			String [] arguments = param;
+			m = JSONRequestObject(method,arguments).toString().getBytes("utf-8");
+			DatagramPacket request = new DatagramPacket(m, m.length, aHost, serverPort);
+			aSocket.send(request);
+				
+			//Reply
+			byte[] buffer = new byte[1000];
+			
+			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+				
+			aSocket.receive(reply);
+			
+			//Format datagram reply into JSONObject
+			JsonReply=new JSONObject(new String(reply.getData()));
+			
+			System.out.println("Reply: " + new String(reply.getData()));
+			System.out.println("Type a message to send or x to exit.");
+		}
+		catch (SocketException e)
+		{
+			System.out.println("Socket: " + e.getMessage());
+		}
+		catch (IOException e)
+		{
+			System.out.println("IO: " + e.getMessage());
+		}
+		return JsonReply;
 	}
 }
