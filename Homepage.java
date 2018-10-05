@@ -22,6 +22,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -51,8 +52,8 @@ public class Homepage
 				   				 Description_Panel, 
 				   				 Song_Panel, 
 				   				  _SongBar, _SongButtons;
-	private JButton 			createPlaylist_, removePlaylist_, 
-								searchQuery_, logout_, 
+	private JButton 			createPlaylist_, removePlaylist_, //home_ //home button
+								searchQuery_, logout_, previousHistory_, nextHistory_, // history buttons
 								previousSong_, playPause_, nextSong_
 								//, addSong_, removeSong_					// add these to _SongButtons
 								;	// addSong_ adds to a chosen playlist, removeSong_ removes the song from that playlist ONLY
@@ -61,7 +62,8 @@ public class Homepage
 								currentTime_, songTime_;
 	private DefaultListModel 	dm;
 	private JList				playlist_List;
-	private JScrollPane			UserSavedPanel, ShiftingPanel; //ShiftingPanel is the big one
+	private JScrollPane			UserSavedPanel;
+	private JLayeredPane        ShiftingPanel; //ShiftingPanel is the big one
 	private JSlider				timedSlider;
 	
 	private CreatePlaylistDialog playlistCreation;
@@ -249,10 +251,19 @@ public class Homepage
 		
 //		_HistoryPanel (worry about this later)
 		_HistoryPanel = new JPanel();						// initialize _HistoryPanel
+		_HistoryPanel.setLayout(new FlowLayout());
+		previousHistory_ = new JButton("\u276C \u276C");
+		nextHistory_ = new JButton("\u276D \u276D");
+		
+		_HistoryPanel.setMaximumSize(new Dimension(200,40));
+		
+		_HistoryPanel.add(previousHistory_);
+		_HistoryPanel.add(nextHistory_);
+		
 		
 		_ProfilePanel = new JPanel();						// initialize _ProfilePanel and set layout
 		_ProfilePanel.setLayout(new FlowLayout());
-		username_ = new JLabel("User: " + userName); 		// initialize username_ and logout_
+		username_ = new JLabel("User: " + userName + "  ");		// initialize username_ and logout_
 		logout_ = new JButton("Logout");
 		logout_.addActionListener(new ActionListener() 
 		{ 	// assign action listener to logout_
@@ -268,15 +279,15 @@ public class Homepage
 		_ProfilePanel.add(logout_);	  							// and set max dimensions
 		_ProfilePanel.setMaximumSize(new Dimension(100,40));
 		
-		TopPanel.add(_SearchPanel); 							// _SearchPanel and _ProfilePanel
-//		TopPanel.add(Box.createHorizontalGlue());				// (and later _HistoryPanel) are
-//		TopPanel.add(_HistoryPanel);							// added to TopPanel and gets set
-		TopPanel.add(Box.createHorizontalGlue());				// a border
+		TopPanel.add(_HistoryPanel); 								// _SearchPanel and _ProfilePanel
+		TopPanel.add(Box.createRigidArea(new Dimension(1,1)));		// (and later _HistoryPanel) are
+		TopPanel.add(_SearchPanel);									// added to TopPanel and gets set
+		TopPanel.add(Box.createHorizontalGlue());					// a border
 		TopPanel.add(_ProfilePanel);
 		TopPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
 //		ShiftingPanel (the one that keeps changing)
-		ShiftingPanel = new JScrollPane(); 						// initialize ShiftingPanel and set border
+		ShiftingPanel = new JLayeredPane(); 						// initialize ShiftingPanel and set border
 		ShiftingPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
 		Explore_Panel.add(TopPanel); 							// add TopPanel and ShiftingPanel to Explore_Panel
@@ -460,11 +471,10 @@ public class Homepage
 	void getPlaylists(DefaultListModel dm) 
 	{
 		dm.clear(); //clear list 
-		JSONObject obj1;
-		String pathname = userName + ".json";
-		try (InputStream input = new FileInputStream(pathname)) 
+		
+		try (InputStream input = new FileInputStream(userName + ".json")) 
 		{
-			obj1 = new JSONObject(new JSONTokener(input));
+			JSONObject obj1 = new JSONObject(new JSONTokener(input));
 		    //read playlists
 		    String playlist = obj1.get("playlists").toString();		    
 		    String [] playlistArray = playlist.substring(2, playlist.length() - 2).split("\",\"");

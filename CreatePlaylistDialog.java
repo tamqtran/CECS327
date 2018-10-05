@@ -33,9 +33,7 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 	private String specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]";
 	private String username_;
 	private String button1 = "Enter", button2 = "Cancel";
-	
-	private JSONArray currentList;
-	
+		
 	public CreatePlaylistDialog(Frame homeFrame, String user, DefaultListModel dm) {
 		super(homeFrame, true);
 		username_ = user;									// assign locally the user's username
@@ -122,7 +120,7 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 		try (InputStream input = new FileInputStream(username+".json")) {
 		    JSONObject obj1 = new JSONObject(new JSONTokener(input));
 		    
-		    currentList = obj1.getJSONArray("playlists");
+		    JSONArray currentList = obj1.getJSONArray("playlists");
 		    
 		    currentList.put(playlist);
 		    obj1.put(playlist, new JSONArray()); //empty song list for this array
@@ -148,7 +146,7 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 		// true if name is unique, false otherwise
 		try (InputStream input = new FileInputStream(username+".json")) {
 			JSONObject obj1 = new JSONObject(new JSONTokener(input));
-			currentList = obj1.getJSONArray("playlists");
+			JSONArray currentList = obj1.getJSONArray("playlists");
 			if (!currentList.toList().contains(playlist)) return true;
 		} catch (Exception e) {
 			e.printStackTrace();
