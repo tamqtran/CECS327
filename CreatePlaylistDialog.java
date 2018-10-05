@@ -12,7 +12,13 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.util.UUID;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
@@ -20,6 +26,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -36,11 +43,16 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 	
 	private JSONArray currentList;
 	
-	public CreatePlaylistDialog(Frame homeFrame, String user, DefaultListModel dm) {
+	//For server connection
+	DatagramSocket aSocket;
+	int serverPort;
+
+	public CreatePlaylistDialog(Frame homeFrame, String user, DefaultListModel dm, DatagramSocket aSocket,int serverPort) {
 		super(homeFrame, true);
 		username_ = user;									// assign locally the user's username
 		dlm = dm;											// assign locally the defaultlistmodel, still references dm (in Homepage)
-		
+		this.aSocket = aSocket;
+		this.serverPort = serverPort;
 		textField = new JTextField(15);								// initialize text field
 		String msgString = "Name this new playlist:"; 				// initialize given message string
 		
@@ -119,6 +131,18 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 	 * @param username current login user
 	 */
 	 void addPlaylist(String playlist, String username) {
+		
+		//Server side Add Playlist
+		String [] arguments = {username,playlist};
+		JSONObject obj = UDPRequestReply("addPlaylist",arguments);
+		
+		//Server side get playlist
+		String [] arguments1 = {username};
+		JSONObject obj1 = UDPRequestReply("getPlaylists",arguments1);
+				
+		currentList = obj1.getJSONArray("result");
+		currentList.put(playlist);	    
+		/*
 		try (InputStream input = new FileInputStream(username+".json")) {
 		    JSONObject obj1 = new JSONObject(new JSONTokener(input));
 		    
@@ -133,7 +157,7 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 			fileWriter.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 	 }
 	
 	 /**
@@ -146,6 +170,15 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 	 private boolean checkPlaylistNameUniqueness(String playlist, String username) {
 		// define name against all other playlist names in the user's account
 		// true if name is unique, false otherwise
+		 
+		//Server side get playlist
+		String [] arguments = {username};
+		JSONObject obj = UDPRequestReply("getPlaylists",arguments);
+		currentList = obj.getJSONArray("result");
+		if (!currentList.toList().contains(playlist)) 
+			return true;
+		return false;
+		/*
 		try (InputStream input = new FileInputStream(username+".json")) {
 			JSONObject obj1 = new JSONObject(new JSONTokener(input));
 			currentList = obj1.getJSONArray("playlists");
@@ -153,6 +186,7 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 		} catch (Exception e) {
 			e.printStackTrace();
 		} return false;
+		*/
 	}
 	
 	public void clearAndHide() {
@@ -164,6 +198,37 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 	 * Read playlists array from json file and add to gui list
 	 * @param dm defaultlistModel
 	 */
+	void getPlaylists(DefaultListModel dm) 
+	{
+		dm.clear(); //clear list 
+		//JSONObject obj1;
+		//String pathname = userName + ".json";
+		String [] arguments = {username_};
+		JSONObject obj = UDPRequestReply("getPlaylists",arguments);
+		//read playlists
+		String playlist = obj.get("result").toString();	
+		
+	    String [] playlistArray = playlist.substring(2, playlist.length() - 2).split("\",\"");
+	    //add playlist to default list
+	    for(int i = 0; i < playlistArray.length; i++) 
+	    	dm.addElement(playlistArray[i]);
+	    
+		/*try (InputStream input = new FileInputStream(pathname)) 
+		{
+			obj1 = new JSONObject(new JSONTokener(input));
+		    //read playlists
+		    String playlist = obj1.get("playlists").toString();		    
+		    String [] playlistArray = playlist.substring(2, playlist.length() - 2).split("\",\"");
+		    //add playlist to default list
+		    for(int i = 0; i < playlistArray.length; i++) dm.addElement(playlistArray[i]);
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}*/
+	}
+	
+	/*
 	void getPlaylists(DefaultListModel dm) {
 		dm.clear(); //clear list 
 		JSONObject obj1;
@@ -178,7 +243,7 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
 	/** ORIGIN: Login.java
 	 * A boolean method that abhors code injections.
@@ -191,5 +256,82 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 			for (char s : specials.toCharArray())
 				if (s == c) return false;
 		} return true;
+	}
+	
+	/**
+	 * Format request into JSON Object
+	 * @param method call method
+	 * @param args argument of the method
+	 * @return return json object
+	 * @throws JSONException
+	 */
+	JSONObject JSONRequestObject(String method, Object[] args) throws JSONException
+	{
+	        //Arguments
+	        JSONArray jsonArgs = new JSONArray();
+	        for (int i=0; i<args.length; i++)
+	        {
+	        	jsonArgs.put(args[i]);
+	        }
+	
+	        //Json Object
+	        JSONObject jsonRequest = new JSONObject();
+	        try 
+	        {
+	                jsonRequest.put("id", UUID.randomUUID().hashCode());
+	                jsonRequest.put("method", method);
+	                jsonRequest.put("arguments", jsonArgs);
+	        }
+	        catch (JSONException e)
+	        {
+	                System.out.println(e);
+	        }
+	        return jsonRequest;
+	}
+	/**
+	 * UDP request and reply 
+	 * @param method method to call
+	 * @param param arguments for the method
+	 * @return JSONObject reply from server
+	 */
+	JSONObject UDPRequestReply(String method,String[] param) {
+		JSONObject JsonReply = null;
+		try 
+		{
+			byte [] m;
+						
+			// opening client side
+			//Login user1 = new Login();
+				
+			InetAddress aHost = InetAddress.getByName("localhost");
+				
+			//Request
+			String [] arguments = param;
+			m = JSONRequestObject(method,arguments).toString().getBytes("utf-8");
+			DatagramPacket request = new DatagramPacket(m, m.length, aHost, serverPort);
+			aSocket.send(request);
+				
+			//Reply
+			byte[] buffer = new byte[1000];
+			
+			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+				
+			aSocket.receive(reply);
+			
+			//Format datagram reply into JSONObject
+			JsonReply=new JSONObject(new String(reply.getData()));
+			
+			System.out.println("Reply: " + new String(reply.getData()));
+			System.out.println("Type a message to send or x to exit.");
+		}
+		catch (SocketException e)
+		{
+			System.out.println("Socket: " + e.getMessage());
+		}
+		catch (IOException e)
+		{
+			System.out.println("IO: " + e.getMessage());
+		}
+		return JsonReply;
 	}
 }

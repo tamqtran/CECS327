@@ -16,7 +16,7 @@ public class UDPClient
 	public static void main(String args[])
 	{
 	
-	// args give message contents and server hostname
+		// args give message contents and server hostname
 	
 		DatagramSocket aSocket = null;
 		Scanner sc = new Scanner(System.in);
@@ -28,6 +28,7 @@ public class UDPClient
 		{
 			aSocket = new DatagramSocket();
 			System.out.println("Client started on port: "+aSocket.getPort());
+			
 			byte [] m;
 			
 			System.out.println("Type a message to send or x to exit.");
@@ -76,7 +77,13 @@ public class UDPClient
 				aSocket.close();
 		}	
 	}
-	
+	/**
+	 * Format request into JSON Object
+	 * @param method call method
+	 * @param args argument of the method
+	 * @return return json object
+	 * @throws JSONException
+	 */
 	static JSONObject JSONRequest(String method, Object[] args) throws JSONException
 	{
 	        //Arguments

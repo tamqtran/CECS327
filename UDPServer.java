@@ -92,6 +92,10 @@ public class UDPServer
 						{
 							rep = JSONReply(method,arguments,result).toString().getBytes("utf-8");
 							DatagramPacket reply = new DatagramPacket(rep, rep.length, request.getAddress(), request.getPort());
+							//Just for testing
+							System.out.println("Reply to port: "+ request.getPort());
+							System.out.println("Reply: "+new String(reply.getData()));
+							
 							aSocket.send(reply);
 						} 
 						catch (UnsupportedEncodingException e1) 
