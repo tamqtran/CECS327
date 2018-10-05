@@ -40,18 +40,16 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 	private String specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]";
 	private String username_;
 	private String button1 = "Enter", button2 = "Cancel";
-	
-	private JSONArray currentList;
-	
+		
 	//For server connection
 	DatagramSocket aSocket;
 	int serverPort;
 
 	public CreatePlaylistDialog(Frame homeFrame, String user, DefaultListModel dm, DatagramSocket aSocket,int serverPort) {
-<<<<<<< HEAD
+//<<<<<<< HEAD
 
-=======
->>>>>>> 3b5fdf9c21f180404e1997b9bb46b157e1c0be56
+//=======
+//>>>>>>> 3b5fdf9c21f180404e1997b9bb46b157e1c0be56
 		super(homeFrame, true);
 		username_ = user;									// assign locally the user's username
 		dlm = dm;											// assign locally the defaultlistmodel, still references dm (in Homepage)
@@ -144,7 +142,7 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 		String [] arguments1 = {username};
 		JSONObject obj1 = UDPRequestReply("getPlaylists",arguments1);
 				
-		currentList = obj1.getJSONArray("result");
+		JSONArray currentList = obj1.getJSONArray("result");
 		currentList.put(playlist);	    
 		/*
 		try (InputStream input = new FileInputStream(username+".json")) {
@@ -178,7 +176,7 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 		//Server side get playlist
 		String [] arguments = {username};
 		JSONObject obj = UDPRequestReply("getPlaylists",arguments);
-		currentList = obj.getJSONArray("result");
+		JSONArray currentList = obj.getJSONArray("result");
 		if (!currentList.toList().contains(playlist)) 
 			return true;
 		return false;
