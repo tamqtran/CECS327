@@ -2,6 +2,7 @@
  * This file was created by Austin Tao on 9/20/2018.
  */
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -55,6 +56,7 @@ public class Homepage
 								 PlaylistTitle, PlaylistOptions,
 								Explore_Panel, 
 								 TopPanel, _SearchPanel, _HistoryPanel, _ProfilePanel,
+								 HomePanel,
 				  				LOW_panel, 
 				   				 Description_Panel, 
 				   				 Song_Panel, 
@@ -88,22 +90,21 @@ public class Homepage
 	}
 	
 	public Homepage(String user, DatagramSocket aSocket, int serverPort) 
-	{								// main constructor
+	{															// main constructor
 		userName = user; 										// takes the username from input
-		this.aSocket = aSocket;
-		this.serverPort = serverPort;
-		initialize();
-		
+		this.aSocket = aSocket;									// takes the socket from input
+		this.serverPort = serverPort;							// takes the serverPort from input
+		initialize();											// initializes the frame
 	}
 	
-	private void initialize() 
-	{ 									// initialization starts here
-		frame = new JFrame("MusicService -- " + userName);
-		frame.setMinimumSize(new Dimension(675,400));		
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	private void initialize() 									// initialization starts here
+	{ 									
+		frame = new JFrame("MusicService -- " + userName);		// initialize the frame itself
+		frame.setMinimumSize(new Dimension(750,450));			// and set min dimensions
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	// and the default close operation for the frame
 		
-		addHighComponentsToHome(frame.getContentPane()); 			// loads upper half of frame components into frame
-		addLowComponentsToHome(frame.getContentPane()); 			// loads lower half of frame components into frame
+		addHighComponentsToHome(frame.getContentPane()); 			// initializes and loads the upper half of frame components into frame
+		addLowComponentsToHome(frame.getContentPane()); 			// initializes and loads the lower half of frame components into frame
 		
 		frame.pack(); 														// packs the frame together
 		
@@ -112,8 +113,8 @@ public class Homepage
 		
 		frame.setVisible(true); 											// make the frame visible
 		
-		playlistCreation = new CreatePlaylistDialog(frame, userName, dm, aSocket, serverPort); // create playlist creation dialog
-		playlistCreation.pack(); 											// pack playlist creation dialog
+		playlistCreation = new CreatePlaylistDialog(frame, userName, dm, aSocket, serverPort); 	// create playlist creation dialog
+		playlistCreation.pack(); 																// pack playlist creation dialog
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -264,16 +265,14 @@ public class Homepage
 		_SearchPanel.setMaximumSize(new Dimension(200,40));
 		
 //		_HistoryPanel (worry about this later)
-		_HistoryPanel = new JPanel();						// initialize _HistoryPanel
-		_HistoryPanel.setLayout(new FlowLayout());
-		previousHistory_ = new JButton("\u276C \u276C");
+		_HistoryPanel = new JPanel();						// initialize _HistoryPanel and set layout
+		_HistoryPanel.setLayout(new FlowLayout());			// and maximum size for the panel
+		_HistoryPanel.setMaximumSize(new Dimension(200,40));		
+		previousHistory_ = new JButton("\u276C \u276C");	// initialize previousHistory_ and nextHistory_ buttons
 		nextHistory_ = new JButton("\u276D \u276D");
-		
-		_HistoryPanel.setMaximumSize(new Dimension(200,40));
-		
-		_HistoryPanel.add(previousHistory_);
+				
+		_HistoryPanel.add(previousHistory_);		// add the buttons to _HistoryPanel
 		_HistoryPanel.add(nextHistory_);
-		
 		
 		_ProfilePanel = new JPanel();						// initialize _ProfilePanel and set layout
 		_ProfilePanel.setLayout(new FlowLayout());
@@ -294,15 +293,26 @@ public class Homepage
 		_ProfilePanel.setMaximumSize(new Dimension(100,40));
 		
 		TopPanel.add(_HistoryPanel); 								// _SearchPanel and _ProfilePanel
-		TopPanel.add(Box.createRigidArea(new Dimension(1,1)));		// (and later _HistoryPanel) are
-		TopPanel.add(_SearchPanel);									// added to TopPanel and gets set
-		TopPanel.add(Box.createHorizontalGlue());					// a border
+		TopPanel.add(Box.createRigidArea(new Dimension(1,1)));		// and _HistoryPanel are
+		TopPanel.add(_SearchPanel);									// added to TopPanel and gets a border set to it
+		TopPanel.add(Box.createHorizontalGlue());					
 		TopPanel.add(_ProfilePanel);
 		TopPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
 //		ShiftingPanel (the one that keeps changing)
 		ShiftingPanel = new JLayeredPane(); 						// initialize ShiftingPanel and set border
 		ShiftingPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+		ShiftingPanel.setMinimumSize(new Dimension(500,500));
+		
+		HomePanel = new JPanel(new BorderLayout());
+		JLabel titleLabel = new JLabel("'MusicService' - " + userName);
+		titleLabel.setFont(new Font("Tahoma", Font.PLAIN, 50));
+		HomePanel.setBounds(0,0,800,450);
+		HomePanel.add(titleLabel, BorderLayout.CENTER);
+		HomePanel.setBorder(BorderFactory.createLineBorder(Color.RED));
+		
+		
+		ShiftingPanel.add(HomePanel);
 		
 		Explore_Panel.add(TopPanel); 							// add TopPanel and ShiftingPanel to Explore_Panel
 		Explore_Panel.add(ShiftingPanel);
