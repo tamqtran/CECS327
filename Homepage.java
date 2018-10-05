@@ -34,7 +34,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-public class Homepage {
+public class Homepage 
+{
 	
 	private String specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]";
 	
@@ -68,16 +69,19 @@ public class Homepage {
 	private boolean isSongPlaying = false, // starts false
 					isThereASong = false;
 	
-	public static void main(String[] args) { // test
+	public static void main(String[] args) 
+	{ // test
 		new Homepage("allan");
 	}
 	
-	public Homepage(String user) {								// main constructor
+	public Homepage(String user) 
+	{								// main constructor
 		userName = user; 										// takes the username from input
 		initialize();
 	}
 	
-	private void initialize() { 									// initialization starts here
+	private void initialize() 
+	{ 									// initialization starts here
 		frame = new JFrame("MusicService -- " + userName);
 		frame.setMinimumSize(new Dimension(675,400));		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -97,7 +101,8 @@ public class Homepage {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void addHighComponentsToHome(Container pane) {
+	private void addHighComponentsToHome(Container pane) 
+	{
 		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));		// set up pane layout
 		pane.add(Box.createRigidArea(new Dimension(1,1)));			// add one rigid area to pane
 		
@@ -127,16 +132,21 @@ public class Homepage {
 		PlaylistOptions.setLayout(new BoxLayout(PlaylistOptions, BoxLayout.X_AXIS));
 
 		createPlaylist_ = new JButton("Create"); 						// initialize createPlaylist_ and assign action listener
-		createPlaylist_.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e) {
+		createPlaylist_.addActionListener(new ActionListener() 
+		{
+			@Override public void actionPerformed(ActionEvent e) 
+			{
 				System.out.println("Opening subwindow for playlist naming...");				
 				playlistCreation.setLocationRelativeTo(frame); 				// show playlist creation dialog
 				playlistCreation.setVisible(true); 							// set dialog visibility to true
-		}	});
+			}	
+		});
 		
 		removePlaylist_ = new JButton("Remove"); 				// initialize removePlaylist_ and assign action listener
-		removePlaylist_.addActionListener(new ActionListener() {
-			@Override public void actionPerformed(ActionEvent e) {
+		removePlaylist_.addActionListener(new ActionListener() 
+		{
+			@Override public void actionPerformed(ActionEvent e) 
+			{
 				System.out.println("Displaying options for which playlist to delete...");	
 				
 				// the premise would be that the list of options would be based on the user's personal playlists				
@@ -145,13 +155,18 @@ public class Homepage {
 				String rp = (String) JOptionPane.showInputDialog(frame, "Which playlist are you removing?\n"
 						+ "(There's no going back once you do.)", "Playlist Removal", 
 						JOptionPane.PLAIN_MESSAGE, null, possibilities, null);
-				if (rp == null) {									// the dialog was exited one way or another
+				if (rp == null) 
+				{									// the dialog was exited one way or another
 					System.out.println("No playlist was removed in the end..."); 
-				} else {
+				} 
+				else 
+				{
 					removePlaylist(rp, userName);			// the variable rp would represent the playlist name to be deleted
 					getPlaylists(dm); 						// update the model (and thus the gui) afterwards
 					System.out.println("The playlist --" + rp + "-- was removed."); // system announcement
-		}	}	});
+				}	
+			}
+		});
 		
 		PlaylistOptions.add(Box.createRigidArea(new Dimension(6,6))); 	// set the layout with rigid areas
 		PlaylistOptions.add(createPlaylist_);							// and jbuttons for PlaylistOptions
@@ -189,21 +204,26 @@ public class Homepage {
 		// searchQuery_ gets assigned an action listener. However...
 		
 		//CONTAINS CODE THAT IS DEBUG ONLY; DOES NOT REFLECT FINAL PRODUCT
-		searchQuery_.addActionListener(new ActionListener() {
+		searchQuery_.addActionListener(new ActionListener() 
+		{
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) 
+			{
 				// TODO Auto-generated method stub
 				
 				//DEBUG ONLY; DOES NOT REFLECT FINAL PRODUCT
 				isThereASong = !isThereASong; 								//
 				System.out.println("is there a song? " + isThereASong);		//
-				if (isThereASong) {											//
+				if (isThereASong) 
+				{											//
 					// addSong_
 					previousSong_.setText("\u2758" + "\u23F4");				//
 					playPause_.setText("\u2758" + "\u2758");				//
 					nextSong_.setText("\u23F5" + "\u2758");					//
 					// removeSong_
-				} else {													//
+				} 
+				else 
+				{													//
 					// addSong_
 					previousSong_.setText("\u274C");						//
 					playPause_.setText("\u274C");							//
@@ -219,7 +239,8 @@ public class Homepage {
 				timedSlider.setEnabled(isThereASong);						//
 				songTime_.setVisible(isThereASong);							//
 				//DEBUG ONLY; DOES NOT REFLECT FINAL PRODUCT
-		}	});
+			}	
+		});
 		//CONTAINS CODE THAT IS DEBUG ONLY; DOES NOT REFLECT FINAL PRODUCT
 		
 		_SearchPanel.add(searchField);						// add searchField and searchQuery_ to _SearchPanel
@@ -233,12 +254,15 @@ public class Homepage {
 		_ProfilePanel.setLayout(new FlowLayout());
 		username_ = new JLabel("User: " + userName); 		// initialize username_ and logout_
 		logout_ = new JButton("Logout");
-		logout_.addActionListener(new ActionListener() { 	// assign action listener to logout_
-			public void actionPerformed(ActionEvent e) {
+		logout_.addActionListener(new ActionListener() 
+		{ 	// assign action listener to logout_
+			public void actionPerformed(ActionEvent e) 
+			{
 				frame.dispose();							// disposes of current frame
 		        new Login().setVisible(true); 				// creates new Login() object
 		        System.out.println("Logging out..."); 		// system announcement
-		}	});
+			}	
+		});
 		
 		_ProfilePanel.add(username_); 							// add username_ and logut_ to _Profile
 		_ProfilePanel.add(logout_);	  							// and set max dimensions
@@ -266,7 +290,8 @@ public class Homepage {
 		pane.add(HIGH_panel); 								// add HIGH_panel to pane (the content pane for frame)
 	}
 	
-	private void addLowComponentsToHome(Container pane) {
+	private void addLowComponentsToHome(Container pane) 
+	{
 		LOW_panel = new JPanel();							// initialize LOW_panel and set layout and max dimensions
 		LOW_panel.setLayout(new BoxLayout(LOW_panel, BoxLayout.X_AXIS));
 		LOW_panel.setMaximumSize(new Dimension(15000,100));
@@ -325,38 +350,54 @@ public class Homepage {
 //		addSong_ goes here
 		
 		previousSong_ = new JButton("\u2758" + "\u23F4"); 			// initialize previousSong_ and add an
-		previousSong_.addActionListener(new ActionListener() { 		// action listener to previousSong_
-			@Override public void actionPerformed(ActionEvent e) {
+		previousSong_.addActionListener(new ActionListener()
+		{ 		// action listener to previousSong_
+			@Override 
+			public void actionPerformed(ActionEvent e) 
+			{
 				System.out.println("Moving to previous song...");
 				// do things here
 				
 				playPause_.setText("\u2758" + "\u2758");
 				isSongPlaying = true;								// the song is playing when it's all over
-		}	});
+			}	
+		});
 		playPause_ = new JButton("\u274C");							// initialize playPause_ and add an 
-		playPause_.addActionListener(new ActionListener() { 		// action listener to playPause_
-			@Override public void actionPerformed(ActionEvent arg0) {
+		playPause_.addActionListener(new ActionListener() 
+		{ 		// action listener to playPause_
+			@Override 
+			public void actionPerformed(ActionEvent arg0) 
+			{
 				isSongPlaying = !isSongPlaying;
-				if (isSongPlaying) {
+				if (isSongPlaying) 
+				{
 					System.out.println("Song is playing");
 					// do things here
 					
 					playPause_.setText("\u2758" + "\u2758");		
-				} else {
+				} 
+				else 
+				{
 					System.out.println("Song is paused");
 					// do things here
 					
 					playPause_.setText("\u25B6");
-		}	}	});
+				}	
+			}
+		});
 		nextSong_ = new JButton("\u23F5" + "\u2758"); 				// initializes nextSong_ and add an
-		nextSong_.addActionListener(new ActionListener() { 			// action listener to nextSong_
-			@Override public void actionPerformed(ActionEvent e) {			
+		nextSong_.addActionListener(new ActionListener() 
+		{ 			// action listener to nextSong_
+			@Override 
+			public void actionPerformed(ActionEvent e) 
+			{			
 				System.out.println("Moving to next song...");
 				//do things here
 				
 				playPause_.setText("\u2758" + "\u2758");
 				isSongPlaying = true;							// the song will begin playing when it's all over			
-		}	});
+			}	
+		});
 	
 //		add removeSong_ here
 		
@@ -392,9 +433,11 @@ public class Homepage {
 	 * @param input: A string, either username or password
 	 * @return false if any special characters are found in input; true otherwise
 	 */
-	private boolean codeDenial (String input) {
+	private boolean codeDenial (String input) 
+	{
 		//denies if input has the following: "[!@#$%&*()_+=|<>?{}\\[\\]~-]" (code injection prevention)
-		for (char c : input.toCharArray()) {
+		for (char c : input.toCharArray()) 
+		{
 			for (char s : specials.toCharArray())
 				if (s == c) return false;
 		} return true;
@@ -404,7 +447,8 @@ public class Homepage {
 	 * A void method that can make a frame visible.
 	 * @param b boolean (true/false) that determines visibility of the frame (where true makes it visible, and false makes it not visible
 	 */
-	public void setVisible(boolean b) {
+	public void setVisible(boolean b) 
+	{
 		// TODO Auto-generated method stub
 		frame.setVisible(b);
 	}
@@ -413,18 +457,22 @@ public class Homepage {
 	 * Read playlists array from json file and add to gui list
 	 * @param dm defaultlistModel
 	 */
-	void getPlaylists(DefaultListModel dm) {
+	void getPlaylists(DefaultListModel dm) 
+	{
 		dm.clear(); //clear list 
 		JSONObject obj1;
 		String pathname = userName + ".json";
-		try (InputStream input = new FileInputStream(pathname)) {
+		try (InputStream input = new FileInputStream(pathname)) 
+		{
 			obj1 = new JSONObject(new JSONTokener(input));
 		    //read playlists
 		    String playlist = obj1.get("playlists").toString();		    
 		    String [] playlistArray = playlist.substring(2, playlist.length() - 2).split("\",\"");
 		    //add playlist to default list
 		    for(int i = 0; i < playlistArray.length; i++) dm.addElement(playlistArray[i]);
-		} catch (Exception e) {
+		} 
+		catch (Exception e) 
+		{
 			e.printStackTrace();
 		}
 	}
@@ -434,8 +482,10 @@ public class Homepage {
 	 * @param playlist playlist to be removed
 	 * @param username current login user
 	 */
-	 void removePlaylist(String playlist, String username) {
-		try (InputStream input = new FileInputStream(username+".json")) {
+	 void removePlaylist(String playlist, String username) 
+	 {
+		try (InputStream input = new FileInputStream(username+".json")) 
+		{
 		    JSONObject obj1 = new JSONObject(new JSONTokener(input));
 		    
 		    JSONArray currentList = obj1.getJSONArray("playlists");
@@ -447,7 +497,9 @@ public class Homepage {
 			fileWriter.flush();
 			fileWriter.close();
 		    
-		} catch (Exception e) {
+		} 
+		catch (Exception e) 
+		{
 			e.printStackTrace();
 		}
 	}

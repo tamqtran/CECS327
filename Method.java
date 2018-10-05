@@ -13,25 +13,28 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.json.JSONException;
 
-public class Method {
-	
-	public Method() {
-		
-	}
+public class Method 
+{
+	public Method() {}
 	
 	/**
 	 * Get user's name
 	 * @param username user making request
 	 * @return user's name 
 	 */
-	public Boolean checkLogin(String username,String password) {
+	public Boolean checkLogin(String username,String password) 
+	{
 		String sPassword = null;
-		try (InputStream input = new FileInputStream(username+".json")) {
+		try (InputStream input = new FileInputStream(username+".json")) 
+		{
 			JSONObject obj1 = new JSONObject(new JSONTokener(input));
 			sPassword = obj1.get("password").toString();
-		}catch (Exception e) {
+		}
+		catch (Exception e) 
+		{
 			e.printStackTrace();
 		}
+		
 		if(password.equals(sPassword))
 			return true;
 		return false;
@@ -42,26 +45,34 @@ public class Method {
 	 * @param username user making request
 	 * @return user's name 
 	 */
-	public String getName(String username) {
+	public String getName(String username) 
+	{
 		String name = null;
-		try (InputStream input = new FileInputStream(username+".json")) {
+		try (InputStream input = new FileInputStream(username+".json")) 
+		{
 			JSONObject obj1 = new JSONObject(new JSONTokener(input));
 			name = obj1.get("name").toString();
-		}catch (Exception e) {
+		}
+		catch (Exception e) 
+		{
 			e.printStackTrace();
 		}
 			return name;
 	}
 	
-	public JSONArray getSonglist(String username) {
+	public JSONArray getSonglist(String username) 
+	{
 		JSONObject obj1;
 		JSONArray songlist = null;
-		try (InputStream input = new FileInputStream(username+".json")) {
+		try (InputStream input = new FileInputStream(username+".json")) 
+		{
 			obj1 = new JSONObject(new JSONTokener(input));
 		    //read playlists
 		    songlist = obj1.getJSONArray("songlist");
 		    
-		}catch (Exception e) {
+		}
+		catch (Exception e) 
+		{
 			e.printStackTrace();
 		}
 		return songlist;
@@ -72,15 +83,19 @@ public class Method {
 	 * @param username user making request
 	 * @return a JSONArray of playlist
 	 */
-	public JSONArray getPlaylists(String username) {
+	public JSONArray getPlaylists(String username) 
+	{
 		JSONObject obj1;
 		JSONArray playlist = null;
-		try (InputStream input = new FileInputStream(username+".json")) {
+		try (InputStream input = new FileInputStream(username+".json")) 
+		{
 			obj1 = new JSONObject(new JSONTokener(input));
 		    //read playlists
 		    playlist = obj1.getJSONArray("playlists");
 		    
-		}catch (Exception e) {
+		}
+		catch (Exception e) 
+		{
 			e.printStackTrace();
 		}
 		return playlist;
@@ -91,12 +106,15 @@ public class Method {
 	 * @param username user making request
 	 * @param playlist playlist to be added
 	 */
-	 public boolean addPlaylist(String username, String playlist) {
-		try (InputStream input = new FileInputStream(username+".json")) {
+	 public boolean addPlaylist(String username, String playlist) 
+	 {
+		try (InputStream input = new FileInputStream(username+".json")) 
+		{
 		    JSONObject obj1 = new JSONObject(new JSONTokener(input));
 		    
 		    JSONArray currentList = obj1.getJSONArray("playlists");
-		    if(!currentList.toList().contains(playlist)) {
+		    if(!currentList.toList().contains(playlist)) 
+		    {
 		    	currentList.put(playlist);
 		    	obj1.put(playlist, new JSONArray()); //empty song list for this array
 		    }
@@ -106,7 +124,9 @@ public class Method {
 			fileWriter.flush();
 			fileWriter.close();
 		    
-		}catch (Exception e) {
+		}
+		catch (Exception e) 
+		{
 			e.printStackTrace();
 		}
 		return true;
@@ -117,8 +137,10 @@ public class Method {
 		 * @param username user making request
 		 * @param playlist playlistto be removed
 		 */
-	public boolean removePlaylist(String username, String playlist) {
-			try (InputStream input = new FileInputStream(username+".json")) {
+	public boolean removePlaylist(String username, String playlist) 
+	{
+			try (InputStream input = new FileInputStream(username+".json")) 
+			{
 			    JSONObject obj1 = new JSONObject(new JSONTokener(input));
 			    
 			    JSONArray currentList = obj1.getJSONArray("playlists");
@@ -130,7 +152,9 @@ public class Method {
 				fileWriter.flush();
 				fileWriter.close();
 			    
-			}catch (Exception e) {
+			}
+			catch (Exception e) 
+			{
 				e.printStackTrace();
 			}
 			return true;
@@ -143,12 +167,15 @@ public class Method {
 	 * @param song song to be added to playlist
 	 * @return true upon success
 	 */
-	public boolean removeSong(String username, String playlist, String song) {
-		try (InputStream input = new FileInputStream(username+".json")) {
+	public boolean removeSong(String username, String playlist, String song) 
+	{
+		try (InputStream input = new FileInputStream(username+".json")) 
+		{
 		    JSONObject obj1 = new JSONObject(new JSONTokener(input));
 		    
 		    JSONArray currentPlaylist = obj1.getJSONArray("playlists");
-		    if(currentPlaylist.toList().contains(playlist)) {
+		    if(currentPlaylist.toList().contains(playlist)) 
+		    {
 		    	JSONArray currentList = obj1.getJSONArray(playlist);
 		    	currentList.remove(currentList.toList().indexOf(song));
 		    }
@@ -157,7 +184,9 @@ public class Method {
 			fileWriter.flush();
 			fileWriter.close();
 		    
-		}catch (Exception e) {
+		}
+		catch (Exception e) 
+		{
 			e.printStackTrace();
 		}
 		return false;
@@ -169,14 +198,18 @@ public class Method {
 	 * @param song song to add
 	 * @return true upon success
 	 */
-	public boolean addSong(String username, String playlist, String song) {
-		try (InputStream input = new FileInputStream(username+".json")) {
+	public boolean addSong(String username, String playlist, String song) 
+	{
+		try (InputStream input = new FileInputStream(username+".json")) 
+		{
 		    JSONObject obj1 = new JSONObject(new JSONTokener(input));
 		    
 		    JSONArray currentPlaylist = obj1.getJSONArray("playlists");
-		    if(currentPlaylist.toList().contains(playlist)) {
+		    if(currentPlaylist.toList().contains(playlist)) 
+		    {
 		    	 JSONArray currentList = obj1.getJSONArray(playlist);
-				    if(!currentList.toList().contains(song)) {
+				    if(!currentList.toList().contains(song)) 
+				    {
 				    	currentList.put(song);
 				    }
 		    }
@@ -186,7 +219,9 @@ public class Method {
 			fileWriter.flush();
 			fileWriter.close();
 		    
-		}catch (Exception e) {
+		}
+		catch (Exception e) 
+		{
 			e.printStackTrace();
 		}
 		return true;
@@ -197,18 +232,21 @@ public class Method {
 	 * @param playlist to get song from
 	 * @return return JSONArray of songs
 	 * */
-	public JSONArray getSongs(String username, String playlist) {
+	public JSONArray getSongs(String username, String playlist) 
+	{
 		JSONObject obj1;
 		JSONArray songs = null;
-		try (InputStream input = new FileInputStream(username+".json")) {
+		try (InputStream input = new FileInputStream(username+".json")) 
+		{
 			obj1 = new JSONObject(new JSONTokener(input));
 		    //read playlists
 			songs = obj1.getJSONArray(playlist);
 		  
-		}catch (Exception e) {
+		}
+		catch (Exception e) 
+		{
 			e.printStackTrace();
 		}
 		return songs;
 	}
-	
 }
