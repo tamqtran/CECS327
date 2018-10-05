@@ -485,10 +485,13 @@ public class Homepage
 	void getPlaylists(DefaultListModel dm) 
 	{
 		dm.clear(); //clear list 
+<<<<<<< HEAD
 
 		
 //		try (InputStream input = new FileInputStream(userName + ".json")) {
 
+=======
+>>>>>>> 3b5fdf9c21f180404e1997b9bb46b157e1c0be56
 		//JSONObject obj1;
 		//String pathname = userName + ".json";
 		String [] arguments = {userName};
@@ -500,8 +503,13 @@ public class Homepage
 	    //add playlist to default list
 	    for(int i = 0; i < playlistArray.length; i++) 
 	    	dm.addElement(playlistArray[i]);
+<<<<<<< HEAD
 		/*}
 		try (InputStream input = new FileInputStream(pathname)) 
+>>>>>>> 3b5fdf9c21f180404e1997b9bb46b157e1c0be56
+=======
+	    
+		/*try (InputStream input = new FileInputStream(pathname)) 
 >>>>>>> 3b5fdf9c21f180404e1997b9bb46b157e1c0be56
 		{
 			JSONObject obj1 = new JSONObject(new JSONTokener(input));

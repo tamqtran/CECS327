@@ -48,7 +48,10 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 	int serverPort;
 
 	public CreatePlaylistDialog(Frame homeFrame, String user, DefaultListModel dm, DatagramSocket aSocket,int serverPort) {
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3b5fdf9c21f180404e1997b9bb46b157e1c0be56
 		super(homeFrame, true);
 		username_ = user;									// assign locally the user's username
 		dlm = dm;											// assign locally the defaultlistmodel, still references dm (in Homepage)
