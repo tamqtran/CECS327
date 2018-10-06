@@ -45,4 +45,15 @@ public class ShiftingPanel extends JLayeredPane
 			}
 		});
 	}
+	
+	
+	// listeners for the previousHistory_ and nextHistory_ buttons will go here
+	// what the buttons will do:
+	// on initialization, neither should be clickable
+	// once another panel has been added to ShiftingPanel, the previousHistory_ should become clickable
+	// if the current panel is the oldest layer (this will be HomePanel) then only the nextHistory_ button will be clickable
+	// if the current panel is the newest layer, then only the previousHistory_ button will be clickable
+	// otherwise both buttons are clickable
+	// clicking previousHistory_ once will change the panel to the previous layer before the current
+	// clicking nextHistory_ once will change the panel to next layer after the current
 }
