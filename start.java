@@ -24,9 +24,6 @@ public class start
 		int serverPort = 6733;
 		DatagramSocket aSocket = null;
 		Scanner sc = new Scanner(System.in);
-	
-		// loop for client to send messages in
-		// INFINITE LOOP FOR NOW
 		
 		try 
 		{
@@ -38,74 +35,10 @@ public class start
 			System.out.println("Socket: " + e.getMessage());
 		}
 		
-		/*End Client*/
-		
-		
-		
-		//Create JSON object for account 'allan'
-		JSONObject allan = new JSONObject();
-		allan.put("username", "allan");					// add username
-		allan.put("password", "forever");				// add password
-		
-		JSONArray playlists = new JSONArray();			// add list of playlists
-		playlists.put("king");
-		playlists.put("queen");
-		allan.put("playlists", playlists);
-		
-		JSONArray kingSongLists = new JSONArray();		// add individual playlists with their own songs
-		JSONArray queenSongLists = new JSONArray();
-		kingSongLists.put("Money");
-		kingSongLists.put("So Serious");
-		kingSongLists.put("Hello Goodbye");
-		queenSongLists.put("Shadows");
-		queenSongLists.put("Yellow Submarine");
-		allan.put("king", kingSongLists);
-		allan.put("queen", queenSongLists);
-		
-		
-		try 											//Write into json file
-		{
-			FileWriter fileWriter = new FileWriter("allan.json");
-			fileWriter.write(allan.toString());
-			fileWriter.flush();
-			fileWriter.close();
-		}catch (Exception e) 							// catch exception
-		{
-			e.printStackTrace();
-		}
-		
-		
-		// Create another JSON object for account 'bill' to test out login into different accounts
-		JSONObject bill = new JSONObject();
-		bill.put("username", "bill");					// add username
-		bill.put("password", "pokemon");				// add password
-		
-		JSONArray playlists2 = new JSONArray();			// add list of playlists
-		playlists2.put("Long Beach");
-		bill.put("playlists", playlists2);
-		
-		JSONArray longBeachLists = new JSONArray();		// add individual playlists with their own songs
-		longBeachLists.put("Yellow Submarine");
-		bill.put("Long Beach", longBeachLists);
-		
-		try 											// Write into json file
-		{
-			FileWriter fileWriter = new FileWriter("bill.json");
-			fileWriter.write(bill.toString());
-			fileWriter.flush();
-			fileWriter.close();
-		}catch (Exception e) 							// catch exception
-		{
-			e.printStackTrace();
-		}
-		
-		System.out.println(allan);
-		System.out.println(bill);
+		/*End Client*/	
 		
 		// call initial Frame to start the program
 		Login begin = new Login(aSocket,serverPort);
-		
-		
 	}
 	
 
