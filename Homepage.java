@@ -166,8 +166,6 @@ public class Homepage
 						ShiftingPanel.addComponent(newPanel);
 												
 						ShiftingPanel.addResizeListenerTo(newPanel);
-						
-						// how do i get the new panel to appear after this?
 					}
 				}
 			}
