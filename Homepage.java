@@ -175,6 +175,7 @@ public class Homepage
 		
 		UserSavedPanel = new JScrollPane(playlist_List); 				// initialize UserSavedPanel using playlist_List
 		
+		
 		PlaylistOptions = new JPanel(); 								// initialize PlaylistOptions and set layout
 		PlaylistOptions.setLayout(new BoxLayout(PlaylistOptions, BoxLayout.X_AXIS));
 
@@ -223,9 +224,9 @@ public class Homepage
 		
 		Playlist_Panel.add(Box.createRigidArea(new Dimension(3,3))); 	// set the layout with rigid areas
 		Playlist_Panel.add(PlaylistTitle);								// and jpanels to Playlist_Panel
-		Playlist_Panel.add(Box.createRigidArea(new Dimension(3,3)));
+		Playlist_Panel.add(Box.createRigidArea(new Dimension(2,2)));
 		Playlist_Panel.add(UserSavedPanel);
-		Playlist_Panel.add(Box.createRigidArea(new Dimension(3,3)));
+		Playlist_Panel.add(Box.createRigidArea(new Dimension(2,2)));
 		Playlist_Panel.add(PlaylistOptions);
 		Playlist_Panel.add(Box.createRigidArea(new Dimension(2,2)));
 		
@@ -329,7 +330,7 @@ public class Homepage
 		TopPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
 //		ShiftingPanel (the one that keeps changing)
-		ShiftingPanel = new ShiftingPanel(frame);				// initialize ShiftingPanel and set border
+		ShiftingPanel = new ShiftingPanel();				// initialize ShiftingPanel and set border
 		ShiftingPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		ShiftingPanel.setMinimumSize(new Dimension(500,500));
 		
@@ -583,7 +584,8 @@ public class Homepage
 		 }
 		 return jsonRequest;
 	 }
-		/**
+
+	 /**
 		 * UDP request and reply 
 		 * @param method method to call
 		 * @param param arguments for the method

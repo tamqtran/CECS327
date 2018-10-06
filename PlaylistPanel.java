@@ -1,3 +1,4 @@
+import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -58,7 +59,7 @@ public class PlaylistPanel extends JPanel
 		
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
-		
+		this.setSize(new Dimension(805,453));
 		
 //		// creating back to profile button
 //		backToProfileButton = new JButton("Back to Profile");
