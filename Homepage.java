@@ -529,7 +529,7 @@ public class Homepage
 		dm.clear(); //clear list 
 
 		String [] arguments = {userName};
-		JSONObject obj = UDPRequestReply("getPlaylists",arguments);
+		JSONObject obj = requestReply.UDPRequestReply("getPlaylists",arguments, aSocket, serverPort);
 		//read playlists
 		String playlist = obj.get("result").toString();	
 		
@@ -548,6 +548,7 @@ public class Homepage
 	 {
 		//Server side playlist removal
 		String [] arguments = {username,playlist};
+<<<<<<< HEAD
 		JSONObject obj = UDPRequestReply("removePlaylist",arguments);
 	}
 
@@ -627,4 +628,29 @@ public class Homepage
 		 }
 		 return JsonReply;
 	 }
+=======
+		JSONObject obj = requestReply.UDPRequestReply("removePlaylist",arguments, aSocket, serverPort);
+		
+		/*try (InputStream input = new FileInputStream(username+".json")) 
+		{
+		    JSONObject obj1 = new JSONObject(new JSONTokener(input));
+		    
+		    JSONArray currentList = obj1.getJSONArray("playlists");
+		    currentList.remove(currentList.toList().indexOf(playlist)); 
+		    obj1.remove(playlist); // also need to remove songs from playlist
+		    
+		    FileWriter fileWriter = new FileWriter(username+".json");
+			fileWriter.write(obj1.toString());
+			fileWriter.flush();
+			fileWriter.close();
+		    
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}*/
+	}
+	 
+	 
+>>>>>>> 85fdee17d8fb2ed2593bfefbc6bcf47f91a8da64
 }

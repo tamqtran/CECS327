@@ -179,7 +179,7 @@ public class Login implements ActionListener {
 			e.printStackTrace();
 		} return false;*/
 		String [] arguments = {user,pass};
-		JSONObject obj = UDPRequestReply("checkLogin",arguments);
+		JSONObject obj = requestReply.UDPRequestReply("checkLogin",arguments, aSocket, serverPort);
 		if(obj.get("result").equals(true))
 			return true;
 		return false;
@@ -207,80 +207,4 @@ public class Login implements ActionListener {
 		frame.setVisible(b);
 	}
 	
-	/**
-	 * Format request into JSON Object
-	 * @param method call method
-	 * @param args argument of the method
-	 * @return return json object
-	 * @throws JSONException
-	 */
-	JSONObject JSONRequestObject(String method, Object[] args) throws JSONException
-	{
-	        //Arguments
-	        JSONArray jsonArgs = new JSONArray();
-	        for (int i=0; i<args.length; i++)
-	        {
-	        	jsonArgs.put(args[i]);
-	        }
-	
-	        //Json Object
-	        JSONObject jsonRequest = new JSONObject();
-	        try 
-	        {
-	                jsonRequest.put("id", UUID.randomUUID().hashCode());
-	                jsonRequest.put("method", method);
-	                jsonRequest.put("arguments", jsonArgs);
-	        }
-	        catch (JSONException e)
-	        {
-	                System.out.println(e);
-	        }
-	        return jsonRequest;
-	}
-	/**
-	 * UDP request and reply 
-	 * @param method method to call
-	 * @param param arguments for the method
-	 * @return JSONObject reply from server
-	 */
-	JSONObject UDPRequestReply(String method,String[] param) {
-		JSONObject JsonReply = null;
-		try 
-		{
-			byte [] m;
-						
-			// opening client side
-			//Login user1 = new Login();
-				
-			InetAddress aHost = InetAddress.getByName("localhost");
-				
-			//Request
-			String [] arguments = param;
-			m = JSONRequestObject(method,arguments).toString().getBytes("utf-8");
-			DatagramPacket request = new DatagramPacket(m, m.length, aHost, serverPort);
-			aSocket.send(request);
-				
-			//Reply
-			byte[] buffer = new byte[1000];
-			
-			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
-				
-			aSocket.receive(reply);
-			
-			//Format datagram reply into JSONObject
-			JsonReply=new JSONObject(new String(reply.getData()));
-			
-			System.out.println("Reply: " + new String(reply.getData()));
-			System.out.println("Type a message to send or x to exit.");
-		}
-		catch (SocketException e)
-		{
-			System.out.println("Socket: " + e.getMessage());
-		}
-		catch (IOException e)
-		{
-			System.out.println("IO: " + e.getMessage());
-		}
-		return JsonReply;
-	}
 }
