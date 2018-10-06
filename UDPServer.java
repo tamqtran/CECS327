@@ -9,7 +9,6 @@ import java.io.*;
 
 public class UDPServer
 {
-
 	public static void main(String args[]) throws SocketException
 	{
 		Method json = new Method();
@@ -35,18 +34,16 @@ public class UDPServer
 	
 		try
 		{
-		
 			//aSocket = new DatagramSocket(6733);
 			System.out.println("Server started on port: "+port);
 			byte[] buffer = new byte[1000];
 		
 			while(true)
 			{
-			
 				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
 				System.out.println("Waiting for request...");
 				aSocket.receive(request);
-				System.out.println("Request from port: "+ request.getPort());
+				System.out.println("Request from Port: "+ request.getPort());
 				System.out.println("Request: "+new String(request.getData()));
 			
 				new Thread(new Runnable() 
@@ -116,7 +113,6 @@ public class UDPServer
 					}
 				}).start();
 			}
-
 		}
 		catch (SocketException e)
 		{
@@ -134,7 +130,14 @@ public class UDPServer
 		}
 	}
 	
-	
+	/**
+	 * This method creates the reply for the Server to send to the Client.
+	 * @param method
+	 * @param args
+	 * @param reply
+	 * @return JSON message
+	 * @throws JSONException
+	 */
 	static JSONObject JSONReply(String method, Object[] args, Object reply) throws JSONException
 	{
 	        //Arguments

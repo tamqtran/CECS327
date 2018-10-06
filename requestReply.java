@@ -12,7 +12,7 @@ import org.json.JSONObject;
 public class requestReply 
 {
 	/**
-	 * UDP request and reply 
+	 * This method handles the UDP request and reply on the Client side 
 	 * @param method method to call
 	 * @param param arguments for the method
 	 * @return JSONObject reply from server
@@ -60,10 +60,10 @@ public class requestReply
 	
 	
 	/**
-	 * Format request into JSON Object
+	 * This method formats the request to send to the Server into a JSON Object
 	 * @param method call method
 	 * @param args argument of the method
-	 * @return return json object
+	 * @return return JSON object
 	 * @throws JSONException
 	 */
 	static JSONObject JSONRequestObject(String method, Object[] args) throws JSONException
