@@ -10,6 +10,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.io.FileInputStream;
@@ -72,7 +74,7 @@ public class Homepage
 	private DefaultListModel 	dm;
 	private JList				playlist_List;
 	private JScrollPane			UserSavedPanel;
-	private JLayeredPane        ShiftingPanel; //ShiftingPanel is the big one
+	private ShiftingPanel        ShiftingPanel; //ShiftingPanel is the big one
 	private JSlider				timedSlider;
 	
 	private CreatePlaylistDialog playlistCreation;
@@ -111,10 +113,10 @@ public class Homepage
 		frame.setSize(new Dimension(1000,600)); 							// sets the size of the frame
 		frame.setLocationRelativeTo(null); 									// sets frame location
 		
-		frame.setVisible(true); 											// make the frame visible
-		
 		playlistCreation = new CreatePlaylistDialog(frame, userName, dm, aSocket, serverPort); 	// create playlist creation dialog
-		playlistCreation.pack(); 																// pack playlist creation dialog
+		playlistCreation.pack();
+		
+		frame.setVisible(true); 											// make the frame visible													// pack playlist creation dialog
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -144,7 +146,6 @@ public class Homepage
 		
 		UserSavedPanel = new JScrollPane(playlist_List); 				// initialize UserSavedPanel using playlist_List
 		
-	
 		PlaylistOptions = new JPanel(); 								// initialize PlaylistOptions and set layout
 		PlaylistOptions.setLayout(new BoxLayout(PlaylistOptions, BoxLayout.X_AXIS));
 
@@ -199,8 +200,7 @@ public class Homepage
 		Playlist_Panel.add(PlaylistOptions);
 		Playlist_Panel.add(Box.createRigidArea(new Dimension(3,3)));
 		
-		Playlist_Panel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED)); 
-		// set border type for Playlist_Panel
+		Playlist_Panel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED)); 	// set border type for Playlist_Panel
 		
 //		large song album cover (e_CoverPanel) can go here later
 		
@@ -300,19 +300,20 @@ public class Homepage
 		TopPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
 //		ShiftingPanel (the one that keeps changing)
-		ShiftingPanel = new JLayeredPane(); 						// initialize ShiftingPanel and set border
+		ShiftingPanel = new ShiftingPanel(userName);				// initialize ShiftingPanel and set border
 		ShiftingPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		ShiftingPanel.setMinimumSize(new Dimension(500,500));
 		
-		HomePanel = new JPanel(new BorderLayout());
-		JLabel titleLabel = new JLabel("'MusicService' - " + userName);
-		titleLabel.setFont(new Font("Tahoma", Font.PLAIN, 50));
-		HomePanel.setBounds(0,0,800,450);
+		JLabel titleLabel = new JLabel("'MusicService' - " + userName, JLabel.CENTER);	// initialize titleLabel
+		titleLabel.setFont(new Font("Tahoma", Font.PLAIN, 40));					// and set font
+		
+		HomePanel = new JPanel(new BorderLayout());		// initialize HomePanel, set size, and add titleLabel
+		HomePanel.setSize(800,450);						
 		HomePanel.add(titleLabel, BorderLayout.CENTER);
-		HomePanel.setBorder(BorderFactory.createLineBorder(Color.RED));
+		HomePanel.setBorder(BorderFactory.createLineBorder(Color.RED)); // and set border around it (debug testing only)
 		
-		
-		ShiftingPanel.add(HomePanel);
+		ShiftingPanel.add(HomePanel);							// add HomePanel to ShiftingPanel
+		ShiftingPanel.addResizeListenerTo(HomePanel);		// set component listener on HomePanel
 		
 		Explore_Panel.add(TopPanel); 							// add TopPanel and ShiftingPanel to Explore_Panel
 		Explore_Panel.add(ShiftingPanel);
