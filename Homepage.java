@@ -548,8 +548,9 @@ public class Homepage
 	 {
 		//Server side playlist removal
 		String [] arguments = {username,playlist};
-<<<<<<< HEAD
-		JSONObject obj = UDPRequestReply("removePlaylist",arguments);
+//<<<<<<< HEAD
+//		JSONObject obj = UDPRequestReply("removePlaylist",arguments);
+		JSONObject obj = requestReply.UDPRequestReply("removePlaylist",arguments, aSocket, serverPort);
 	}
 
 	 /**
@@ -628,8 +629,8 @@ public class Homepage
 		 }
 		 return JsonReply;
 	 }
-=======
-		JSONObject obj = requestReply.UDPRequestReply("removePlaylist",arguments, aSocket, serverPort);
+//=======
+//		JSONObject obj = requestReply.UDPRequestReply("removePlaylist",arguments, aSocket, serverPort);
 		
 		/*try (InputStream input = new FileInputStream(username+".json")) 
 		{
@@ -649,8 +650,8 @@ public class Homepage
 		{
 			e.printStackTrace();
 		}*/
-	}
+//	}
 	 
 	 
->>>>>>> 85fdee17d8fb2ed2593bfefbc6bcf47f91a8da64
+//>>>>>>> 85fdee17d8fb2ed2593bfefbc6bcf47f91a8da64
 }
