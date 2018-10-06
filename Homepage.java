@@ -8,12 +8,15 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -144,6 +147,32 @@ public class Homepage
 		playlist_List.setFont(new Font("Tahoma", Font.PLAIN, 14));		// set font for playlist_List
 		getPlaylists(dm);												// update list gui with playlist information from json
 		
+		playlist_List.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				JList list = (JList)e.getSource();
+				Rectangle r = list.getCellBounds(0, list.getLastVisibleIndex());
+				
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					if (e.getClickCount() == 2 && r != null && r.contains(e.getPoint())) {
+						
+						// things happen here
+						int index = list.locationToIndex(e.getPoint());
+						System.out.println("Index identified: " + index);
+						System.out.println("Index name: " + list.getSelectedValue().toString());
+						
+						PlaylistPanel newPanel = new PlaylistPanel(userName, list.getSelectedValue().toString());
+						newPanel.setName(list.getSelectedValue().toString());
+						
+						ShiftingPanel.addComponent(newPanel);
+												
+						ShiftingPanel.addResizeListenerTo(newPanel);
+						
+						// how do i get the new panel to appear after this?
+					}
+				}
+			}
+		});
+		
 		UserSavedPanel = new JScrollPane(playlist_List); 				// initialize UserSavedPanel using playlist_List
 		
 		PlaylistOptions = new JPanel(); 								// initialize PlaylistOptions and set layout
@@ -160,7 +189,7 @@ public class Homepage
 			}	
 		});
 		
-		removePlaylist_ = new JButton("Remove"); 				// initialize removePlaylist_ and assign action listener
+		removePlaylist_ = new JButton("Remove"); 						// initialize removePlaylist_ and assign action listener
 		removePlaylist_.addActionListener(new ActionListener() 
 		{
 			@Override public void actionPerformed(ActionEvent e) 
@@ -194,11 +223,11 @@ public class Homepage
 		
 		Playlist_Panel.add(Box.createRigidArea(new Dimension(3,3))); 	// set the layout with rigid areas
 		Playlist_Panel.add(PlaylistTitle);								// and jpanels to Playlist_Panel
-		Playlist_Panel.add(Box.createRigidArea(new Dimension(4,4)));
+		Playlist_Panel.add(Box.createRigidArea(new Dimension(3,3)));
 		Playlist_Panel.add(UserSavedPanel);
 		Playlist_Panel.add(Box.createRigidArea(new Dimension(3,3)));
 		Playlist_Panel.add(PlaylistOptions);
-		Playlist_Panel.add(Box.createRigidArea(new Dimension(3,3)));
+		Playlist_Panel.add(Box.createRigidArea(new Dimension(2,2)));
 		
 		Playlist_Panel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED)); 	// set border type for Playlist_Panel
 		
@@ -282,9 +311,9 @@ public class Homepage
 		{ 	// assign action listener to logout_
 			public void actionPerformed(ActionEvent e) 
 			{
-				frame.dispose();							// disposes of current frame
-		        new Login(aSocket, serverPort).setVisible(true); 				// creates new Login() object
-		        System.out.println("Logging out..."); 		// system announcement
+				frame.dispose();										// disposes of current frame
+		        new Login(aSocket, serverPort).setVisible(true); 		// creates new Login() object
+		        System.out.println("Logging out..."); 					// system announcement
 			}	
 		});
 		
@@ -300,8 +329,8 @@ public class Homepage
 		TopPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
 //		ShiftingPanel (the one that keeps changing)
-		ShiftingPanel = new ShiftingPanel(userName);				// initialize ShiftingPanel and set border
-		ShiftingPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+		ShiftingPanel = new ShiftingPanel(frame);				// initialize ShiftingPanel and set border
+		ShiftingPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		ShiftingPanel.setMinimumSize(new Dimension(500,500));
 		
 		JLabel titleLabel = new JLabel("'MusicService' - " + userName, JLabel.CENTER);	// initialize titleLabel
@@ -312,7 +341,9 @@ public class Homepage
 		HomePanel.add(titleLabel, BorderLayout.CENTER);
 		HomePanel.setBorder(BorderFactory.createLineBorder(Color.RED)); // and set border around it (debug testing only)
 		
-		ShiftingPanel.add(HomePanel);							// add HomePanel to ShiftingPanel
+		HomePanel.setName("Zero Home");
+		
+		ShiftingPanel.addComponent(HomePanel);							// add HomePanel to ShiftingPanel
 		ShiftingPanel.addResizeListenerTo(HomePanel);		// set component listener on HomePanel
 		
 		Explore_Panel.add(TopPanel); 							// add TopPanel and ShiftingPanel to Explore_Panel
@@ -385,7 +416,7 @@ public class Homepage
 		
 //		addSong_ goes here
 		
-		previousSong_ = new JButton("\u2758" + "\u23F4"); 			// initialize previousSong_ and add an
+		previousSong_ = new JButton("\u274C"); 			// initialize previousSong_ and add an
 		previousSong_.addActionListener(new ActionListener()
 		{ 		// action listener to previousSong_
 			@Override 
@@ -421,7 +452,7 @@ public class Homepage
 				}	
 			}
 		});
-		nextSong_ = new JButton("\u23F5" + "\u2758"); 				// initializes nextSong_ and add an
+		nextSong_ = new JButton("\u274C"); 				// initializes nextSong_ and add an
 		nextSong_.addActionListener(new ActionListener() 
 		{ 			// action listener to nextSong_
 			@Override 
@@ -496,15 +527,7 @@ public class Homepage
 	void getPlaylists(DefaultListModel dm) 
 	{
 		dm.clear(); //clear list 
-//<<<<<<< HEAD
 
-		
-//		try (InputStream input = new FileInputStream(userName + ".json")) {
-
-//=======
-//>>>>>>> 3b5fdf9c21f180404e1997b9bb46b157e1c0be56
-		//JSONObject obj1;
-		//String pathname = userName + ".json";
 		String [] arguments = {userName};
 		JSONObject obj = UDPRequestReply("getPlaylists",arguments);
 		//read playlists
@@ -514,26 +537,6 @@ public class Homepage
 	    //add playlist to default list
 	    for(int i = 0; i < playlistArray.length; i++) 
 	    	dm.addElement(playlistArray[i]);
-//<<<<<<< HEAD
-		/*}
-		try (InputStream input = new FileInputStream(pathname)) 
->>>>>>> 3b5fdf9c21f180404e1997b9bb46b157e1c0be56
-=======
-	    
-		/*try (InputStream input = new FileInputStream(pathname)) 
->>>>>>> 3b5fdf9c21f180404e1997b9bb46b157e1c0be56
-		{
-			JSONObject obj1 = new JSONObject(new JSONTokener(input));
-		    //read playlists
-		    String playlist = obj1.get("playlists").toString();		    
-		    String [] playlistArray = playlist.substring(2, playlist.length() - 2).split("\",\"");
-		    //add playlist to default list
-		    for(int i = 0; i < playlistArray.length; i++) dm.addElement(playlistArray[i]);
-		} 
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-		}*/
 	}
 	
 	/** ORIGIN: Profile.java
@@ -546,101 +549,82 @@ public class Homepage
 		//Server side playlist removal
 		String [] arguments = {username,playlist};
 		JSONObject obj = UDPRequestReply("removePlaylist",arguments);
-		
-		/*try (InputStream input = new FileInputStream(username+".json")) 
-		{
-		    JSONObject obj1 = new JSONObject(new JSONTokener(input));
-		    
-		    JSONArray currentList = obj1.getJSONArray("playlists");
-		    currentList.remove(currentList.toList().indexOf(playlist)); 
-		    obj1.remove(playlist); // also need to remove songs from playlist
-		    
-		    FileWriter fileWriter = new FileWriter(username+".json");
-			fileWriter.write(obj1.toString());
-			fileWriter.flush();
-			fileWriter.close();
-		    
-		} 
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-		}*/
 	}
-	 
+
 	 /**
-		 * Format request into JSON Object
-		 * @param method call method
-		 * @param args argument of the method
-		 * @return return json object
-		 * @throws JSONException
-		 */
-		JSONObject JSONRequestObject(String method, Object[] args) throws JSONException
-		{
-		        //Arguments
-		        JSONArray jsonArgs = new JSONArray();
-		        for (int i=0; i<args.length; i++)
-		        {
-		        	jsonArgs.put(args[i]);
-		        }
-		
-		        //Json Object
-		        JSONObject jsonRequest = new JSONObject();
-		        try 
-		        {
-		                jsonRequest.put("id", UUID.randomUUID().hashCode());
-		                jsonRequest.put("method", method);
-		                jsonRequest.put("arguments", jsonArgs);
-		        }
-		        catch (JSONException e)
-		        {
-		                System.out.println(e);
-		        }
-		        return jsonRequest;
-		}
+	  * Format request into JSON Object
+	  * @param method call method
+	  * @param args argument of the method
+	  * @return return json object
+	  * @throws JSONException
+	  */
+	 JSONObject JSONRequestObject(String method, Object[] args) throws JSONException
+	 {
+		 //Arguments
+		 JSONArray jsonArgs = new JSONArray();
+		 for (int i=0; i<args.length; i++)
+		 {
+			 jsonArgs.put(args[i]);
+		 }
+
+		 //JSON Object
+		 JSONObject jsonRequest = new JSONObject();
+		 try 
+		 {
+			 jsonRequest.put("id", UUID.randomUUID().hashCode());
+			 jsonRequest.put("method", method);
+			 jsonRequest.put("arguments", jsonArgs);
+		 }
+		 catch (JSONException e)
+		 {
+			 System.out.println(e);
+		 }
+		 return jsonRequest;
+	 }
 		/**
 		 * UDP request and reply 
 		 * @param method method to call
 		 * @param param arguments for the method
 		 * @return JSONObject reply from server
 		 */
-		JSONObject UDPRequestReply(String method,String[] param) {
-			JSONObject JsonReply = null;
-			try 
-			{
-				byte [] m;
-							
-				// opening client side
-				//Login user1 = new Login();
-					
-				InetAddress aHost = InetAddress.getByName("localhost");
-					
-				//Request
-				String [] arguments = param;
-				m = JSONRequestObject(method,arguments).toString().getBytes("utf-8");
-				DatagramPacket request = new DatagramPacket(m, m.length, aHost, serverPort);
-				aSocket.send(request);
-					
-				//Reply
-				byte[] buffer = new byte[1000];
-				
-				DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
-					
-				aSocket.receive(reply);
-				
-				//Format datagram reply into JSONObject
-				JsonReply=new JSONObject(new String(reply.getData()));
-				
-				System.out.println("Reply: " + new String(reply.getData()));
-				System.out.println("Type a message to send or x to exit.");
-			}
-			catch (SocketException e)
-			{
-				System.out.println("Socket: " + e.getMessage());
-			}
-			catch (IOException e)
-			{
-				System.out.println("IO: " + e.getMessage());
-			}
-			return JsonReply;
-		}
+	 JSONObject UDPRequestReply(String method,String[] param) {
+		 JSONObject JsonReply = null;
+		 try 
+		 {
+			 byte [] m;
+
+			 // opening client side
+			 //Login user1 = new Login();
+
+			 InetAddress aHost = InetAddress.getByName("localhost");
+
+			 //Request
+			 String [] arguments = param;
+			 m = JSONRequestObject(method,arguments).toString().getBytes("utf-8");
+			 DatagramPacket request = new DatagramPacket(m, m.length, aHost, serverPort);
+			 aSocket.send(request);
+
+			 //Reply
+			 byte[] buffer = new byte[1000];
+
+			 DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+
+			 aSocket.receive(reply);
+
+			 //Format datagram reply into JSONObject
+			 JsonReply=new JSONObject(new String(reply.getData()));
+
+			 System.out.println("Reply: " + new String(reply.getData()));
+			 System.out.println("Type a message to send or x to exit.");
+		 }
+		 catch (SocketException e)
+		 {
+			 System.out.println("Socket: " + e.getMessage());
+		 }
+		 catch (IOException e)
+		 {
+			 System.out.println("IO: " + e.getMessage());
+		 }
+		 return JsonReply;
+	 }
 }

@@ -152,7 +152,7 @@ public class PlayButton {
 					}
 					JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 					pFrame.dispose();
-					new SearchMenuFrame(uName).setVisible(true);
+//					new SearchMenuFrame(uName).setVisible(true);
 				}
 				else if(o == panel.pause)//pauses song if song is active and saves frame position to resume in play
 				{
@@ -218,11 +218,11 @@ public class PlayButton {
 					pFrame.dispose();
 					if(playlist.isEmpty())
 					{
-						new SearchMenuFrame(uName).setVisible(true);
+//						new SearchMenuFrame(uName).setVisible(true);
 					}
 					else 
 					{
-						new PlaylistFrame(uName, playlist).setVisible(true);
+//						new PlaylistFrame(uName, playlist).setVisible(true);
 					}
 				}
 				else if(o == panel.pause)//pauses song is song is playing

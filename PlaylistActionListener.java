@@ -69,7 +69,7 @@ public class PlaylistActionListener implements ActionListener
 			
 			// close and open new JFrame
 			JFrame sFrame = (JFrame) panel.getTopLevelAncestor();
-			sFrame.dispose();
+//			sFrame.dispose();
 			new PlayButton.PlayFrame(songTitle + "_" + artist + "_" + album, panel.username, panel.playlist).setVisible(true);
 		}
 		

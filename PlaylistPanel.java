@@ -2,12 +2,14 @@ import java.awt.event.ActionListener;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
+import javax.swing.border.BevelBorder;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -24,7 +26,7 @@ import org.json.JSONTokener;
 public class PlaylistPanel extends JPanel
 {
 	// declaring variables
-	public JLabel playlistName;
+	public JLabel playlistName, playlistAuthor;
 	
 	public JButton selectSongButton,
 				   addSongButton,
@@ -54,30 +56,39 @@ public class PlaylistPanel extends JPanel
 		// based on absolute layout to organize the components in the frame (https://docs.oracle.com/javase/tutorial/uiswing/layout/none.html)
 		this.setLayout(null);
 		
-		// creating back to profile button
-		backToProfileButton = new JButton("Back to Profile");
-		backToProfileButton.setSize(backToProfileButton.getPreferredSize());
-		backToProfileButton.setLocation(10, 10);
-		backToProfileButton.addActionListener(listener);
-		this.add(backToProfileButton);
+		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+		
+		
+		
+//		// creating back to profile button
+//		backToProfileButton = new JButton("Back to Profile");
+//		backToProfileButton.setSize(backToProfileButton.getPreferredSize());
+//		backToProfileButton.setLocation(10, 10);
+//		backToProfileButton.addActionListener(listener);
+//		this.add(backToProfileButton);
 		
 		// creating playlist name label
 		playlistName = new JLabel("Playlist Name: " + playlist);
 		playlistName.setSize(playlistName.getPreferredSize());
-		playlistName.setLocation(50, 100);
+		playlistName.setLocation(10, 10);
 		this.add(playlistName);
+		
+		playlistAuthor = new JLabel("Author: " + this.username);
+		playlistAuthor.setSize(playlistName.getPreferredSize());
+		playlistAuthor.setLocation(10, 30);
+		this.add(playlistAuthor);
 		
 		// creating select song button
 		selectSongButton = new JButton("Select Song");
 		selectSongButton.setSize(selectSongButton.getPreferredSize());
-		selectSongButton.setLocation(350, 500);
+		selectSongButton.setLocation(270, 55);
 		selectSongButton.addActionListener(listener);
 		this.add(selectSongButton);
 	
 		// creating delete song button
 		deleteSongButton = new JButton("Delete Song");
 		deleteSongButton.setSize(deleteSongButton.getPreferredSize());
-		deleteSongButton.setLocation(550, 500);
+		deleteSongButton.setLocation(270, 85);
 		deleteSongButton.addActionListener(listener);
 		this.add(deleteSongButton);
 		
@@ -86,8 +97,8 @@ public class PlaylistPanel extends JPanel
 		songList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		DefaultListModel<String> DLM = new DefaultListModel<String>();
 		songList.setModel(DLM);
-		songList.setSize(300,380);
-		songList.setLocation(350, 100);
+		songList.setSize(250,200);
+		songList.setLocation(10, 55);
 		this.add(songList);		
 		
 		// updates the list of songs in the playlist

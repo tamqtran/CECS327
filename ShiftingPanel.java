@@ -1,10 +1,14 @@
 // Created by Austin Tao on 10/5/2018
 
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.Collections;
 
 import javax.swing.BorderFactory;
+import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
@@ -17,17 +21,20 @@ import javax.swing.border.BevelBorder;
  */
 public class ShiftingPanel extends JLayeredPane 
 {
-	
+	Frame f;
 	private String username_;
+	private Component[] history;
+	
+	private Integer baseComponent = 0;
 	
 	/**
 	 * Main constructor. Creates a JLayeredPane called ShiftingPanel
 	 * @param user the name of the user
 	 */
-	public ShiftingPanel(String user) 
+	public ShiftingPanel(Frame homeFrame) 
 	{
-		username_ = user;														// assign user to username_
-		this.setMinimumSize(new Dimension(500,500));							// set minimum size
+		f = homeFrame;
+		this.setMinimumSize(new Dimension(501,501));							// set minimum size
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));	// set border
 	}
 	
@@ -46,6 +53,30 @@ public class ShiftingPanel extends JLayeredPane
 		});
 	}
 	
+	/**
+	 * This particular method will add the component to the zeroth layer of ShiftingPanel and adjust the history array
+	 * and the components accordingly to this new inclusion
+	 * @param c the component that is being added to ShiftingPanel
+	 */
+	public void addComponent(Component c) {
+		
+		//move current component to layer -1
+		for (Component p : this.getComponentsInLayer(0))
+			this.setLayer(p, -1);
+		// order components in layer -1 by order
+		for (Component p : this.getComponentsInLayer(-1))
+			this.moveToFront(p);
+		
+		this.add(c, JLayeredPane.DEFAULT_LAYER, 0);			// add component to layer 0
+		c.setVisible(true);
+		history = this.getComponents();						// update history
+		
+		for (Component p : history)						//system: the layer the component is in
+			System.out.println("Layer: " + this.getLayer(p) 	// the position of each component in the layer
+			+ ", pos: " + this.getPosition(p) + ", name: " + p.getName());	// and the name of each component
+		System.out.println("baseComponent is 0 of " + baseComponent++ + "\n");
+		
+	}
 	
 	// listeners for the previousHistory_ and nextHistory_ buttons will go here
 	// what the buttons will do:
