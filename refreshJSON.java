@@ -42,13 +42,10 @@ public class refreshJSON
 		queenSongLists.put("Yellow Submarine");
 		allan.put("king", kingSongLists);
 		allan.put("queen", queenSongLists);
-<<<<<<< HEAD
 		allan.put("ace", new JSONArray());
 		allan.put("jack", new JSONArray());
-=======
-		
 		allan.put("loggedIn", false);
->>>>>>> 4ccbd1dadaa00c51a5da88f2a02027c1498a3c47
+
 		
 		try 											//Write into json file
 		{
