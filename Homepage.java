@@ -336,6 +336,11 @@ public class Homepage
 			public void actionPerformed(ActionEvent e) 
 			{
 				frame.dispose();									// disposes of current frame
+				
+				//send logout message to server
+				String [] arguments = {userName};
+				requestReply.UDPRequestReply("loggedOut",arguments, aSocket, serverPort);
+				
 		        new Login(aSocket, serverPort).setVisible(true); 	// creates new Login() object
 		        System.out.println("Logging out..."); 				// system announcement
 			}	
