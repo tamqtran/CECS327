@@ -122,9 +122,9 @@ public class PlaylistActionListener implements ActionListener
 	{
 		switch (label.getName()) 			// the three labels are named via label.setName(labelName)
 		{
-		case "title": titleLabel = label;
-		case "artist(s)": artistLabel = label;
-		case "album": albumLabel = label;
+		case "title": titleLabel = label; break;
+		case "artist(s)": artistLabel = label; break;
+		case "album": albumLabel = label; break;
 		}
 	}
 	

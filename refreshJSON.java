@@ -29,6 +29,8 @@ public class refreshJSON
 		JSONArray playlists = new JSONArray();			// add list of playlists
 		playlists.put("king");
 		playlists.put("queen");
+		playlists.put("ace");
+		playlists.put("jack");
 		allan.put("playlists", playlists);
 		
 		JSONArray kingSongLists = new JSONArray();		// add individual playlists with their own songs
@@ -40,7 +42,13 @@ public class refreshJSON
 		queenSongLists.put("Yellow Submarine");
 		allan.put("king", kingSongLists);
 		allan.put("queen", queenSongLists);
+<<<<<<< HEAD
+		allan.put("ace", new JSONArray());
+		allan.put("jack", new JSONArray());
+=======
 		
+		allan.put("loggedIn", false);
+>>>>>>> 4ccbd1dadaa00c51a5da88f2a02027c1498a3c47
 		
 		try 											//Write into json file
 		{
@@ -66,6 +74,8 @@ public class refreshJSON
 		JSONArray longBeachLists = new JSONArray();		// add individual playlists with their own songs
 		longBeachLists.put("Yellow Submarine");
 		bill.put("Long Beach", longBeachLists);
+		
+		bill.put("loggedIn", false);
 		
 		try 											// Write into json file
 		{

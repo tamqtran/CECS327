@@ -81,16 +81,15 @@ public class Homepage
 	private DefaultListModel 	dm;
 	private JList				playlist_List;
 	private JScrollPane			UserSavedPanel;
-	private ShiftingPanel        ShiftingPanel; //ShiftingPanel is the big one
+	private ShiftingPanel        ShiftingPanel; 		// ShiftingPanel is the big one
 	private JSlider				timedSlider;
 	
 	private CreatePlaylistDialog playlistCreation;
 	
-	private boolean isSongPlaying = false, // starts false
+	private boolean isSongPlaying = false, 				// starts false; changes depending on changes occurring in frame
 					isThereASong = false;
 	
-	//For server connection
-	DatagramSocket aSocket;
+	DatagramSocket aSocket;								//For server connection
 	int serverPort;
 	
 	/**
@@ -119,7 +118,7 @@ public class Homepage
 	/**
 	 * The main initialization method. Initializes the frame and sets off everything else into motion.
 	 */
-	private void initialize() 										// initialization starts here
+	private void initialize()
 	{ 									
 		frame = new JFrame("MusicService -- " + userName);			// initialize the frame itself
 		frame.setMinimumSize(new Dimension(750,450));				// and set min dimensions
@@ -173,24 +172,33 @@ public class Homepage
 				JList list = (JList)e.getSource();				// this rectangle bounds between the first and last entries on playlist_List
 				Rectangle r = list.getCellBounds(0, list.getLastVisibleIndex());	
 				
-				if (e.getButton() == MouseEvent.BUTTON1) {		// left mouse button double-click only
-					if (e.getClickCount() == 2 && r != null && r.contains(e.getPoint())) { // and only within the rectangle (that exists)
-						
-						// things happen here
+				if (e.getButton() == MouseEvent.BUTTON1) 									// left mouse button double-click only
+				{		
+					if (e.getClickCount() == 2 && r != null && r.contains(e.getPoint()))	// and only within the rectangle (that exists) 
+					{ 
 						int index = list.locationToIndex(e.getPoint());
+						
 						System.out.println("Index identified: " + index);	// system: shows the index of the clicked item
 						System.out.println("Index name: " + list.getSelectedValue().toString()); // system: shows the name of the clicked item
 						
-						PlaylistPanel newPanel = new PlaylistPanel(userName, list.getSelectedValue().toString());
-						newPanel.setName(list.getSelectedValue().toString());	// iniitalize a new PlaylistPanel and set the name of the PlaylistPanel
+						System.out.println("Current panel in ShiftingPanel is " + ShiftingPanel.getCurrentPanelName());
 						
-						newPanel.getListener().setLabel(title_);		// set the labels from Description_Panel to follow the actions 
-						newPanel.getListener().setLabel(artist_);		// of the buttons from PlaylistPanel 
-						newPanel.getListener().setLabel(album_);
-						
-						ShiftingPanel.addComponent(newPanel);			// add the PlaylistPanel to ShiftingPanel
-												
-						ShiftingPanel.addResizeListenerTo(newPanel);	// assign a component listener to ShiftingPanel using newPanel
+						// checks if the current panel is the same one as the one that just got clicked
+						if (!list.getSelectedValue().toString().equals(ShiftingPanel.getCurrentPanelName())) 
+						{
+							PlaylistPanel newPanel = new PlaylistPanel(userName, list.getSelectedValue().toString());
+							newPanel.setName(list.getSelectedValue().toString());	// iniitalize a new PlaylistPanel and set the name of the PlaylistPanel
+
+							newPanel.getListener().setLabel(title_);		// set the labels from Description_Panel to follow the actions 
+							newPanel.getListener().setLabel(artist_);		// of the buttons from PlaylistPanel 
+							newPanel.getListener().setLabel(album_);
+
+							ShiftingPanel.addComponent(newPanel);			// add the PlaylistPanel to ShiftingPanel
+
+							ShiftingPanel.addResizeListenerTo(newPanel);	// assign a component listener to ShiftingPanel using newPanel
+						}
+						else 
+							System.out.println("Current panel in ShiftingPanel remains " + ShiftingPanel.getCurrentPanelName());
 					}
 				}
 			}
@@ -223,18 +231,20 @@ public class Homepage
 				// the premise would be that the list of options would be based on the user's personal playlists				
 				
 				Object[] possibilities = dm.toArray(); 				// each playlist name would be listed here
-				String rp = (String) JOptionPane.showInputDialog(frame, "Which playlist are you removing?\n"
+				String removedPlaylist = (String) JOptionPane.showInputDialog(frame, "Which playlist are you removing?\n"
 						+ "(There's no going back once you do.)", "Playlist Removal", 
 						JOptionPane.PLAIN_MESSAGE, null, possibilities, null);
-				if (rp == null) 
+				if (removedPlaylist == null) 
 				{													// the dialog was exited one way or another
 					System.out.println("No playlist was removed in the end..."); 
 				} 
 				else 
 				{
-					removePlaylist(rp, userName);					// the variable rp would represent the playlist name to be deleted
+					removePlaylist(removedPlaylist, userName);					// the variable rp would represent the playlist name to be deleted
 					getPlaylists(dm); 								// update the model (and thus the gui) afterwards
-					System.out.println("The playlist --" + rp + "-- was removed."); // system announcement
+					
+					ShiftingPanel.removeFromHistory(removedPlaylist);
+					System.out.println("The playlist --" + removedPlaylist + "-- was removed."); // system announcement
 				}	
 			}
 		});
@@ -322,7 +332,12 @@ public class Homepage
 		_HistoryPanel.setLayout(new FlowLayout());					// and maximum size for the panel
 		_HistoryPanel.setMaximumSize(new Dimension(200,40));		
 		previousHistory_ = new JButton("\u276C \u276C");			// initialize previousHistory_ and nextHistory_ buttons
+		previousHistory_.setEnabled(false);
 		nextHistory_ = new JButton("\u276D \u276D");
+		nextHistory_.setEnabled(false);
+		
+		previousHistory_.setName("previous panel");					// set names of buttons
+		nextHistory_.setName("next panel");
 				
 		_HistoryPanel.add(previousHistory_);						// add the buttons to _HistoryPanel
 		_HistoryPanel.add(nextHistory_);
@@ -336,6 +351,11 @@ public class Homepage
 			public void actionPerformed(ActionEvent e) 
 			{
 				frame.dispose();									// disposes of current frame
+				
+				//send logout message to server
+				String [] arguments = {userName};
+				requestReply.UDPRequestReply("loggedOut",arguments, aSocket, serverPort);
+				
 		        new Login(aSocket, serverPort).setVisible(true); 	// creates new Login() object
 		        System.out.println("Logging out..."); 				// system announcement
 			}	
@@ -356,6 +376,9 @@ public class Homepage
 		ShiftingPanel = new ShiftingPanel();						// initialize ShiftingPanel and set border
 		ShiftingPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		ShiftingPanel.setMinimumSize(new Dimension(500,500));
+		
+		ShiftingPanel.setHistorySwitch(previousHistory_);
+		ShiftingPanel.setHistorySwitch(nextHistory_);
 		
 		JLabel titleLabel = new JLabel("'MusicService' - " + userName, JLabel.CENTER);	// initialize titleLabel
 		titleLabel.setFont(new Font("Tahoma", Font.PLAIN, 40));					// and set font
@@ -522,7 +545,7 @@ public class Homepage
 		pane.add(LOW_panel); // add LOW_panel to pane (the content pane of frame)
 	}
 
-		
+	// FOR USE WITH SEARCHQUERY_	
 	/** ORIGIN: Login.java
 	 * A boolean method that abhors code injections.
 	 * @param input: A string, either username or password
@@ -572,88 +595,88 @@ public class Homepage
 	 * @param playlist playlist to be removed
 	 * @param username current login user
 	 */
-	 void removePlaylist(String playlist, String username) 
-	 {
+	void removePlaylist(String playlist, String username) 
+	{
 		//Server side playlist removal
 		String [] arguments = {username,playlist};
 		JSONObject obj = requestReply.UDPRequestReply("removePlaylist",arguments, aSocket, serverPort);
 	}
 
-	 /**
-	  * Format request into JSON Object
-	  * @param method call method
-	  * @param args argument of the method
-	  * @return return json object
-	  * @throws JSONException
-	  */
-	 JSONObject JSONRequestObject(String method, Object[] args) throws JSONException
-	 {
-		 //Arguments
-		 JSONArray jsonArgs = new JSONArray();
-		 for (int i=0; i<args.length; i++)
-		 {
-			 jsonArgs.put(args[i]);
-		 }
+	/**
+	 * Format request into JSON Object
+	 * @param method call method
+	 * @param args argument of the method
+	 * @return return json object
+	 * @throws JSONException
+	 */
+	JSONObject JSONRequestObject(String method, Object[] args) throws JSONException
+	{
+		//Arguments
+		JSONArray jsonArgs = new JSONArray();
+		for (int i=0; i<args.length; i++)
+		{
+			jsonArgs.put(args[i]);
+		}
 
-		 //JSON Object
-		 JSONObject jsonRequest = new JSONObject();
-		 try 
-		 {
-			 jsonRequest.put("id", UUID.randomUUID().hashCode());
-			 jsonRequest.put("method", method);
-			 jsonRequest.put("arguments", jsonArgs);
-		 }
-		 catch (JSONException e)
-		 {
-			 System.out.println(e);
-		 }
-		 return jsonRequest;
-	 }
+		//JSON Object
+		JSONObject jsonRequest = new JSONObject();
+		try 
+		{
+			jsonRequest.put("id", UUID.randomUUID().hashCode());
+			jsonRequest.put("method", method);
+			jsonRequest.put("arguments", jsonArgs);
+		}
+		catch (JSONException e)
+		{
+			System.out.println(e);
+		}
+		return jsonRequest;
+	}
 
-	 /**
-		 * UDP request and reply 
-		 * @param method method to call
-		 * @param param arguments for the method
-		 * @return JSONObject reply from server
-		 */
-	 JSONObject UDPRequestReply(String method,String[] param) {
-		 JSONObject JsonReply = null;
-		 try 
-		 {
-			 byte [] m;
+	/**
+	 * UDP request and reply 
+	 * @param method method to call
+	 * @param param arguments for the method
+	 * @return JSONObject reply from server
+	 */
+	JSONObject UDPRequestReply(String method,String[] param) {
+		JSONObject JsonReply = null;
+		try 
+		{
+			byte [] m;
 
-			 // opening client side
-			 //Login user1 = new Login();
+			// opening client side
+			//Login user1 = new Login();
 
-			 InetAddress aHost = InetAddress.getByName("localhost");
+			InetAddress aHost = InetAddress.getByName("localhost");
 
-			 //Request
-			 String [] arguments = param;
-			 m = JSONRequestObject(method,arguments).toString().getBytes("utf-8");
-			 DatagramPacket request = new DatagramPacket(m, m.length, aHost, serverPort);
-			 aSocket.send(request);
+			//Request
+			String [] arguments = param;
+			m = JSONRequestObject(method,arguments).toString().getBytes("utf-8");
+			DatagramPacket request = new DatagramPacket(m, m.length, aHost, serverPort);
+			aSocket.send(request);
 
-			 //Reply
-			 byte[] buffer = new byte[1000];
+			//Reply
+			byte[] buffer = new byte[1000];
 
-			 DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 
-			 aSocket.receive(reply);
+			aSocket.receive(reply);
 
-			 //Format datagram reply into JSONObject
-			 JsonReply=new JSONObject(new String(reply.getData()));
+			//Format datagram reply into JSONObject
+			JsonReply=new JSONObject(new String(reply.getData()));
 
-			 System.out.println("Reply: " + new String(reply.getData()));
-			 System.out.println("Type a message to send or x to exit.");
-		 }
-		 catch (SocketException e)
-		 {
-			 System.out.println("Socket: " + e.getMessage());
-		 }
-		 catch (IOException e)
-		 {
-			 System.out.println("IO: " + e.getMessage());
-		 }
-		 return JsonReply;
-	 }
+			System.out.println("Reply: " + new String(reply.getData()));
+			System.out.println("Type a message to send or x to exit.");
+		}
+		catch (SocketException e)
+		{
+			System.out.println("Socket: " + e.getMessage());
+		}
+		catch (IOException e)
+		{
+			System.out.println("IO: " + e.getMessage());
+		}
+		return JsonReply;
+	}
 }

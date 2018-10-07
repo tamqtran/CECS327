@@ -63,6 +63,8 @@ public class PlaylistPanel extends JPanel
 		
 		this.setSize(new Dimension(805,453));
 		
+		this.setName(this.playlist);			// set name of playlistPanel as the playlist name
+		
 //		// creating back to profile button
 //		backToProfileButton = new JButton("Back to Profile");
 //		backToProfileButton.setSize(backToProfileButton.getPreferredSize());
