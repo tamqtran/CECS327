@@ -45,17 +45,19 @@ public class Login implements ActionListener {
 	DatagramSocket aSocket;
 	int serverPort;
 	
-	/*
+	/**
 	 * The driver. When run, the system calls the Login() constructor.
-	 * NOTE: Can be commented out if need be.
+	 * @param args: a list of arguments. If none, then it will act as an empty array.
 	 */
 	public static void main (String[] args) {
 		//testing only
 		new Login(null,6733);
 	}
 	
-	/*
+	/**
 	 * The main constructor. Constructs the frame for the login.
+	 * @param aSocket: a socket
+	 * @param serverPort: a server port
 	 */
 	public Login(DatagramSocket aSocket, int serverPort) {
 		frame = new JFrame("'MusicService' Login");
@@ -126,12 +128,12 @@ public class Login implements ActionListener {
 		String user = usernameField.getText();
 		String pass = String.valueOf(passwordField.getPassword());
 		
-		System.out.println("Typed User: " + user + "\nTyped Pass: " + pass); //debug
+		System.out.println("Typed User: " + user + "\nTyped Pass: " + pass); //system
 		
 		if ((!user.isEmpty()) && (!pass.isEmpty())) {
 			if (isUser(user) && codeDenial(user)) {
 				if (codeDenial(pass) && confirmPassword(user, pass)) {
-					System.out.println("Success. Redirecting..."); //debug
+					System.out.println("Success. Redirecting..."); //system
 					frame.dispose(); 					//close the login
 					//then redirect to homepage with their data
 //					new Profile(user).setVisible(true); 	//version 1
@@ -171,13 +173,7 @@ public class Login implements ActionListener {
 	private boolean confirmPassword (String user, String pass) {
 		//find the user that has this username and this password from whatever json file they're stored in
 		//if pass == json.username_pass then true
-		/*try (InputStream input = new FileInputStream(user + ".json")) {
-			JSONObject obj = new JSONObject(new JSONTokener(input));
-		    String password = obj.get("password").toString();
-		    return password.equals(pass);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} return false;*/
+
 		String [] arguments = {user,pass};
 		JSONObject obj = requestReply.UDPRequestReply("checkLogin",arguments, aSocket, serverPort);
 		if(obj.get("result").equals(true))

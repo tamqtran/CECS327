@@ -42,7 +42,7 @@ public class ShiftingPanel extends JLayeredPane
 	 */
 	public void addResizeListenerTo(JPanel panel) 
 	{
-		this.addComponentListener(new ComponentAdapter() 		// assign component listener to panel
+		this.addComponentListener(new ComponentAdapter() 		// assign component listener to ShiftingPanel
 		{		
 			public void componentResized(ComponentEvent e) 
 			{			

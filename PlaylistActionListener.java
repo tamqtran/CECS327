@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.InputStream;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.table.DefaultTableModel;
 
 import org.json.JSONArray;
@@ -21,6 +22,8 @@ public class PlaylistActionListener implements ActionListener
 {
 	// declaring variables
 	private PlaylistPanel panel;
+	private String songTitle, artist, album;
+	private JLabel titleLabel, artistLabel, albumLabel;
 	
 	/**
 	 * Constructors that adds functionality to the playlist panel
@@ -63,9 +66,14 @@ public class PlaylistActionListener implements ActionListener
 			};
 			
 			// get selected song variables
-			String songTitle = model.getValueAt(0, 0).toString();
-			String artist = model.getValueAt(0, 1).toString();
-			String album = model.getValueAt(0, 2).toString();
+			songTitle = model.getValueAt(0, 0).toString();
+			artist = model.getValueAt(0, 1).toString();
+			album = model.getValueAt(0, 2).toString();
+			
+			//change text on labels in homepage
+			titleLabel.setText(songTitle);
+			artistLabel.setText(artist);
+			albumLabel.setText(album);			
 			
 			// close and open new JFrame
 			JFrame sFrame = (JFrame) panel.getTopLevelAncestor();
@@ -105,4 +113,19 @@ public class PlaylistActionListener implements ActionListener
 			
 		}
 	}
+	
+	/**
+	 * The JLabel variables from Homepage (title_, artist_, album_) are set to these labels in order to change their text whenever the song changes
+	 * @param label: a JLabel from Homepage
+	 */
+	public void setLabel(JLabel label) 
+	{
+		switch (label.getName()) 			// the three labels are named via label.setName(labelName)
+		{
+		case "title": titleLabel = label;
+		case "artist(s)": artistLabel = label;
+		case "album": albumLabel = label;
+		}
+	}
+	
 }

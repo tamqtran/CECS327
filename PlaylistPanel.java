@@ -36,6 +36,8 @@ public class PlaylistPanel extends JPanel
 	
 	public JList<String> songList;
 	
+	private PlaylistActionListener listener;
+	
 	String username,
 		   playlist,
 		   songName;
@@ -52,8 +54,8 @@ public class PlaylistPanel extends JPanel
 		this.playlist = playlist;
 		
 		// initialize  variable that adds functionality to the buttons
-		ActionListener listener = new PlaylistActionListener(this);
-		
+		listener = new PlaylistActionListener(this);
+
 		// based on absolute layout to organize the components in the frame (https://docs.oracle.com/javase/tutorial/uiswing/layout/none.html)
 		this.setLayout(null);
 		
@@ -131,7 +133,14 @@ public class PlaylistPanel extends JPanel
 		catch (Exception e) 																		// catch exception
 		{
 			e.printStackTrace();
+			
 		}
 	}
+	
+	/**
+	 * Gets the PlaylistActionListener variable 'listener'
+	 * @return listener, a PlaylistActionListener
+	 */
+	public PlaylistActionListener getListener() { return listener; }
 
 }

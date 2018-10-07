@@ -48,9 +48,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+/**
+ * The Homepage class creates a frame that houses the main piece of this music streaming application.
+ * @author Austin
+ * @since 9/20/2018
+ */
 public class Homepage 
 {
-	
 	private String specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]";
 	
 	private String 				userName;
@@ -89,39 +93,56 @@ public class Homepage
 	DatagramSocket aSocket;
 	int serverPort;
 	
+	/**
+	 * Test driver for this class.
+	 * @param args: a list of arguments. If none, then it will act as an empty array.
+	 */
 	public static void main(String[] args) 
 	{ // test
 		new Homepage("allan",null, 6733);
 	}
 	
+	/**
+	 * Main constructor.
+	 * @param user: the name of the user
+	 * @param aSocket: a socket
+	 * @param serverPort: the server port
+	 */
 	public Homepage(String user, DatagramSocket aSocket, int serverPort) 
-	{															// main constructor
-		userName = user; 										// takes the username from input
-		this.aSocket = aSocket;									// takes the socket from input
-		this.serverPort = serverPort;							// takes the serverPort from input
-		initialize();											// initializes the frame
+	{																// main constructor
+		userName = user; 											// takes the username from input
+		this.aSocket = aSocket;										// takes the socket from input
+		this.serverPort = serverPort;								// takes the serverPort from input
+		initialize();												// initializes the frame
 	}
 	
-	private void initialize() 									// initialization starts here
+	/**
+	 * The main initialization method. Initializes the frame and sets off everything else into motion.
+	 */
+	private void initialize() 										// initialization starts here
 	{ 									
-		frame = new JFrame("MusicService -- " + userName);		// initialize the frame itself
-		frame.setMinimumSize(new Dimension(750,450));			// and set min dimensions
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	// and the default close operation for the frame
+		frame = new JFrame("MusicService -- " + userName);			// initialize the frame itself
+		frame.setMinimumSize(new Dimension(750,450));				// and set min dimensions
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		// and the default close operation for the frame
 		
 		addHighComponentsToHome(frame.getContentPane()); 			// initializes and loads the upper half of frame components into frame
 		addLowComponentsToHome(frame.getContentPane()); 			// initializes and loads the lower half of frame components into frame
 		
-		frame.pack(); 														// packs the frame together
+		frame.pack(); 												// packs the frame together
 		
-		frame.setSize(new Dimension(1000,600)); 							// sets the size of the frame
-		frame.setLocationRelativeTo(null); 									// sets frame location
+		frame.setSize(new Dimension(1000,600)); 					// sets the size of the frame
+		frame.setLocationRelativeTo(null); 							// sets frame location
 		
 		playlistCreation = new CreatePlaylistDialog(frame, userName, dm, aSocket, serverPort); 	// create playlist creation dialog
-		playlistCreation.pack();
+		playlistCreation.pack();									// pack playlist creation dialog
 		
-		frame.setVisible(true); 											// make the frame visible													// pack playlist creation dialog
+		frame.setVisible(true); 									// make the frame visible
 	}
 	
+	/**
+	 * This initialization method handles the upper half of the frame.
+	 * @param pane: the frame's content pane
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void addHighComponentsToHome(Container pane) 
 	{
@@ -131,7 +152,7 @@ public class Homepage
 		HIGH_panel = new JPanel(); 									// initialize HIGH_panel and set layout
 		HIGH_panel.setLayout(new BoxLayout(HIGH_panel, BoxLayout.X_AXIS));
 		
-		Playlist_Panel = new JPanel(); 							// initialize Playlist_Panel and set layout and set max dimensions
+		Playlist_Panel = new JPanel(); 								// initialize Playlist_Panel and set layout and set max dimensions
 		Playlist_Panel.setLayout(new BoxLayout(Playlist_Panel, BoxLayout.Y_AXIS));
 		Playlist_Panel.setMaximumSize(new Dimension(200,10000));
 		
@@ -149,23 +170,27 @@ public class Homepage
 		
 		playlist_List.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				JList list = (JList)e.getSource();
-				Rectangle r = list.getCellBounds(0, list.getLastVisibleIndex());
+				JList list = (JList)e.getSource();				// this rectangle bounds between the first and last entries on playlist_List
+				Rectangle r = list.getCellBounds(0, list.getLastVisibleIndex());	
 				
-				if (e.getButton() == MouseEvent.BUTTON1) {
-					if (e.getClickCount() == 2 && r != null && r.contains(e.getPoint())) {
+				if (e.getButton() == MouseEvent.BUTTON1) {		// left mouse button double-click only
+					if (e.getClickCount() == 2 && r != null && r.contains(e.getPoint())) { // and only within the rectangle (that exists)
 						
 						// things happen here
 						int index = list.locationToIndex(e.getPoint());
-						System.out.println("Index identified: " + index);
-						System.out.println("Index name: " + list.getSelectedValue().toString());
+						System.out.println("Index identified: " + index);	// system: shows the index of the clicked item
+						System.out.println("Index name: " + list.getSelectedValue().toString()); // system: shows the name of the clicked item
 						
 						PlaylistPanel newPanel = new PlaylistPanel(userName, list.getSelectedValue().toString());
-						newPanel.setName(list.getSelectedValue().toString());
+						newPanel.setName(list.getSelectedValue().toString());	// iniitalize a new PlaylistPanel and set the name of the PlaylistPanel
 						
-						ShiftingPanel.addComponent(newPanel);
+						newPanel.getListener().setLabel(title_);		// set the labels from Description_Panel to follow the actions 
+						newPanel.getListener().setLabel(artist_);		// of the buttons from PlaylistPanel 
+						newPanel.getListener().setLabel(album_);
+						
+						ShiftingPanel.addComponent(newPanel);			// add the PlaylistPanel to ShiftingPanel
 												
-						ShiftingPanel.addResizeListenerTo(newPanel);
+						ShiftingPanel.addResizeListenerTo(newPanel);	// assign a component listener to ShiftingPanel using newPanel
 					}
 				}
 			}
@@ -183,8 +208,8 @@ public class Homepage
 			@Override public void actionPerformed(ActionEvent e) 
 			{
 				System.out.println("Opening subwindow for playlist naming...");				
-				playlistCreation.setLocationRelativeTo(frame); 				// show playlist creation dialog
-				playlistCreation.setVisible(true); 							// set dialog visibility to true
+				playlistCreation.setLocationRelativeTo(frame); 			// show playlist creation dialog
+				playlistCreation.setVisible(true); 						// set dialog visibility to true
 			}	
 		});
 		
@@ -202,13 +227,13 @@ public class Homepage
 						+ "(There's no going back once you do.)", "Playlist Removal", 
 						JOptionPane.PLAIN_MESSAGE, null, possibilities, null);
 				if (rp == null) 
-				{									// the dialog was exited one way or another
+				{													// the dialog was exited one way or another
 					System.out.println("No playlist was removed in the end..."); 
 				} 
 				else 
 				{
-					removePlaylist(rp, userName);			// the variable rp would represent the playlist name to be deleted
-					getPlaylists(dm); 						// update the model (and thus the gui) afterwards
+					removePlaylist(rp, userName);					// the variable rp would represent the playlist name to be deleted
+					getPlaylists(dm); 								// update the model (and thus the gui) afterwards
 					System.out.println("The playlist --" + rp + "-- was removed."); // system announcement
 				}	
 			}
@@ -260,15 +285,15 @@ public class Homepage
 				isThereASong = !isThereASong; 								//
 				System.out.println("is there a song? " + isThereASong);		//
 				if (isThereASong) 
-				{											//
+				{															//
 					// addSong_
 					previousSong_.setText("\u2758" + "\u23F4");				//
 					playPause_.setText("\u2758" + "\u2758");				//
 					nextSong_.setText("\u23F5" + "\u2758");					//
 					// removeSong_
 				} 
-				else 
-				{													//
+				else
+				{ 															//
 					// addSong_
 					previousSong_.setText("\u274C");						//
 					playPause_.setText("\u274C");							//
@@ -288,36 +313,36 @@ public class Homepage
 		});
 		//CONTAINS CODE THAT IS DEBUG ONLY; DOES NOT REFLECT FINAL PRODUCT
 		
-		_SearchPanel.add(searchField);						// add searchField and searchQuery_ to _SearchPanel
-		_SearchPanel.add(searchQuery_);							// and set max dimensions
+		_SearchPanel.add(searchField);								// add searchField and searchQuery_ to _SearchPanel
+		_SearchPanel.add(searchQuery_);								// and set max dimensions
 		_SearchPanel.setMaximumSize(new Dimension(200,40));
 		
 //		_HistoryPanel (worry about this later)
-		_HistoryPanel = new JPanel();						// initialize _HistoryPanel and set layout
-		_HistoryPanel.setLayout(new FlowLayout());			// and maximum size for the panel
+		_HistoryPanel = new JPanel();								// initialize _HistoryPanel and set layout
+		_HistoryPanel.setLayout(new FlowLayout());					// and maximum size for the panel
 		_HistoryPanel.setMaximumSize(new Dimension(200,40));		
-		previousHistory_ = new JButton("\u276C \u276C");	// initialize previousHistory_ and nextHistory_ buttons
+		previousHistory_ = new JButton("\u276C \u276C");			// initialize previousHistory_ and nextHistory_ buttons
 		nextHistory_ = new JButton("\u276D \u276D");
 				
-		_HistoryPanel.add(previousHistory_);		// add the buttons to _HistoryPanel
+		_HistoryPanel.add(previousHistory_);						// add the buttons to _HistoryPanel
 		_HistoryPanel.add(nextHistory_);
 		
-		_ProfilePanel = new JPanel();						// initialize _ProfilePanel and set layout
+		_ProfilePanel = new JPanel();								// initialize _ProfilePanel and set layout
 		_ProfilePanel.setLayout(new FlowLayout());
-		username_ = new JLabel("User: " + userName + "  ");		// initialize username_ and logout_
+		username_ = new JLabel("User: " + userName + "  ");			// initialize username_ and logout_
 		logout_ = new JButton("Logout");
 		logout_.addActionListener(new ActionListener() 
 		{ 	// assign action listener to logout_
 			public void actionPerformed(ActionEvent e) 
 			{
-				frame.dispose();										// disposes of current frame
-		        new Login(aSocket, serverPort).setVisible(true); 		// creates new Login() object
-		        System.out.println("Logging out..."); 					// system announcement
+				frame.dispose();									// disposes of current frame
+		        new Login(aSocket, serverPort).setVisible(true); 	// creates new Login() object
+		        System.out.println("Logging out..."); 				// system announcement
 			}	
 		});
 		
-		_ProfilePanel.add(username_); 							// add username_ and logut_ to _Profile
-		_ProfilePanel.add(logout_);	  							// and set max dimensions
+		_ProfilePanel.add(username_); 								// add username_ and logut_ to _Profile
+		_ProfilePanel.add(logout_);	  								// and set max dimensions
 		_ProfilePanel.setMaximumSize(new Dimension(100,40));
 		
 		TopPanel.add(_HistoryPanel); 								// _SearchPanel and _ProfilePanel
@@ -328,24 +353,24 @@ public class Homepage
 		TopPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
 //		ShiftingPanel (the one that keeps changing)
-		ShiftingPanel = new ShiftingPanel();				// initialize ShiftingPanel and set border
+		ShiftingPanel = new ShiftingPanel();						// initialize ShiftingPanel and set border
 		ShiftingPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		ShiftingPanel.setMinimumSize(new Dimension(500,500));
 		
 		JLabel titleLabel = new JLabel("'MusicService' - " + userName, JLabel.CENTER);	// initialize titleLabel
 		titleLabel.setFont(new Font("Tahoma", Font.PLAIN, 40));					// and set font
 		
-		HomePanel = new JPanel(new BorderLayout());		// initialize HomePanel, set size, and add titleLabel
+		HomePanel = new JPanel(new BorderLayout());					// initialize HomePanel, set size, and add titleLabel
 		HomePanel.setSize(800,450);						
 		HomePanel.add(titleLabel, BorderLayout.CENTER);
 		HomePanel.setBorder(BorderFactory.createLineBorder(Color.RED)); // and set border around it (debug testing only)
 		
 		HomePanel.setName("Zero Home");
 		
-		ShiftingPanel.addComponent(HomePanel);							// add HomePanel to ShiftingPanel
-		ShiftingPanel.addResizeListenerTo(HomePanel);		// set component listener on HomePanel
+		ShiftingPanel.addComponent(HomePanel);						// add HomePanel to ShiftingPanel
+		ShiftingPanel.addResizeListenerTo(HomePanel);				// set component listener on HomePanel
 		
-		Explore_Panel.add(TopPanel); 							// add TopPanel and ShiftingPanel to Explore_Panel
+		Explore_Panel.add(TopPanel); 								// add TopPanel and ShiftingPanel to Explore_Panel
 		Explore_Panel.add(ShiftingPanel);
 		
 		HIGH_panel.add(Box.createRigidArea(new Dimension(1,1))); 	// add rigid areas and panels
@@ -353,32 +378,36 @@ public class Homepage
 		HIGH_panel.add(Box.createRigidArea(new Dimension(1,1)));
 		HIGH_panel.add(Explore_Panel);
 		
-		pane.add(HIGH_panel); 								// add HIGH_panel to pane (the content pane for frame)
+		pane.add(HIGH_panel); 										// add HIGH_panel to pane (the content pane for frame)
 	}
 	
+	/**
+	 * This initialization method handles the lower half of the frame.
+	 * @param pane: the frame's content pane
+	 */
 	private void addLowComponentsToHome(Container pane) 
 	{
-		LOW_panel = new JPanel();							// initialize LOW_panel and set layout and max dimensions
+		LOW_panel = new JPanel();									// initialize LOW_panel and set layout and max dimensions
 		LOW_panel.setLayout(new BoxLayout(LOW_panel, BoxLayout.X_AXIS));
 		LOW_panel.setMaximumSize(new Dimension(15000,100));
-		LOW_panel.add(Box.createHorizontalStrut(4));	 	// add horizontal strut to LOW_panel
+		LOW_panel.add(Box.createHorizontalStrut(4));	 			// add horizontal strut to LOW_panel
 		
 		// small song album cover (m_CoverPanel) can go here later
 		
-		Description_Panel = new JPanel(); 					// initialize Description_Panel and set layout
+		Description_Panel = new JPanel(); 							// initialize Description_Panel and set layout
 		Description_Panel.setLayout(new BoxLayout(Description_Panel, BoxLayout.Y_AXIS));
 		
-		title_ = new JLabel();								// initialize title_ and set max dimensions and text
+		title_ = new JLabel("Title");								// initialize title_ and set max dimensions and text
 		title_.setMaximumSize(new Dimension(150,20)); 
-		title_.setText("Title: song title song title song title song title song title");
+		title_.setName("title");
 		
-		artist_ = new JLabel(); 							// initialize artist_ and set max dimensions and text
+		artist_ = new JLabel("Artist(s)"); 							// initialize artist_ and set max dimensions and text
 		artist_.setMaximumSize(new Dimension(150,20)); 
-		artist_.setText("Artist(s): list of artists");
+		artist_.setName("artist(s)");		
 		
-		album_ = new JLabel(); 								// initialize album_ and set max dimensions and text
-		album_.setMaximumSize(new Dimension(150,20)); 
-		album_.setText("Album: song album");
+		album_ = new JLabel("Album"); 								// initialize album_ and set max dimensions and text
+		album_.setMaximumSize(new Dimension(150,20));		
+		album_.setName("album");
 		
 		Description_Panel.add(Box.createRigidArea(new Dimension(1,1)));	// add rigid areas and labels
 		Description_Panel.add(title_);									// to Description_Panel
@@ -402,7 +431,7 @@ public class Homepage
 		songTime_ = new JLabel("total");
 		// un-movable on initialization, movable when there is a song 'queued' (is that the word for it?)
 		
-		currentTime_.setVisible(isThereASong); 					// set visibilities of currentTime_ and songTime_ to off
+		currentTime_.setVisible(isThereASong); 						// set visibilities of currentTime_ and songTime_ to off
 		timedSlider.setEnabled(isThereASong);  						// timedSlider gets disabled
 		songTime_.setVisible(isThereASong);
 		
@@ -415,9 +444,9 @@ public class Homepage
 		
 //		addSong_ goes here
 		
-		previousSong_ = new JButton("\u274C"); 			// initialize previousSong_ and add an
-		previousSong_.addActionListener(new ActionListener()
-		{ 		// action listener to previousSong_
+		previousSong_ = new JButton("\u274C"); 						// initialize previousSong_ and add an
+		previousSong_.addActionListener(new ActionListener()		// action listener to previousSong_
+		{ 		
 			@Override 
 			public void actionPerformed(ActionEvent e) 
 			{
@@ -451,9 +480,9 @@ public class Homepage
 				}	
 			}
 		});
-		nextSong_ = new JButton("\u274C"); 				// initializes nextSong_ and add an
-		nextSong_.addActionListener(new ActionListener() 
-		{ 			// action listener to nextSong_
+		nextSong_ = new JButton("\u274C"); 						// initializes nextSong_ and add an
+		nextSong_.addActionListener(new ActionListener() 		// action listener to nextSong_
+		{ 			
 			@Override 
 			public void actionPerformed(ActionEvent e) 
 			{			
@@ -547,8 +576,6 @@ public class Homepage
 	 {
 		//Server side playlist removal
 		String [] arguments = {username,playlist};
-//<<<<<<< HEAD
-//		JSONObject obj = UDPRequestReply("removePlaylist",arguments);
 		JSONObject obj = requestReply.UDPRequestReply("removePlaylist",arguments, aSocket, serverPort);
 	}
 
@@ -629,29 +656,4 @@ public class Homepage
 		 }
 		 return JsonReply;
 	 }
-//=======
-//		JSONObject obj = requestReply.UDPRequestReply("removePlaylist",arguments, aSocket, serverPort);
-		
-		/*try (InputStream input = new FileInputStream(username+".json")) 
-		{
-		    JSONObject obj1 = new JSONObject(new JSONTokener(input));
-		    
-		    JSONArray currentList = obj1.getJSONArray("playlists");
-		    currentList.remove(currentList.toList().indexOf(playlist)); 
-		    obj1.remove(playlist); // also need to remove songs from playlist
-		    
-		    FileWriter fileWriter = new FileWriter(username+".json");
-			fileWriter.write(obj1.toString());
-			fileWriter.flush();
-			fileWriter.close();
-		    
-		} 
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-		}*/
-//	}
-	 
-	 
-//>>>>>>> 85fdee17d8fb2ed2593bfefbc6bcf47f91a8da64
 }
