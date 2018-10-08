@@ -13,12 +13,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+<<<<<<< HEAD
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+=======
+>>>>>>> cc731c9e289f4e4330a453f57c909b65ac99d63d
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -45,12 +47,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
-import javax.swing.table.DefaultTableModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 /**
  * The Homepage class creates a frame that houses the main piece of this music streaming application.
@@ -308,57 +308,55 @@ public class Homepage
 			}
 		});
 		searchQuery_ = new JButton("Search");
-		searchQuery_.addActionListener(new ActionListener() 
-		{
+		searchQuery_.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) 
-			{
-				System.out.println("Searching for: " + searchField.getText());
-				System.out.println("Current panel in ShiftingPanel is " + ShiftingPanel.getCurrentPanelName());
+			public void actionPerformed(ActionEvent e) {
+<<<<<<< HEAD
+						System.out.println("Searching for: " + searchField.getText());
+						System.out.println("Current panel in ShiftingPanel is " + ShiftingPanel.getCurrentPanelName());
 						
-				// checks if the current panel is the same one as the one that just got clicked
-				if (!searchField.getText().equals(ShiftingPanel.getCurrentPanelName())) 
-				{
-					SearchMenuPanel newPanel = new SearchMenuPanel(userName, getSearchResults(searchField.getText()),searchField.getText());
-					playlist = "x";
-								
-					newPanel.setName("search - " + searchField.getText()); // set name of the new SearchMenuPanel
-								
-					newPanel.setLabel(title_);		// set labels to respond to changes
-					newPanel.setLabel(artist_);		// in this searchMenuPanel
-					newPanel.setLabel(album_);
-								
-					ShiftingPanel.addComponent(newPanel);			// add the SearchMenuPanel to ShiftingPanel
-	
-					System.out.println("Searching for: " + searchField.getText());
-					System.out.println("Current panel in ShiftingPanel is " + ShiftingPanel.getCurrentPanelName());
-	
-	
-					if (!codeDenial(searchField.getText())) // if special characters are used then this will go off
-					{
-						JOptionPane.showMessageDialog(frame, "You can't do that. Stop it!", "Inane warning", JOptionPane.WARNING_MESSAGE);
-						searchField.setText("");
-					}
-					else  
-					{
 						// checks if the current panel is the same one as the one that just got clicked
 						if (!searchField.getText().equals(ShiftingPanel.getCurrentPanelName())) 
 						{
-							SearchMenuPanel newPanel2 = new SearchMenuPanel(userName, getSearchResults(searchField.getText()),searchField.getText());
-	
-							newPanel2.setName("search - " + searchField.getText()); // set name of the new SearchMenuPanel
-	
-							newPanel2.setLabel(title_);		// set labels to respond to changes
-							newPanel2.setLabel(artist_);		// in this searchMenuPanel
-							newPanel2.setLabel(album_);
-	
-							ShiftingPanel.addComponent(newPanel2);			// add the SearchMenuPanel to ShiftingPanel
-	
-							//							ShiftingPanel.addResizeListenerTo(newPanel);	// assign a component listener to ShiftingPanel using newPanel
-						}
-						else 
-							System.out.println("Current panel in ShiftingPanel remains " + ShiftingPanel.getCurrentPanelName());
+							SearchMenuPanel newPanel = new SearchMenuPanel(userName, getSearchResults(searchField.getText()),searchField.getText());
+							playlist = "x";
+							
+							newPanel.setName("search - " + searchField.getText()); // set name of the new SearchMenuPanel
+							
+							newPanel.setLabel(title_);		// set labels to respond to changes
+							newPanel.setLabel(artist_);		// in this searchMenuPanel
+							newPanel.setLabel(album_);
+							
+							ShiftingPanel.addComponent(newPanel);			// add the SearchMenuPanel to ShiftingPanel
+=======
+				System.out.println("Searching for: " + searchField.getText());
+				System.out.println("Current panel in ShiftingPanel is " + ShiftingPanel.getCurrentPanelName());
+>>>>>>> cc731c9e289f4e4330a453f57c909b65ac99d63d
+
+				if (!codeDenial(searchField.getText())) // if special characters are used then this will go off
+				{
+					JOptionPane.showMessageDialog(frame, "You can't do that. Stop it!", "Inane warning", JOptionPane.WARNING_MESSAGE);
+					searchField.setText("");
+				}
+				else  
+				{
+					// checks if the current panel is the same one as the one that just got clicked
+					if (!searchField.getText().equals(ShiftingPanel.getCurrentPanelName())) 
+					{
+						SearchMenuPanel newPanel = new SearchMenuPanel(userName, getSearchResults(searchField.getText()),searchField.getText());
+
+						newPanel.setName("search - " + searchField.getText()); // set name of the new SearchMenuPanel
+
+						newPanel.setLabel(title_);		// set labels to respond to changes
+						newPanel.setLabel(artist_);		// in this searchMenuPanel
+						newPanel.setLabel(album_);
+
+						ShiftingPanel.addComponent(newPanel);			// add the SearchMenuPanel to ShiftingPanel
+
+						//							ShiftingPanel.addResizeListenerTo(newPanel);	// assign a component listener to ShiftingPanel using newPanel
 					}
+					else 
+						System.out.println("Current panel in ShiftingPanel remains " + ShiftingPanel.getCurrentPanelName());
 				}
 			}
 		});
@@ -540,8 +538,7 @@ public class Homepage
 				{
 					if(playlist.equals("x"))
 					{
-						try 
-						{
+						try {
 							System.out.println(title_+ "_" + artist_ + "_" + album_  + ".wav");
 							File file = new File(title_+ "_" + artist_ + "_" + album_  + ".wav");
 							AudioInputStream player = AudioSystem.getAudioInputStream(file);
@@ -549,9 +546,7 @@ public class Homepage
 							current.open(player);
 							current.setFramePosition(pos);
 							current.start();
-						} 
-						catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) 
-						{
+						} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
@@ -560,51 +555,46 @@ public class Homepage
 					{
 						ArrayList<String> songList = new ArrayList<String>();
 						{
-							
-							try (InputStream input = new FileInputStream(userName+".json"))
+						
+						try (InputStream input = new FileInputStream(userName+".json"))
+						{
+
+							JSONObject obj = new JSONObject(new JSONTokener(input));								// turn into JSON object
+
+							JSONArray listOfSongs = obj.getJSONArray(playlist);										// grabs JSON array of songs by mapping the playlist name
+
+							for(int j = 0; j < listOfSongs.length(); j++)											// adds all songs from array into JList
 							{
-	
-								JSONObject obj = new JSONObject(new JSONTokener(input));								// turn into JSON object
-	
-								JSONArray listOfSongs = obj.getJSONArray(playlist);										// grabs JSON array of songs by mapping the playlist name
-	
-								for(int j = 0; j < listOfSongs.length(); j++)											// adds all songs from array into JList
-								{
-									String temp = listOfSongs.getString(j);
-									String[] transferSong = SearchMenuPanel.search(temp);
-	
-									// get the list of .wav files and separate by song, artist, and album
-									String[] column = { "Song Title", "Artist", "Album" };
-									DefaultTableModel model = new DefaultTableModel(null, column);
-									model.setRowCount(0);
-									for (int i = 0; i < transferSong.length; i++) 
-									{
-										model.addRow(transferSong[i].split("_"));
-									};
-	
-									// get selected song variables
-									String songTitle = model.getValueAt(0, 0).toString();
-									String artist = model.getValueAt(0, 1).toString();
-									String album = model.getValueAt(0, 2).toString();
-	
-									//change text on labels in homepage
-									songList.add(songTitle + "_" + artist + "_" + album);
-								}
-								songIndex = songList.indexOf(title_+ "_" + artist_ + "_" + album_);
-							} 
-							catch (FileNotFoundException e) 
-							{
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							} 
-							catch (IOException e) 
-							{
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								String temp = listOfSongs.getString(j);
+								String[] transferSong = SearchMenuPanel.search(temp);
+
+								// get the list of .wav files and separate by song, artist, and album
+								String[] column = { "Song Title", "Artist", "Album" };
+								DefaultTableModel model = new DefaultTableModel(null, column);
+								model.setRowCount(0);
+								for (int i = 0; i < transferSong.length; i++) {
+									model.addRow(transferSong[i].split("_"));
+								};
+
+								// get selected song variables
+								String songTitle = model.getValueAt(0, 0).toString();
+								String artist = model.getValueAt(0, 1).toString();
+								String album = model.getValueAt(0, 2).toString();
+
+								//change text on labels in homepage
+								songList.add(songTitle + "_" + artist + "_" + album);
 							}
-							playPause_.setText("\u2758" + "\u2758");	
+							songIndex = songList.indexOf(title_+ "_" + artist_ + "_" + album_);
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					playPause_.setText("\u2758" + "\u2758");	
 						}
-					}	
+				}	
 			}
 		}});
 		nextSong_ = new JButton("\u274C"); 						// initializes nextSong_ and add an
@@ -655,7 +645,7 @@ public class Homepage
 	 * @param input: A string, either username or password
 	 * @return false if any special characters are found in input; true otherwise
 	 */
-	private boolean codeDenial(String input) 
+	private boolean codeDenial (String input) 
 	{
 		//denies if input has the following: "[!@#$%&*()_+=|<>?{}\\[\\]~-]" (code injection prevention)
 		for (char c : input.toCharArray()) 
