@@ -27,7 +27,7 @@ public class PlaylistActionListener implements ActionListener
 	private JLabel titleLabel, artistLabel, albumLabel;
 	
 	/**
-	 * Constructors that adds functionality to the playlist panel
+	 * Constructor that adds functionality to the playlist panel
 	 * @param p
 	 */
 	public PlaylistActionListener(PlaylistPanel p) 

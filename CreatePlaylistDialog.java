@@ -45,7 +45,7 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 	DatagramSocket aSocket;
 	int serverPort;
 
-	public CreatePlaylistDialog(Frame homeFrame, String user, DefaultListModel dm, DatagramSocket aSocket,int serverPort) {
+	public CreatePlaylistDialog(Frame homeFrame, String user, DefaultListModel<String> dm, DatagramSocket aSocket,int serverPort) {
 		super(homeFrame, true);
 		username_ = user;									// assign locally the user's username
 		dlm = dm;											// assign locally the defaultlistmodel, still references dm (in Homepage)
@@ -132,7 +132,7 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 		
 		//Server side Add Playlist
 		String [] arguments = {username,playlist};
-		JSONObject obj = requestReply.UDPRequestReply("addPlaylist",arguments, aSocket, serverPort);
+		requestReply.UDPRequestReply("addPlaylist",arguments, aSocket, serverPort);
 		
 		//Server side get playlist
 		String [] arguments1 = {username};

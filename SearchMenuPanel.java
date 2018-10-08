@@ -22,8 +22,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 
 	private JButton playButton, addButton;
 
-	private JLabel 	playlistLabel, responseLabel, 
-//				   	userLabel, searchLabel,
+	private JLabel 	playlistLabel, responseLabel,
 				   	titleLabel, artistLabel, albumLabel;
 
 	@SuppressWarnings("rawtypes")
@@ -43,33 +42,12 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		this.setLayout(null);
 		this.setSize(new Dimension(805,453));
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-		
-//		//Displays Username on Panel
-//		userLabel = new JLabel("User: " + username);
-//		userLabel.setSize(new Dimension(100, 30));
-//		userLabel.setLocation(10, 5);
-//		this.add(userLabel);
-
-//		//Displays what is being searched
-//		searchLabel = new JLabel("Searching for: " + userSearch);
-//		searchLabel.setSize(new Dimension(200, 30));
-//		searchLabel.setLocation(10,18);
-//		this.add(searchLabel);
-		
+				
 		//Response Label. Displays whether action is successful or not
 		responseLabel = new JLabel("");
 		responseLabel.setSize(new Dimension(320, 50));
 		responseLabel.setLocation(130, 295);
 		this.add(responseLabel);
-
-		/*
-		// Back button. Tries to match the playlist page visually
-		// Main functionality is to go back to Profile Frame
-		backButton = new JButton("Back");
-		backButton.setSize(backButton.getPreferredSize());
-		backButton.setLocation(20, 10);
-		backButton.addActionListener(this);
-		this.add(backButton); */
 
 		// Play Button. Redirects user to PlaySong frame
 		playButton = new JButton("Play Song");
@@ -124,6 +102,10 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		addButton.setSize(addButton.getPreferredSize());
 		addButton.setLocation(10, 270);
 		addButton.addActionListener(new ActionListener() {
+			/**
+			 * Adding functionality to addButton
+			 */
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				//Checks if user selected a song
 				if (results.getSelectedRow() != -1) {
@@ -146,7 +128,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 						if (!songlistToAdd.toList().contains(selectedSong)) {
 							songlistToAdd.put(selectedSong);
 							responseLabel.setText("Success! This song was added to that playlist.");
-							responseLabel.setForeground(Color.BLUE);
+							responseLabel.setForeground(Color.BLUE);	// from Color.GREEN (easier on the eyes)
 							System.out.println("Song '" + selectedSong + "' has been added to playlist '" + selectedPL + "'");
 						} else {
 							responseLabel.setText("Warning! This song already exists in that playlist");
@@ -197,7 +179,6 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 			if (FilesInFolder[i].endsWith(EXT) && FilesInFolder[i].toLowerCase().contains(text.toLowerCase()))
 				searchResults.add(FilesInFolder[i].replace(EXT, ""));
 		}
-		;
 
 		return searchResults.toArray(new String[searchResults.size()]);
 	}
@@ -226,14 +207,6 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 	// Action Listener for buttons
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
-
-		/*
-		// If the user clicks back, take the user to Profile Frame
-		if (source == this.backButton) {
-			JFrame sFrame = (JFrame) this.getTopLevelAncestor();
-			sFrame.dispose();
-			new Profile(this.username).setVisible(true);
-		} */
 		
 		//If the user clicks play, play the selected song.
 		// Display success message if successful
@@ -246,7 +219,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 				String album = results.getModel().getValueAt(row, 2).toString();
 				new PlayButton.PlayFrame(songTitle + "_" + artist + "_" + album, username).setVisible(true);
 				
-				//change text on labels in homepage
+				//change text on labels in homepage and sets them all to visible (if they aren't already)
 				titleLabel.setText(songTitle); titleLabel.setVisible(true);
 				artistLabel.setText(artist); artistLabel.setVisible(true);
 				albumLabel.setText(album);	albumLabel.setVisible(true);
@@ -258,6 +231,10 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		}
 	}
 	
+	/**
+	 * This public method assigns one of the jlabels used in this class to the input jlabel
+	 * @param label: a JLabel, one of the three in the description panel in Homepage
+	 */
 	public void setLabel(JLabel label) 
 	{
 		switch (label.getName()) 			// the three labels are named via label.setName(labelName)
