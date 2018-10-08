@@ -11,16 +11,9 @@ import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -34,7 +27,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -42,21 +34,20 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
-import javax.swing.table.DefaultTableModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 /**
  * The Homepage class creates a frame that houses the main piece of this music streaming application.
  * @author Austin
- * @since 9/20/2018
+ * @since 09-20-2018
  */
 public class Homepage 
 {
-	private String specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]";
+	// declare all variables
+	private static String specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]";
 	
 	private String 				userName;
 	private JFrame 				frame;
@@ -79,8 +70,8 @@ public class Homepage
 	private JLabel 				playlist_, username_, 
 								title_, artist_, album_,
 								currentTime_, songTime_;
-	private DefaultListModel 	dm;
-	private JList				playlist_List;
+	private DefaultListModel<String> dm;
+	private JList<?>			playlist_List;
 	private JScrollPane			UserSavedPanel;
 	private ShiftingPanel        ShiftingPanel; 		// ShiftingPanel is the big one
 	private JSlider				timedSlider;
@@ -122,7 +113,7 @@ public class Homepage
 	private void initialize()
 	{ 									
 		frame = new JFrame("MusicService -- " + userName);			// initialize the frame itself
-		frame.setMinimumSize(new Dimension(750,450));				// and set min dimensions
+		frame.setMinimumSize(new Dimension(750,500));				// and set min dimensions
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		// and the default close operation for the frame
 		
 		addHighComponentsToHome(frame.getContentPane()); 			// initializes and loads the upper half of frame components into frame
@@ -135,6 +126,8 @@ public class Homepage
 		
 		playlistCreation = new CreatePlaylistDialog(frame, userName, dm, aSocket, serverPort); 	// create playlist creation dialog
 		playlistCreation.pack();									// pack playlist creation dialog
+		
+		frame.getRootPane().setDefaultButton(searchQuery_);
 		
 		frame.setVisible(true); 									// make the frame visible
 	}
@@ -193,10 +186,14 @@ public class Homepage
 							newPanel.getListener().setLabel(title_);		// set the labels from Description_Panel to follow the actions 
 							newPanel.getListener().setLabel(artist_);		// of the buttons from PlaylistPanel 
 							newPanel.getListener().setLabel(album_);
+							
+							newPanel.getListener().setButtonOn(previousSong_); // set buttons active when a song is selected 
+							newPanel.getListener().setButtonOn(playPause_);
+							newPanel.getListener().setButtonOn(nextSong_);
 
 							ShiftingPanel.addComponent(newPanel);			// add the PlaylistPanel to ShiftingPanel
 
-							ShiftingPanel.addResizeListenerTo(newPanel);	// assign a component listener to ShiftingPanel using newPanel
+//							ShiftingPanel.addResizeListenerTo(newPanel);	// assign a component listener to ShiftingPanel using newPanel
 						}
 						else 
 							System.out.println("Current panel in ShiftingPanel remains " + ShiftingPanel.getCurrentPanelName());
@@ -241,8 +238,10 @@ public class Homepage
 				} 
 				else 
 				{
-					removePlaylist(removedPlaylist, userName);					// the variable rp would represent the playlist name to be deleted
+					removePlaylist(removedPlaylist, userName);		// the variable rp would represent the playlist name to be deleted
 					getPlaylists(dm); 								// update the model (and thus the gui) afterwards
+					
+					// if the current song is from this playlist, remove visibility of the description panel
 					
 					ShiftingPanel.removeFromHistory(removedPlaylist);
 					System.out.println("The playlist --" + removedPlaylist + "-- was removed."); // system announcement
@@ -290,68 +289,40 @@ public class Homepage
 			}
 		});
 		searchQuery_ = new JButton("Search");
-		searchQuery_.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-						System.out.println("Searching for: " + searchField.getText());
-						System.out.println("Current panel in ShiftingPanel is " + ShiftingPanel.getCurrentPanelName());
-						
-						// checks if the current panel is the same one as the one that just got clicked
-						if (!searchField.getText().equals(ShiftingPanel.getCurrentPanelName())) 
-						{
-							SearchMenuPanel newPanel = new SearchMenuPanel(userName, getSearchResults(searchField.getText()),searchField.getText());
-
-							ShiftingPanel.addComponent(newPanel);			// add the SearchMenuPanel to ShiftingPanel
-
-							ShiftingPanel.addResizeListenerTo(newPanel);	// assign a component listener to ShiftingPanel using newPanel
-						}
-						else 
-							System.out.println("Current panel in ShiftingPanel remains " + ShiftingPanel.getCurrentPanelName());
-					}
-				});
-		
-		// searchQuery_ gets assigned an action listener. However...
-		
-		//CONTAINS CODE THAT IS DEBUG ONLY; DOES NOT REFLECT FINAL PRODUCT
-		/*
-		searchQuery_.addActionListener(new ActionListener() 
-		{
+		searchQuery_.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) 
-			{
-				// TODO Auto-generated method stub
-				
-				//DEBUG ONLY; DOES NOT REFLECT FINAL PRODUCT
-				isThereASong = !isThereASong; 								//
-				System.out.println("is there a song? " + isThereASong);		//
-				if (isThereASong) 
-				{															//
-					// addSong_
-					previousSong_.setText("\u2758" + "\u23F4");				//
-					playPause_.setText("\u2758" + "\u2758");				//
-					nextSong_.setText("\u23F5" + "\u2758");					//
-					// removeSong_
-				} 
-				else
-				{ 															//
-					// addSong_
-					previousSong_.setText("\u274C");						//
-					playPause_.setText("\u274C");							//
-					nextSong_.setText("\u274C");							//
-					// removeSong_
-				}															//
-				// addSong_
-				previousSong_.setEnabled(isThereASong);						//
-				playPause_.setEnabled(isThereASong);						//
-				nextSong_.setEnabled(isThereASong);							//
-				// removeSong_
-				currentTime_.setVisible(isThereASong);						//
-				timedSlider.setEnabled(isThereASong);						//
-				songTime_.setVisible(isThereASong);							//
-				//DEBUG ONLY; DOES NOT REFLECT FINAL PRODUCT
-			}	
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Searching for: " + searchField.getText());
+				System.out.println("Current panel in ShiftingPanel is " + ShiftingPanel.getCurrentPanelName());
+
+				if (!codeDenial(searchField.getText())) // if special characters are used then this will go off
+				{
+					JOptionPane.showMessageDialog(frame, "You can't do that. Stop it!", "Inane warning", JOptionPane.WARNING_MESSAGE);
+					searchField.setText("");
+				}
+				else  
+				{
+					// checks if the current panel is the same one as the one that just got clicked
+					if (!searchField.getText().equals(ShiftingPanel.getCurrentPanelName())) 
+					{
+						SearchMenuPanel newPanel = new SearchMenuPanel(userName, getSearchResults(searchField.getText()),searchField.getText());
+
+						newPanel.setName("search - " + searchField.getText()); // set name of the new SearchMenuPanel
+
+						newPanel.setLabel(title_);		// set labels to respond to changes
+						newPanel.setLabel(artist_);		// in this searchMenuPanel
+						newPanel.setLabel(album_);
+
+						ShiftingPanel.addComponent(newPanel);			// add the SearchMenuPanel to ShiftingPanel
+
+						//							ShiftingPanel.addResizeListenerTo(newPanel);	// assign a component listener to ShiftingPanel using newPanel
+					}
+					else 
+						System.out.println("Current panel in ShiftingPanel remains " + ShiftingPanel.getCurrentPanelName());
+				}
+			}
 		});
-		//CONTAINS CODE THAT IS DEBUG ONLY; DOES NOT REFLECT FINAL PRODUCT
-		*/
+
 		_SearchPanel.add(searchField);								// add searchField and searchQuery_ to _SearchPanel
 		_SearchPanel.add(searchQuery_);								// and set max dimensions
 		_SearchPanel.setMaximumSize(new Dimension(200,40));
@@ -452,14 +423,17 @@ public class Homepage
 		title_ = new JLabel("Title");								// initialize title_ and set max dimensions and text
 		title_.setMaximumSize(new Dimension(150,20)); 
 		title_.setName("title");
+		title_.setVisible(false);
 		
 		artist_ = new JLabel("Artist(s)"); 							// initialize artist_ and set max dimensions and text
 		artist_.setMaximumSize(new Dimension(150,20)); 
 		artist_.setName("artist(s)");		
+		artist_.setVisible(false);
 		
 		album_ = new JLabel("Album"); 								// initialize album_ and set max dimensions and text
 		album_.setMaximumSize(new Dimension(150,20));		
 		album_.setName("album");
+		album_.setVisible(false);
 		
 		Description_Panel.add(Box.createRigidArea(new Dimension(1,1)));	// add rigid areas and labels
 		Description_Panel.add(title_);									// to Description_Panel
@@ -604,7 +578,7 @@ public class Homepage
 	 * Read playlists array from json file and add to gui list
 	 * @param dm defaultlistModel
 	 */
-	void getPlaylists(DefaultListModel dm) 
+	void getPlaylists(DefaultListModel<String> dm) 
 	{
 		dm.clear(); //clear list 
 
@@ -628,12 +602,12 @@ public class Homepage
 	{
 		//Server side playlist removal
 		String [] arguments = {username,playlist};
-		JSONObject obj = requestReply.UDPRequestReply("removePlaylist",arguments, aSocket, serverPort);
+		requestReply.UDPRequestReply("removePlaylist",arguments, aSocket, serverPort);
 	}
 
 	/** ORIGIN: SearchMenuPanel.java
 	 * Get search results 
-	 * @param
+	 * @param search query
 	 */
 	String[] getSearchResults(String search) {
 		String [] arguments = {search};

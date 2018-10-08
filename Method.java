@@ -1,18 +1,17 @@
 //package Server;
 
-import java.util.UUID;
-
-import javax.swing.DefaultListModel;
-
-import java.net.*;
-import java.util.Scanner;
 import java.io.*;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.json.JSONException;
 
+/**
+ * 
+ * @author Duong Pham
+ * @since 10-01-2018
+ *
+ */
 public class Method 
 {
 	public Method() {}
@@ -30,25 +29,6 @@ public class Method
 			JSONObject obj1 = new JSONObject(new JSONTokener(input));
 			sPassword = obj1.get("password").toString();
 			
-			// checking if another user has logged in
-			// true if someone logged in, false if someone is not
-			boolean loggedIn = (boolean) obj1.get("loggedIn");
-			
-			if(loggedIn == true)	
-			{
-				System.out.println("Error: Someone is already logged into this account");
-				return false;
-			}
-			else
-			{
-				// change so multiple users cant use it
-				obj1.put("loggedIn", true);
-				
-				FileWriter fileWriter = new FileWriter(username+".json");
-				fileWriter.write(obj1.toString());
-				fileWriter.flush();
-				fileWriter.close();
-			}
 		}
 		catch (Exception e) 
 		{
@@ -58,6 +38,45 @@ public class Method
 		if(password.equals(sPassword))
 			return true;
 		return false;
+	}
+	
+	/**
+	 * This method changes the loggedIn variable of the account JSON once user logs out
+	 * @param username
+	 * @return
+	 */
+	public Boolean logIn(String username)
+	{
+		try (InputStream input = new FileInputStream(username+".json")) 
+		{
+			JSONObject obj1 = new JSONObject(new JSONTokener(input));
+			
+			boolean loggedIn = (boolean) obj1.get("loggedIn");
+			
+			// checking if another user has logged in
+			// true if someone logged in, false if someone is not
+			if(loggedIn == true)	
+			{
+				System.out.println("Error: Someone is already logged into this account");
+				return false;
+			}
+			else
+			{
+				// change variable so multiple users cant use it
+				obj1.put("loggedIn", true);
+				
+				FileWriter fileWriter = new FileWriter(username+".json");
+				fileWriter.write(obj1.toString());
+				fileWriter.flush();
+				fileWriter.close();
+			}
+			
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		return true;
 	}
 	
 	/**

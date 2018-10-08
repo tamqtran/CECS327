@@ -7,13 +7,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.util.UUID;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -23,14 +18,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-//import java.awt.event.MouseAdapter;
-//import java.awt.event.MouseEvent;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+/**
+ * 
+ * @author Austin Tao
+ * @since 08-20-2018
+ *
+ */
 public class Login implements ActionListener {
 	private JFrame frame;
 	protected JTextField usernameField;
@@ -130,17 +127,26 @@ public class Login implements ActionListener {
 		
 		System.out.println("Typed User: " + user + "\nTyped Pass: " + pass); //system
 		
-		if ((!user.isEmpty()) && (!pass.isEmpty())) {
-			if (isUser(user) && codeDenial(user)) {
-				if (codeDenial(pass) && confirmPassword(user, pass)) {
+		if ((!user.isEmpty()) && (!pass.isEmpty())) 
+		{
+			if (isUser(user) && codeDenial(user)) 
+			{
+				if (codeDenial(pass) && confirmPassword(user, pass) && singleUser(user)) 
+				{
 					System.out.println("Success. Redirecting..."); //system
 					frame.dispose(); 					//close the login
 					//then redirect to homepage with their data
 //					new Profile(user).setVisible(true); 	//version 1
 					new Homepage(user,aSocket, serverPort).setVisible(true);	//version 2
-				} else message = "Incorrect password; try again.";
-			} else message = "No such user; try again.";
-		} else message = "Fill out both boxes.";
+				} 
+				else if(confirmPassword(user, pass) == false)
+					message = "Incorrect password; try again.";
+				else if(singleUser(user) == false)
+					message = "Sorry, this account is already occupied";
+			}
+			else message = "No such user; try again.";
+		} 
+		else message = "Fill out both boxes.";
 		
 		eLabel.setText(message);
 		eLabel.setSize(eLabel.getPreferredSize());
@@ -163,6 +169,7 @@ public class Login implements ActionListener {
 			e.printStackTrace();
 		} return false;
 	}
+	
 	/**
 	 * A boolean method that checks if a given user exists in the list of accounts logged by the service, and is authentically
 	 * the person they claim to be (using their password for proof).
@@ -175,9 +182,33 @@ public class Login implements ActionListener {
 		//if pass == json.username_pass then true
 
 		String [] arguments = {user,pass};
+		
+		// checking password
 		JSONObject obj = requestReply.UDPRequestReply("checkLogin",arguments, aSocket, serverPort);
+		
 		if(obj.get("result").equals(true))
 			return true;
+		return false;
+	}
+	
+	/**
+	 * A boolean method that checks if there is another user already active in the account 
+	 * @param user: The name of the user
+	 * @return a boolean determining if there is a user active on the account
+	 */
+	private boolean singleUser(String user) 
+	{
+		//find the user that has this username from whatever json file they're stored in
+		String [] arguments = {user};
+		
+		// checking if another user has the same account
+		JSONObject obj = requestReply.UDPRequestReply("logIn",arguments, aSocket, serverPort);
+		
+		// if there is no user using the account, return true
+		if(obj.get("result").equals(true))
+			return true;
+		
+		// if there is a user, return false
 		return false;
 	}
 	

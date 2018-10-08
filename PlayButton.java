@@ -1,11 +1,12 @@
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -13,14 +14,19 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 /**
+ * Playbutton handles songs and adds the features to play and pause a song.
  * @author Luciano Vega
-   Playbutton handles songs and adds the features to play and pause a song.
+ * @since 09-06-2018
+ * 
  */
 public class PlayButton {
 	static String uName = "";//used for the username
@@ -104,10 +110,12 @@ public class PlayButton {
 			this.setLayout(new BorderLayout());
 			this.add(p1, BorderLayout.CENTER);
 		}
+		
 		class YActionListener implements ActionListener{//Action listener for songs played from search menu
 			private PlayPanel panel;
 			Clip current;
 			int pos = 0;
+			
 
 			public YActionListener(PlayPanel b)
 			{
@@ -152,7 +160,6 @@ public class PlayButton {
 					}
 					JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 					pFrame.dispose();
-//					new SearchMenuFrame(uName).setVisible(true);
 				}
 				else if(o == panel.pause)//pauses song if song is active and saves frame position to resume in play
 				{
@@ -167,10 +174,53 @@ public class PlayButton {
 				}
 			}
 		}
-		class XActionListener implements ActionListener{//
+		class XActionListener implements ActionListener
+		{
 			private PlayPanel panel;
 			Clip current;
 			int pos = 0;
+			int songIndex = 0;
+
+			String username = uName;
+			ArrayList<String> songList = new ArrayList<String>();
+			{
+			
+			try (InputStream input = new FileInputStream(username+".json"))
+			{
+
+				JSONObject obj = new JSONObject(new JSONTokener(input));								// turn into JSON object
+
+				JSONArray listOfSongs = obj.getJSONArray(playlist);										// grabs JSON array of songs by mapping the playlist name
+
+				for(int j = 0; j < listOfSongs.length(); j++)											// adds all songs from array into JList
+				{
+					String temp = listOfSongs.getString(j);
+					String[] transferSong = SearchMenuPanel.search(temp);
+
+					// get the list of .wav files and separate by song, artist, and album
+					String[] column = { "Song Title", "Artist", "Album" };
+					DefaultTableModel model = new DefaultTableModel(null, column);
+					model.setRowCount(0);
+					for (int i = 0; i < transferSong.length; i++) {
+						model.addRow(transferSong[i].split("_"));
+					};
+
+					// get selected song variables
+					String songTitle = model.getValueAt(0, 0).toString();
+					String artist = model.getValueAt(0, 1).toString();
+					String album = model.getValueAt(0, 2).toString();
+
+					//change text on labels in homepage
+					songList.add(songTitle + "_" + artist + "_" + album);
+				}
+				songIndex = songList.indexOf(song);
+
+			}
+			catch (Exception e) 																		// catch exception
+			{
+				e.printStackTrace();
+
+			}}
 
 			public XActionListener(PlayPanel b)
 			{
@@ -189,19 +239,51 @@ public class PlayButton {
 					if((current == null) || (current!=null && (!(current.isActive()))))//checks if song has not started playing or if it is paused
 					{
 						try {
-							System.out.println(song + ".wav");
-							File file = new File(song + ".wav");
+							System.out.println(songList.get(songIndex) + ".wav");
+							File file = new File(songList.get(songIndex) + ".wav");
 							AudioInputStream player = AudioSystem.getAudioInputStream(file);
 							current = AudioSystem.getClip();
 							current.open(player);
 							current.setFramePosition(pos);
 							current.start();
+							if(songIndex == songList.size()-1)
+							{
+								songIndex = 0;
+							}
+							else
+							{
+								songIndex++;
+							}
+
 						} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
 					}
 				}
+//				else if(o == panel.skip)
+//				{
+//					if(!(songList.isEmpty()))
+//					{
+//						current.stop();
+//						System.out.println(songList.get(songIndex) + ".wav");
+//						File file = new File(songList.get(songIndex) + ".wav");
+//						AudioInputStream player = AudioSystem.getAudioInputStream(file);
+//						current = AudioSystem.getClip();
+//						current.open(player);
+//						current.setFramePosition(pos);
+//						current.start();
+//						
+//						if(songIndex == songList.size() -1)
+//						{
+//							songIndex = 0;
+//						}
+//						else
+//						{
+//							songIndex++;
+//						}
+//					}
+//				}
 				else if(o == panel.back)//stops song if it is playing and returns to playlist
 				{
 					if(current != null)
@@ -214,16 +296,9 @@ public class PlayButton {
 						current.flush();
 						current.close();
 					}
+					songList.clear();
 					JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 					pFrame.dispose();
-					if(playlist.isEmpty())
-					{
-//						new SearchMenuFrame(uName).setVisible(true);
-					}
-					else 
-					{
-//						new PlaylistFrame(uName, playlist).setVisible(true);
-					}
 				}
 				else if(o == panel.pause)//pauses song is song is playing
 				{

@@ -1,26 +1,19 @@
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.net.*;
-import java.util.Scanner;
 import java.io.*;
-import java.util.UUID;
-
-import org.json.JSONTokener;
-import org.json.JSONException;
-
 
 /**
  * This file is the file that initializes the testing JSON files to start
  * This file starts the program
  * @author Tam Tran
- *
+ * @since 10-05-2018
  */
 public class refreshJSON 
 {
 	public static void main(String[] args) 
 	{
-		
+		// 1st Account
 		//Create JSON object for account 'allan'
 		JSONObject allan = new JSONObject();
 		allan.put("username", "allan");					// add username
@@ -58,7 +51,7 @@ public class refreshJSON
 			e.printStackTrace();
 		}
 		
-		
+		// 2nd Account
 		// Create another JSON object for account 'bill' to test out login into different accounts
 		JSONObject bill = new JSONObject();
 		bill.put("username", "bill");					// add username
@@ -85,10 +78,37 @@ public class refreshJSON
 			e.printStackTrace();
 		}
 		
+		
+		// 3rd Account
+		// Create another JSON object for account 'bill' to test out login into different accounts
+		JSONObject tony = new JSONObject();
+		tony.put("username", "tony");					// add username
+		tony.put("password", "stark");				// add password
+				
+		JSONArray playlists3 = new JSONArray();			// add list of playlists
+		playlists3.put("Marvel");
+		tony.put("playlists", playlists3);
+				
+		JSONArray marvel = new JSONArray();		// add individual playlists with their own songs
+		marvel.put("Hello Goodbye");
+		tony.put("Marvel", marvel);
+				
+		tony.put("loggedIn", false);
+				
+		try 											// Write into json file
+		{
+			FileWriter fileWriter = new FileWriter("tony.json");
+			fileWriter.write(tony.toString());
+			fileWriter.flush();
+			fileWriter.close();
+		}catch (Exception e) 							// catch exception
+		{
+			e.printStackTrace();
+		}
+		
 		System.out.println(allan);
 		System.out.println(bill);
-
-		
+		System.out.println(tony);
 	}
 	
 
