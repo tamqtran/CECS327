@@ -13,7 +13,7 @@ import org.json.JSONTokener;
 import javax.swing.table.*;
 
 /**
- * 
+ *  The JPanel that displays the searches of the user
  * @author Vincent Vu
  * @since 09-06-2018
  *
@@ -162,7 +162,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 
 	/**
 	 * Search method to search for the user's desired song and display relevant results
-	 * @param text: what the user wants to search for
+	 * @param text - what the user wants to search for
 	 * @return String array of the search results
 	 */
 	public static String[] search(String text) {
@@ -190,7 +190,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 	}
 
 	/**
-	 * Method for grabbing the current user's playlists
+	 * Grabs the current user's playlists
 	 * @return String array of all the user's playlists
 	 */
 	public String[] grabPlaylists() {
@@ -210,7 +210,9 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		return null;
 	}
 
-	// Action Listener for buttons
+	/**
+	 * Adding functionality to buttons
+	 */
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 		
@@ -238,8 +240,8 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 	}
 	
 	/**
-	 * This public method assigns one of the jlabels used in this class to the input jlabel
-	 * @param label: a JLabel, one of the three in the description panel in Homepage
+	 * Assigns one of the jlabels used in this class to the input jlabel
+	 * @param label - a JLabel, one of the three in the description panel in Homepage
 	 */
 	public void setLabel(JLabel label) 
 	{

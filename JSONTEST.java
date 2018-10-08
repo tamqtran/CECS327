@@ -11,7 +11,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 /**
- * 
+ * Holds static methods that modifies the JSON files
  * @author Duong Pham
  * @since 09-06-2018
  *
@@ -139,8 +139,8 @@ public class JSONTEST {
 	
 	/**
 	 * Add playlist to JSON FiLE
-	 * @param playlist playlist to be added
-	 * @param username current login user
+	 * @param playlist - playlist to be added
+	 * @param username - current login user
 	 */
 	static void addPlaylist(String playlist, String username) {
 		try (InputStream input = new FileInputStream(username+".json")) {
@@ -161,10 +161,11 @@ public class JSONTEST {
 			e.printStackTrace();
 		}
 	}
+	
 	/**
 	 * Remove playlist from JSON FiLE
-	 * @param playlist playlist to be removed
-	 * @param username current login user
+	 * @param playlist - playlist to be removed
+	 * @param username - current login user
 	 */
 	static void removePlaylist(String playlist, String username) {
 		try (InputStream input = new FileInputStream(username+".json")) {
@@ -185,12 +186,12 @@ public class JSONTEST {
 	}
 	
 	
-	/*-------------------------Playlist Frame------------------------------*
+	/*-------------------------Playlist Frame------------------------------*/
 	/**
 	 * Add a song to a playlist
-	 * @param playlist playlist to add the song
-	 * @param song song to be added to playlist
-	 * @param username current login user
+	 * @param playlist - playlist to add the song
+	 * @param song song - to be added to playlist
+	 * @param username - current login user
 	 */
 	static void removeSong(String playlist, String song, String username) {
 		try (InputStream input = new FileInputStream(username+".json")) {
@@ -212,9 +213,9 @@ public class JSONTEST {
 	}
 	/**
 	 * Remove a song from a playlist
-	 * @param playlist playlist that song is in
-	 * @param song song to be removed
-	 * @param username current login user
+	 * @param playlist - playlist that song is in
+	 * @param song - song to be removed
+	 * @param username - current login user
 	 */
 	static void addSong(String playlist, String song, String username) {
 		try (InputStream input = new FileInputStream(username+".json")) {
@@ -238,8 +239,8 @@ public class JSONTEST {
 		}
 	}
 	/**
-	 * Read songs array from a playlist in json file and add to gui list
-	 * @param dm defaultlistModel
+	 * Read songs array from a playlist in json file and add to GUI list
+	 * @param dm - defaultlistModel
 	 */
 	void getSonglist(DefaultListModel<String> dm, String playlist) {
 		dm.clear(); //clear list 

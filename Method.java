@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 /**
- * 
+ * This class holds the methods that reads messages from the Client-Server interaction and also invokes the method according to the message 
  * @author Duong Pham
  * @since 10-01-2018
  *
@@ -18,7 +18,7 @@ public class Method
 	
 	/**
 	 * Get user's name
-	 * @param username user making request
+	 * @param username - user that is making the request
 	 * @return user's name 
 	 */
 	public Boolean checkLogin(String username,String password) 
@@ -41,9 +41,9 @@ public class Method
 	}
 	
 	/**
-	 * This method changes the loggedIn variable of the account JSON once user logs out
-	 * @param username
-	 * @return
+	 * Changes the loggedIn variable of the account JSON once user logs in
+	 * @param username - user that is making the request
+	 * @return boolean depending if there is someone currently using the account
 	 */
 	public Boolean logIn(String username)
 	{
@@ -80,9 +80,9 @@ public class Method
 	}
 	
 	/**
-	 * This method changes the loggedIn variable of the account JSON once user logs out
-	 * @param username
-	 * @return
+	 * Changes the loggedIn variable of the account JSON once user logs out
+	 * @param username - user that is making the request
+	 * @return boolean that identifies that the user has successfully logged out
 	 */
 	public Boolean loggedOut(String username)
 	{
@@ -114,7 +114,7 @@ public class Method
 	
 	/**
 	 * Get user's name
-	 * @param username user making request
+	 * @param username - user that is making the request
 	 * @return user's name 
 	 */
 	public String getName(String username) 
@@ -132,6 +132,11 @@ public class Method
 			return name;
 	}
 	
+	/**
+	 * Get the song list
+	 * @param username - user that is making the request
+	 * @return in a JSONARRAY song list
+	 */
 	public JSONArray getSonglist(String username) 
 	{
 		JSONObject obj1;
@@ -151,8 +156,8 @@ public class Method
 	}
 	
 	/**
-	 * Get playlist
-	 * @param username user making request
+	 * Get the list of playlists
+	 * @param username - user that is making the request
 	 * @return a JSONArray of playlist
 	 */
 	public JSONArray getPlaylists(String username) 
@@ -175,8 +180,8 @@ public class Method
 	
 	/**
 	 * Add playlist to JSON FiLE
-	 * @param username user making request
-	 * @param playlist playlist to be added
+	 * @param username - user that is making the request
+	 * @param playlist - playlist to be added
 	 */
 	 public boolean addPlaylist(String username, String playlist) 
 	 {
@@ -206,8 +211,8 @@ public class Method
 	 
 	 /**
 		 * Remove playlist from JSON FiLE
-		 * @param username user making request
-		 * @param playlist playlistto be removed
+		 * @param username - user that is making the request
+		 * @param playlist - playlist to be removed
 		 */
 	public boolean removePlaylist(String username, String playlist) 
 	{
@@ -234,10 +239,10 @@ public class Method
 	
 	/**
 	 * Remove a song from a playlist
-	 * @param username user making request
-	 * @param playlist playlist to add the song
-	 * @param song song to be added to playlist
-	 * @return true upon success
+	 * @param username - user that is making the request
+	 * @param playlist - playlist to add the song
+	 * @param song - song to be added to playlist
+	 * @return true upon success; false if unsuccessful
 	 */
 	public boolean removeSong(String username, String playlist, String song) 
 	{
@@ -265,10 +270,10 @@ public class Method
 	}
 	/**
 	 * Add a song to a playlist
-	 * @param username user making request
-	 * @param playlist playlist song is in
-	 * @param song song to add
-	 * @return true upon success
+	 * @param username - user that is making the request
+	 * @param playlist - playlist song is in
+	 * @param song - song to add
+	 * @return true upon success; false if unsuccessful
 	 */
 	public boolean addSong(String username, String playlist, String song) 
 	{
@@ -300,8 +305,8 @@ public class Method
 	}
 	/**
 	 * Get songs from a playlist
-	 * @param username user making request
-	 * @param playlist to get song from
+	 * @param username - user that is making the request
+	 * @param playlist - playlist to get song from
 	 * @return return JSONArray of songs
 	 * */
 	public JSONArray getSongs(String username, String playlist) 

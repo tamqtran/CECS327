@@ -23,7 +23,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 /**
- * 
+ * The Login class JFrame that deals with user logging in
  * @author Austin Tao
  * @since 08-20-2018
  *
@@ -43,8 +43,8 @@ public class Login implements ActionListener {
 	int serverPort;
 	
 	/**
-	 * The driver. When run, the system calls the Login() constructor.
-	 * @param args: a list of arguments. If none, then it will act as an empty array.
+	 * Test driver
+	 * @param args - a list of arguments. If none, then it will act as an empty array.
 	 */
 	public static void main (String[] args) {
 		//testing only
@@ -53,8 +53,8 @@ public class Login implements ActionListener {
 	
 	/**
 	 * The main constructor. Constructs the frame for the login.
-	 * @param aSocket: a socket
-	 * @param serverPort: a server port
+	 * @param aSocket - a socket
+	 * @param serverPort - a server port
 	 */
 	public Login(DatagramSocket aSocket, int serverPort) {
 		frame = new JFrame("'MusicService' Login");
@@ -72,8 +72,9 @@ public class Login implements ActionListener {
 		this.serverPort = serverPort;
 	}
 	
-	/*
-	 * The extra panes constructor. Fills in the contents of the login frame.
+	/**
+	 * Adds contents of the login frame.
+	 * @param pane - the pane of the Login Frame
 	 */
 	private void addComponentsToPane (Container pane){
 		pane.setLayout(new BoxLayout(pane, BoxLayout.PAGE_AXIS));
@@ -121,6 +122,11 @@ public class Login implements ActionListener {
 	 * current users in the system. If the username and password is found, then the login will let them through.
 	 * Any mistake will be pointed out as an error message (in red).
 	 */
+	
+	/**
+	 * Adds functionality to the buttons within the Login Frame
+	 * @param e - the action that is being performed
+	 */
 	public void actionPerformed(ActionEvent e) {
 		String user = usernameField.getText();
 		String pass = String.valueOf(passwordField.getPassword());
@@ -154,9 +160,9 @@ public class Login implements ActionListener {
 	}
 	
 	/**
-	 * A boolean method that tests if the system has a json file of the user 
-	 * @param user: The name of the user
-	 * @return a boolean determining if a user exists within the accounts currently logged in the service
+	 * Tests if the system has a json file of the user 
+	 * @param user - The name of the user
+	 * @return boolean determining if a user exists within the accounts currently logged in the service
 	 */
 	private boolean isUser (String user) {
 		//find the existence of a user with this name from whatever json file they're stored in
@@ -171,11 +177,10 @@ public class Login implements ActionListener {
 	}
 	
 	/**
-	 * A boolean method that checks if a given user exists in the list of accounts logged by the service, and is authentically
-	 * the person they claim to be (using their password for proof).
-	 * @param user: The name of the user
-	 * @param pass: The password for the specified user
-	 * @return a boolean determining if a password matches with the password logged in the given user's file
+	 * Checks if a given user exists in the list of accounts logged by the service, and is authentically the person they claim to be (using their password for proof).
+	 * @param user - The name of the user
+	 * @param pass - The password for the specified user
+	 * @return boolean determining if a password matches with the password logged in the given user's file
 	 */
 	private boolean confirmPassword (String user, String pass) {
 		//find the user that has this username and this password from whatever json file they're stored in
@@ -192,9 +197,9 @@ public class Login implements ActionListener {
 	}
 	
 	/**
-	 * A boolean method that checks if there is another user already active in the account 
-	 * @param user: The name of the user
-	 * @return a boolean determining if there is a user active on the account
+	 * Checks if there is another user already active in the account 
+	 * @param user - The name of the user
+	 * @return boolean determining if there is a user active on the account
 	 */
 	private boolean singleUser(String user) 
 	{
@@ -213,8 +218,8 @@ public class Login implements ActionListener {
 	}
 	
 	/**
-	 * A boolean method that abhors code injections.
-	 * @param input: A string, either username or password
+	 * Detects special characters in the string
+	 * @param input - A string, either username or password
 	 * @return false if any special characters are found in input; true otherwise
 	 */
 	private boolean codeDenial (String input) {
