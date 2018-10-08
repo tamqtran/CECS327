@@ -642,6 +642,9 @@ public class Homepage
 		String [] arguments = {search};
 		JSONObject obj = requestReply.UDPRequestReply("getSearch", arguments, aSocket, serverPort);
 		String results  = obj.get("result").toString();
+		if (results.length() < 3) {
+			return null;
+		}
 		results = results.substring(2, results.length() - 2).replace("\",\"", ",");
 		System.out.println("These are the results" + results);
 		
