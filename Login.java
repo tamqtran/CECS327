@@ -7,8 +7,13 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.util.UUID;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -18,16 +23,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+//import java.awt.event.MouseAdapter;
+//import java.awt.event.MouseEvent;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-/**
- * 
- * @author Austin Tao
- * @since 08-20-2018
- *
- */
 public class Login implements ActionListener {
 	private JFrame frame;
 	protected JTextField usernameField;

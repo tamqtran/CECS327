@@ -1,13 +1,20 @@
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.net.*;
+import java.util.Scanner;
 import java.io.*;
+import java.util.UUID;
+
+import org.json.JSONTokener;
+import org.json.JSONException;
+
 
 /**
  * This file is the file that initializes the testing JSON files to start
  * This file starts the program
  * @author Tam Tran
- * @since 10-05-2018
+ *
  */
 public class refreshJSON 
 {

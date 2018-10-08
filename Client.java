@@ -1,22 +1,17 @@
 import java.io.BufferedReader; 
 import java.io.FileReader;
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-/**
- * 
- * @author Duong Pham
- * @since 09-25-2018
- *
- */
 public class Client implements Runnable{
 	//Reception socket
     private DatagramSocket socket;
     // UDP packet to receive data into
     private DatagramPacket packet;
-    // Flag for initialization
+    // Flag for initialisation
     private boolean failedInit = true;
 
     /**
@@ -28,7 +23,7 @@ public class Client implements Runnable{
         try {
             // Create the socket using the reception port
             this.socket = new DatagramSocket(receptionPort);
-            // Initialize the packet
+            // Init the packet
             this.packet = new DatagramPacket(new byte[packetMaxLenght],packetMaxLenght);
             this.failedInit = false;
         } catch (SocketException e) {
@@ -41,7 +36,7 @@ public class Client implements Runnable{
         if(failedInit){
             return;
         }
-        // Loop indefinitely
+        // Loop undefinitly
         while(true){
             try {
             	int port = 4723;

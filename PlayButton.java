@@ -1,5 +1,7 @@
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -13,20 +15,21 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-
 /**
- * Playbutton handles songs and adds the features to play and pause a song.
  * @author Luciano Vega
- * @since 09-06-2018
- * 
+   Playbutton handles songs and adds the features to play and pause a song.
  */
 public class PlayButton {
 	static String uName = "";//used for the username
@@ -160,6 +163,7 @@ public class PlayButton {
 					}
 					JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 					pFrame.dispose();
+//					new SearchMenuFrame(uName).setVisible(true);
 				}
 				else if(o == panel.pause)//pauses song if song is active and saves frame position to resume in play
 				{

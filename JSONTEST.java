@@ -1,7 +1,9 @@
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
@@ -10,12 +12,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-/**
- * 
- * @author Duong Pham
- * @since 09-06-2018
- *
- */
 public class JSONTEST {
 
 	public static void main(String[] args) {
@@ -241,7 +237,7 @@ public class JSONTEST {
 	 * Read songs array from a playlist in json file and add to gui list
 	 * @param dm defaultlistModel
 	 */
-	void getSonglist(DefaultListModel<String> dm, String playlist) {
+	void getSonglist(DefaultListModel dm, String playlist) {
 		dm.clear(); //clear list 
 		JSONObject obj1;
 		String pathname = "allan.json";

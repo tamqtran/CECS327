@@ -27,12 +27,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-/**
- * 
- * @author Duong Pham
- * @since 09-06-2018
- *
- */
+
 public class Profile {
 
 	String username;
