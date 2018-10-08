@@ -76,8 +76,6 @@ public class PlaylistActionListener implements ActionListener
 			artistLabel.setText(artist); artistLabel.setVisible(true);
 			albumLabel.setText(album);	albumLabel.setVisible(true);
 			
-			// close and open new JFrame
-			JFrame sFrame = (JFrame) panel.getTopLevelAncestor();
 //			sFrame.dispose();
 			new PlayButton.PlayFrame(songTitle + "_" + artist + "_" + album, panel.username, panel.playlist).setVisible(true);
 		}
@@ -136,7 +134,6 @@ public class PlaylistActionListener implements ActionListener
 	public void setButtonOn(JButton button) 
 	{
 		button.setEnabled(true);
-		button.updateUI();
 	}
 	
 }
