@@ -13,18 +13,17 @@ import org.json.JSONTokener;
 
 import javax.swing.table.*;
 
-public class SearchMenuPanel extends JPanel implements DocumentListener, ActionListener {
+public class SearchMenuPanel extends JPanel implements ActionListener {
 	
 	//Declaring variables
-	private JTextField searchTextField;
 
 	private JTable results;
 
 	private JScrollPane resultsJPS;
 
-	private JButton backButton, playButton, addButton;
+	private JButton playButton, addButton;
 
-	private JLabel playlistLabel, userLabel, responseLabel;
+	private JLabel playlistLabel, userLabel, responseLabel,searchLabel;
 
 	private JComboBox playList;
 
@@ -34,69 +33,70 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 	 * Constructor for SearchMenuPanel
 	 * @param username: username of the user
 	 */
-	public SearchMenuPanel(String username) {
+	public SearchMenuPanel(String username, String[] search, String userSearch) {
 		this.username = username;
 
 		// Custom Layout
 		this.setLayout(null);
+		this.setSize(new Dimension(700,600));
 
 		//Displays Username on Panel
 		userLabel = new JLabel("User: " + username);
 		userLabel.setSize(new Dimension(100, 30));
-		userLabel.setLocation(100, 8);
+		userLabel.setLocation(10, 5);
 		this.add(userLabel);
 
+		//Displays what is being searched
+		searchLabel = new JLabel("Searching for: " + userSearch);
+		searchLabel.setSize(new Dimension(200, 30));
+		searchLabel.setLocation(10,18);
+		this.add(searchLabel);
+		
 		//Response Label. Displays whether action is successful or not
 		responseLabel = new JLabel("");
 		responseLabel.setSize(new Dimension(220, 50));
-		responseLabel.setLocation(245, 460);
+		responseLabel.setLocation(245, 410);
 		this.add(responseLabel);
 
+		/*
 		// Back button. Tries to match the playlist page visually
 		// Main functionality is to go back to Profile Frame
 		backButton = new JButton("Back");
 		backButton.setSize(backButton.getPreferredSize());
 		backButton.setLocation(20, 10);
 		backButton.addActionListener(this);
-		this.add(backButton);
+		this.add(backButton); */
 
 		// Play Button. Redirects user to PlaySong frame
 		playButton = new JButton("Play Song");
 		playButton.setSize(playButton.getPreferredSize());
-		playButton.setLocation(270, 500);
+		playButton.setLocation(270, 400);
 		playButton.addActionListener(this);
 		this.add(playButton);
 
-		// Search textfield where user can type in to search for desired song
-		searchTextField = new JTextField("Search for song title, album, or artist", 20);
-		// Wipes textfield once you click it
-		searchTextField.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				searchTextField.setText("");
-
-				// Clears the Jtable
-				DefaultTableModel model = (DefaultTableModel) results.getModel();
-				model.setRowCount(0);
-			}
-		});
-		// Detects changes within the textfield
-		searchTextField.getDocument().addDocumentListener(this);
-		searchTextField.setSize(new Dimension(400, 20));
-		searchTextField.setLocation(150, 50);
-		this.add(searchTextField);
 
 		// Testing. Dummy values to store in JTable
 		String data[][] = { {}, {}, {} };
 		String[] columns = { "Song Title", "Artist", "Album" };
-
-		DefaultTableModel model = new DefaultTableModel(null, columns);
-
+		DefaultTableModel model = null;
+		if (search != null) {
+			model = new DefaultTableModel(null, columns);
+			for (int i = 0; i < search.length; i++) {
+				   model.addRow(search[i].split("_"));
+			}
+		} else {
+			JLabel errorLabel = new JLabel("No results found for " + userSearch);
+			errorLabel.setSize(errorLabel.getPreferredSize());
+			errorLabel.setLocation(250,22);
+			this.add(errorLabel);
+		};
+		
 		// Creates a table to display the search results
 		results = new JTable(model);
 		results.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		resultsJPS = new JScrollPane(results);
 		resultsJPS.setSize(new Dimension(400, 250));
-		resultsJPS.setLocation(150, 100);
+		resultsJPS.setLocation(50, 50);
 		// News JScrollPane else column names wont show up
 		this.add(resultsJPS);
 
@@ -104,13 +104,13 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 		// pulls playlist from json file
 		playList = new JComboBox(grabPlaylists());
 		playList.setSize(new Dimension(110, 30));
-		playList.setLocation(350, 380);
+		playList.setLocation(560, 50);
 		this.add(playList);
 
 		// Another display label
-		playlistLabel = new JLabel("Select a playlist");
+		playlistLabel = new JLabel("<html>Select a playlist to<br/> add a song to</html>");
 		playlistLabel.setSize(playlistLabel.getPreferredSize());
-		playlistLabel.setLocation(255, 386);
+		playlistLabel.setLocation(465, 50);
 		this.add(playlistLabel);
 
 		// Add Button. Allows user to add a song to the selected playlist
@@ -118,7 +118,7 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 		// Cannot add if no song is selected
 		addButton = new JButton("Add Song");
 		addButton.setSize(addButton.getPreferredSize());
-		addButton.setLocation(360, 425);
+		addButton.setLocation(300, 360);
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//Checks if user selected a song
@@ -164,39 +164,6 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 			}
 		});
 		this.add(addButton);
-	}
-
-	// Updates search results when user types additional characters
-	public void insertUpdate(DocumentEvent e) {
-		String[] searchResults = search(searchTextField.getText());
-
-		// Clears the Jtable
-		DefaultTableModel model = (DefaultTableModel) results.getModel();
-		model.setRowCount(0);
-
-		for (int i = 0; i < searchResults.length; i++) {
-			model.addRow(searchResults[i].split("_"));
-		}
-		;
-
-	}
-
-	// Updates search results when user deletes additional characters
-	// For example, backspacing
-	public void removeUpdate(DocumentEvent e) {
-		String[] searchResults = search(searchTextField.getText());
-
-		// Clears the Jtable
-		DefaultTableModel model = (DefaultTableModel) results.getModel();
-		model.setRowCount(0);
-
-		for (int i = 0; i < searchResults.length; i++) {
-			model.addRow(searchResults[i].split("_"));
-		};
-
-	}
-
-	public void changedUpdate(DocumentEvent e) {
 	}
 
 	/**
@@ -254,12 +221,13 @@ public class SearchMenuPanel extends JPanel implements DocumentListener, ActionL
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 
+		/*
 		// If the user clicks back, take the user to Profile Frame
 		if (source == this.backButton) {
 			JFrame sFrame = (JFrame) this.getTopLevelAncestor();
 			sFrame.dispose();
 			new Profile(this.username).setVisible(true);
-		}
+		} */
 		
 		//If the user clicks play, play the selected song.
 		// Display success message if successful

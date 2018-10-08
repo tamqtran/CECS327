@@ -322,4 +322,8 @@ public class Method
 		}
 		return songs;
 	}
+	
+	public String[] getSearch(String search) {
+		return SearchMenuPanel.search(search);
+	}
 }
