@@ -13,13 +13,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+<<<<<<< HEAD
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+=======
+>>>>>>> cc731c9e289f4e4330a453f57c909b65ac99d63d
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.UUID;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -49,7 +62,12 @@ public class Homepage
 	// declare all variables
 	private static String specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]";
 	
+	private Clip 				current;
+	private int					pos;//current frame position for song
+	private int					songIndex;
+	
 	private String 				userName;
+	private String				playlist;
 	private JFrame 				frame;
 	protected JTextField 		searchField;
 	private JPanel 				HIGH_panel, 
@@ -181,6 +199,7 @@ public class Homepage
 						if (!list.getSelectedValue().toString().equals(ShiftingPanel.getCurrentPanelName())) 
 						{
 							PlaylistPanel newPanel = new PlaylistPanel(userName, list.getSelectedValue().toString());
+							playlist = list.getSelectedValue().toString();
 							newPanel.setName(list.getSelectedValue().toString());	// iniitalize a new PlaylistPanel and set the name of the PlaylistPanel
 
 							newPanel.getListener().setLabel(title_);		// set the labels from Description_Panel to follow the actions 
@@ -292,8 +311,27 @@ public class Homepage
 		searchQuery_.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+<<<<<<< HEAD
+						System.out.println("Searching for: " + searchField.getText());
+						System.out.println("Current panel in ShiftingPanel is " + ShiftingPanel.getCurrentPanelName());
+						
+						// checks if the current panel is the same one as the one that just got clicked
+						if (!searchField.getText().equals(ShiftingPanel.getCurrentPanelName())) 
+						{
+							SearchMenuPanel newPanel = new SearchMenuPanel(userName, getSearchResults(searchField.getText()),searchField.getText());
+							playlist = "x";
+							
+							newPanel.setName("search - " + searchField.getText()); // set name of the new SearchMenuPanel
+							
+							newPanel.setLabel(title_);		// set labels to respond to changes
+							newPanel.setLabel(artist_);		// in this searchMenuPanel
+							newPanel.setLabel(album_);
+							
+							ShiftingPanel.addComponent(newPanel);			// add the SearchMenuPanel to ShiftingPanel
+=======
 				System.out.println("Searching for: " + searchField.getText());
 				System.out.println("Current panel in ShiftingPanel is " + ShiftingPanel.getCurrentPanelName());
+>>>>>>> cc731c9e289f4e4330a453f57c909b65ac99d63d
 
 				if (!codeDenial(searchField.getText())) // if special characters are used then this will go off
 				{
@@ -483,29 +521,82 @@ public class Homepage
 				isSongPlaying = true;								// the song is playing when it's all over
 			}	
 		});
-		playPause_ = new JButton("\u274C");							// initialize playPause_ and add an 
+		playPause_ = new JButton("\u25B6");							// initialize playPause_ and add an 
 		playPause_.addActionListener(new ActionListener() 
 		{ 		// action listener to playPause_
 			@Override 
 			public void actionPerformed(ActionEvent arg0) 
 			{
-				isSongPlaying = !isSongPlaying;
-				if (isSongPlaying) 
-				{
-					System.out.println("Song is playing");
-					// do things here
-					
-					playPause_.setText("\u2758" + "\u2758");		
-				} 
-				else 
-				{
-					System.out.println("Song is paused");
-					// do things here
-					
+				if ((current!=null && ((current.isActive()))))
+				{	
+					pos = current.getFramePosition();
+					current.stop();
 					playPause_.setText("\u25B6");
+					isSongPlaying = false;;		
+				} 
+				else if((current == null) || (current!=null && (!(current.isActive()))))
+				{
+					if(playlist.equals("x"))
+					{
+						try {
+							System.out.println(title_+ "_" + artist_ + "_" + album_  + ".wav");
+							File file = new File(title_+ "_" + artist_ + "_" + album_  + ".wav");
+							AudioInputStream player = AudioSystem.getAudioInputStream(file);
+							current = AudioSystem.getClip();
+							current.open(player);
+							current.setFramePosition(pos);
+							current.start();
+						} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					else
+					{
+						ArrayList<String> songList = new ArrayList<String>();
+						{
+						
+						try (InputStream input = new FileInputStream(userName+".json"))
+						{
+
+							JSONObject obj = new JSONObject(new JSONTokener(input));								// turn into JSON object
+
+							JSONArray listOfSongs = obj.getJSONArray(playlist);										// grabs JSON array of songs by mapping the playlist name
+
+							for(int j = 0; j < listOfSongs.length(); j++)											// adds all songs from array into JList
+							{
+								String temp = listOfSongs.getString(j);
+								String[] transferSong = SearchMenuPanel.search(temp);
+
+								// get the list of .wav files and separate by song, artist, and album
+								String[] column = { "Song Title", "Artist", "Album" };
+								DefaultTableModel model = new DefaultTableModel(null, column);
+								model.setRowCount(0);
+								for (int i = 0; i < transferSong.length; i++) {
+									model.addRow(transferSong[i].split("_"));
+								};
+
+								// get selected song variables
+								String songTitle = model.getValueAt(0, 0).toString();
+								String artist = model.getValueAt(0, 1).toString();
+								String album = model.getValueAt(0, 2).toString();
+
+								//change text on labels in homepage
+								songList.add(songTitle + "_" + artist + "_" + album);
+							}
+							songIndex = songList.indexOf(title_+ "_" + artist_ + "_" + album_);
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					playPause_.setText("\u2758" + "\u2758");	
+						}
 				}	
 			}
-		});
+		}});
 		nextSong_ = new JButton("\u274C"); 						// initializes nextSong_ and add an
 		nextSong_.addActionListener(new ActionListener() 		// action listener to nextSong_
 		{ 			
