@@ -10,6 +10,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+/**
+ * 
+ * @author Duong Pham
+ * @since 09-06-2018
+ *
+ */
 public class JSONTEST {
 
 	public static void main(String[] args) {

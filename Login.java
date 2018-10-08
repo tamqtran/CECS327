@@ -22,6 +22,12 @@ import javax.swing.JTextField;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+/**
+ * 
+ * @author Austin Tao
+ * @since 08-20-2018
+ *
+ */
 public class Login implements ActionListener {
 	private JFrame frame;
 	protected JTextField usernameField;

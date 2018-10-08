@@ -1,5 +1,3 @@
-//package Client;
-
 import java.net.*;
 import java.util.Scanner;
 import java.io.*;
@@ -9,6 +7,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
 
+/**
+ * @author Duong Pham
+ * @since 09-27-2018
+ */
 public class UDPClient
 {
 	static Scanner sc;

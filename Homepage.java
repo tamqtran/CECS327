@@ -42,7 +42,7 @@ import org.json.JSONObject;
 /**
  * The Homepage class creates a frame that houses the main piece of this music streaming application.
  * @author Austin
- * @since 9/20/2018
+ * @since 09-20-2018
  */
 public class Homepage 
 {

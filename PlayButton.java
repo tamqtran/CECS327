@@ -23,8 +23,10 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 /**
+ * Playbutton handles songs and adds the features to play and pause a song.
  * @author Luciano Vega
-   Playbutton handles songs and adds the features to play and pause a song.
+ * @since 09-06-2018
+ * 
  */
 public class PlayButton {
 	static String uName = "";//used for the username

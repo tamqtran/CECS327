@@ -16,7 +16,7 @@ import javax.swing.border.BevelBorder;
 /**
  * This class is a JLayeredPane with a few extra methods meant to have inner panel respond to size changes of this pane.
  * @author Austin Tao
- * @since 10/5/2018
+ * @since 10-05-2018
  *
  */
 public class ShiftingPanel extends JLayeredPane 

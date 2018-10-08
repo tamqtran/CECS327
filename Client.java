@@ -5,6 +5,12 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
+/**
+ * 
+ * @author Duong Pham
+ * @since 09-25-2018
+ *
+ */
 public class Client implements Runnable{
 	//Reception socket
     private DatagramSocket socket;

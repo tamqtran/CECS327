@@ -12,6 +12,12 @@ import org.json.JSONTokener;
 
 import javax.swing.table.*;
 
+/**
+ * 
+ * @author Vincent Vu
+ * @since 09-06-2018
+ *
+ */
 public class SearchMenuPanel extends JPanel implements ActionListener {
 	
 	//Declaring variables

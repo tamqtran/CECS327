@@ -3,8 +3,8 @@ import java.net.*;
 /**
  * This file is the file that initializes the testing JSON files to start
  * This file starts the program
- * @author Tam Tran
- *
+ * @author Duong Pham
+ * @since 10-04-2018
  */
 public class start 
 {

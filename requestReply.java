@@ -9,6 +9,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * 
+ * @author Simba
+ * @since 10-05-2018
+ */
 public class requestReply 
 {
 	/**
