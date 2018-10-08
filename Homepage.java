@@ -1,7 +1,3 @@
-/*
- * This file was created by Austin Tao on 9/20/2018.
- */
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -127,7 +123,7 @@ public class Homepage
 	}
 	
 	/**
-	 * The main initialization method. Initializes the frame and sets off everything else into motion.
+	 * Initializes the frame and sets off everything else into motion.
 	 */
 	private void initialize()
 	{ 									
@@ -152,8 +148,8 @@ public class Homepage
 	}
 	
 	/**
-	 * This initialization method handles the upper half of the frame.
-	 * @param pane: the frame's content pane
+	 * Initializes the upper half of the frame.
+	 * @param pane - the frame's content pane
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void addHighComponentsToHome(Container pane) 
@@ -426,8 +422,8 @@ public class Homepage
 	}
 	
 	/**
-	 * This initialization method handles the lower half of the frame.
-	 * @param pane: the frame's content pane
+	 * Initializes the lower half of the frame.
+	 * @param pane - the frame's content pane
 	 */
 	private void addLowComponentsToHome(Container pane) 
 	{
@@ -623,9 +619,9 @@ public class Homepage
 	}
 
 	// FOR USE WITH SEARCHQUERY_	
-	/** ORIGIN: Login.java
-	 * A boolean method that abhors code injections.
-	 * @param input: A string, either username or password
+	/**
+	 * Detects special characters in the string
+	 * @param input - A string, either username or password
 	 * @return false if any special characters are found in input; true otherwise
 	 */
 	private boolean codeDenial (String input) 
@@ -639,8 +635,8 @@ public class Homepage
 	}
 	
 	/**
-	 * A void method that can make a frame visible.
-	 * @param b boolean (true/false) that determines visibility of the frame (where true makes it visible, and false makes it not visible
+	 * Make a frame visible.
+	 * @param b - boolean (true/false) that determines visibility of the frame (where true makes it visible, and false makes it not visible
 	 */
 	public void setVisible(boolean b) 
 	{
@@ -648,9 +644,9 @@ public class Homepage
 		frame.setVisible(b);
 	}
 	
-	/** ORIGIN: Profile.java
+	/**
 	 * Read playlists array from json file and add to gui list
-	 * @param dm defaultlistModel
+	 * @param dm - the defaultlistModel that holds the list of playlists
 	 */
 	public void getPlaylists(DefaultListModel<String> dm) 
 	{
@@ -667,10 +663,10 @@ public class Homepage
 	    	dm.addElement(playlistArray[i]);
 	}
 	
-	/** ORIGIN: Profile.java
+	/** 
 	 * Remove playlist from JSON FiLE
-	 * @param playlist playlist to be removed
-	 * @param username current login user
+	 * @param playlist - playlist to be removed
+	 * @param username - current login user
 	 */
 	void removePlaylist(String playlist, String username) 
 	{
@@ -679,9 +675,9 @@ public class Homepage
 		requestReply.UDPRequestReply("removePlaylist",arguments, aSocket, serverPort);
 	}
 
-	/** ORIGIN: SearchMenuPanel.java
+	/**
 	 * Get search results 
-	 * @param search query
+	 * @param search - the desired search query
 	 */
 	String[] getSearchResults(String search) {
 		String [] arguments = {search};
@@ -694,82 +690,5 @@ public class Homepage
 		System.out.println("These are the results" + results);
 		
 		return results.split(",");
-	}
-	/**
-	 * Format request into JSON Object
-	 * @param method call method
-	 * @param args argument of the method
-	 * @return return json object
-	 * @throws JSONException
-	 */
-	JSONObject JSONRequestObject(String method, Object[] args) throws JSONException
-	{
-		//Arguments
-		JSONArray jsonArgs = new JSONArray();
-		for (int i=0; i<args.length; i++)
-		{
-			jsonArgs.put(args[i]);
-		}
-
-		//JSON Object
-		JSONObject jsonRequest = new JSONObject();
-		try 
-		{
-			jsonRequest.put("id", UUID.randomUUID().hashCode());
-			jsonRequest.put("method", method);
-			jsonRequest.put("arguments", jsonArgs);
-		}
-		catch (JSONException e)
-		{
-			System.out.println(e);
-		}
-		return jsonRequest;
-	}
-
-	/**
-	 * UDP request and reply 
-	 * @param method method to call
-	 * @param param arguments for the method
-	 * @return JSONObject reply from server
-	 */
-	JSONObject UDPRequestReply(String method,String[] param) {
-		JSONObject JsonReply = null;
-		try 
-		{
-			byte [] m;
-
-			// opening client side
-			//Login user1 = new Login();
-
-			InetAddress aHost = InetAddress.getByName("localhost");
-
-			//Request
-			String [] arguments = param;
-			m = JSONRequestObject(method,arguments).toString().getBytes("utf-8");
-			DatagramPacket request = new DatagramPacket(m, m.length, aHost, serverPort);
-			aSocket.send(request);
-
-			//Reply
-			byte[] buffer = new byte[1000];
-
-			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
-
-			aSocket.receive(reply);
-
-			//Format datagram reply into JSONObject
-			JsonReply=new JSONObject(new String(reply.getData()));
-
-			System.out.println("Reply: " + new String(reply.getData()));
-			System.out.println("Type a message to send or x to exit.");
-		}
-		catch (SocketException e)
-		{
-			System.out.println("Socket: " + e.getMessage());
-		}
-		catch (IOException e)
-		{
-			System.out.println("IO: " + e.getMessage());
-		}
-		return JsonReply;
 	}
 }

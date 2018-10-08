@@ -1,5 +1,3 @@
-// Created by Austin Tao on 10/5/2018
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -19,6 +17,7 @@ import javax.swing.border.BevelBorder;
  * @since 10-05-2018
  *
  */
+@SuppressWarnings("serial")
 public class ShiftingPanel extends JLayeredPane 
 {
 	// declare all variables
@@ -35,7 +34,7 @@ public class ShiftingPanel extends JLayeredPane
 	
 	/**
 	 * Main constructor. Creates a JLayeredPane called ShiftingPanel
-	 * @param user the name of the user
+	 * @param user - the name of the user
 	 */
 	public ShiftingPanel() 
 	{
@@ -47,7 +46,7 @@ public class ShiftingPanel extends JLayeredPane
 	}
 	
 	/**
-	 * A method that assigns a component listener w/ a particular componentResized() method to the input panel.
+	 * Assigns a component listener with a particular componentResized() method to the input panel.
 	 * @param panel: a JPanel
 	 */
 	public void addResizeListenerTo(JPanel panel) 
@@ -62,9 +61,8 @@ public class ShiftingPanel extends JLayeredPane
 	}
 	
 	/**
-	 * This particular method will add the component to the zeroth layer of ShiftingPanel and adjust the history array
-	 * and the components accordingly to this new inclusion.
-	 * @param c: the component that is being added to ShiftingPanel
+	 * Add the component to the zeroth layer of ShiftingPanel and adjust the history array and the components accordingly to this new inclusion.
+	 * @param c - the component that is being added to ShiftingPanel
 	 */
 	public void addComponent(Component c) 
 	{
@@ -91,8 +89,7 @@ public class ShiftingPanel extends JLayeredPane
 	}
 	
 	/**
-	 * A void method that adds an action listener to one of the two JButtons it's used for. 
-	 * Both buttons together function as the panel switcher for ShiftingPanel.
+	 * Adds an action listener to one of the two JButtons it's used for. Both buttons together function as the panel switcher for ShiftingPanel.
 	 * @param button: a JButton, either previousHistory_ or nextHistory_
 	 */
 	public void setHistorySwitch(JButton button) {
@@ -141,42 +138,42 @@ public class ShiftingPanel extends JLayeredPane
 	}
 	
 	/**
-	 * A get method that returns currentComponent parameter.
-	 * @return currentComponent, an Integer representing the index of the current panel.
+	 * Returns currentComponent parameter.
+	 * @return currentComponent - an Integer representing the index of the current panel.
 	 */
 	protected Integer getCurrentPanelIndex() {return currentComponent;}
 	
 	/**
-	 * A get method that returns the currentPanel parameter.
-	 * @return currentPanel, the string name of the current panel of ShiftingPanel.
+	 * Returns the currentPanel parameter.
+	 * @return currentPanel - the string name of the current panel of ShiftingPanel.
 	 */
 	protected String getCurrentPanelName() {return currentPanel;}
 	
 	/**
-	 * A get method that returns the history parameter.
-	 * @return history, an array of Components for ShiftingPanel
+	 * Returns the history parameter.
+	 * @return history - an array of Components for ShiftingPanel
 	 */
 	protected Component[] getHistory() {return history;}
 	
 	/**
-	 * A get method that returns this ShiftingPanel.
-	 * @return this ShiftingPanel class
+	 * Returns this ShiftingPanel.
+	 * @return this - the ShiftingPanel class itself
 	 */
 	protected ShiftingPanel getShiftingPanel() {return this;}	
 	
 	/**
-	 * A void method that increments currentComponent.
+	 * Increments currentComponent.
 	 */
 	protected void currentMovedBack() {currentComponent++;}
 	
 	/**
-	 * A void method that decrements currentComponent.
+	 * Decrements currentComponent.
 	 */
 	protected void currentMovedForward() {currentComponent--;}
 	
 	/**
-	 * This void method removes all instances of a given playlist name from the history parameter.
-	 * @param playlistName: the name of the playlist that is being removed
+	 * Removes all instances of a given playlist name from the history parameter.
+	 * @param playlistName - the name of the playlist that is being removed
 	 */
 	public void removeFromHistory(String playlistName) {
 		System.out.print("Before:");				// system: before the wipe
@@ -204,8 +201,7 @@ public class ShiftingPanel extends JLayeredPane
 	}
 	
 	/**
-	 * A void method that removes redundancies within the history parameter.
-	 * Ex: HOME, king, queen, king, jack -> remove queen -> HOME, king, king, jack -> reduceFurther() -> HOME, king, jack
+	 * Removes redundancies within the history parameter. Ex: HOME, king, queen, king, jack -> remove queen -> HOME, king, king, jack -> reduceFurther() -> HOME, king, jack
 	 */
 	private void reduceFurther() {
 		history = this.getComponents();
@@ -226,7 +222,7 @@ public class ShiftingPanel extends JLayeredPane
 	}
 	
 	/**
-	 * A void method that updates, then lists out a bunch of relevant information about the user's settings in regards to ShiftingPanel.
+	 * Updates, then lists out a bunch of relevant information about the user's settings in regards to ShiftingPanel.
 	 */
 	private void checkHistory() {
 		updateHistory();															// update history parameters
@@ -240,7 +236,7 @@ public class ShiftingPanel extends JLayeredPane
 	}
 	
 	/**
-	 * A void method that updates all history parameters and sets the history buttons enable/disable functions.
+	 * Updates all history parameters and sets the history buttons enable/disable functions.
 	 */
 	private void updateHistory() {
 		history = this.getComponents();						// assign history to the list of components of ShiftingPanel
