@@ -5,9 +5,6 @@ import javax.swing.border.BevelBorder;
 import java.util.*;
 import java.awt.event.*;
 import java.io.*;
-import javax.swing.event.*;
-import javax.swing.text.*;
-import javax.swing.text.Document;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

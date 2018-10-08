@@ -35,7 +35,7 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 	private String typedText = null;
 	private JTextField textField;
 	private JOptionPane optionPane;
-	private DefaultListModel dlm;
+	private DefaultListModel<String> dlm;
 	
 	private String specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]";
 	private String username_;
@@ -196,7 +196,7 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 	 * Read playlists array from json file and add to gui list
 	 * @param dm defaultlistModel
 	 */
-	void getPlaylists(DefaultListModel dm) 
+	void getPlaylists(DefaultListModel<String> dm) 
 	{
 		dm.clear(); //clear list 
 		//JSONObject obj1;
