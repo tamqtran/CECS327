@@ -217,7 +217,7 @@ public class PlayButton {
 					//change text on labels in homepage
 					songList.add(songTitle + "_" + artist + "_" + album);
 				}
-				int songIndex = songList.indexOf(song);
+				songIndex = songList.indexOf(song);
 
 			}
 			catch (Exception e) 																		// catch exception
@@ -301,17 +301,8 @@ public class PlayButton {
 						current.close();
 					}
 					songList.clear();
-					songIndex = 0;
 					JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 					pFrame.dispose();
-					if(playlist.isEmpty())
-					{
-//						new SearchMenuFrame(uName).setVisible(true);
-					}
-					else 
-					{
-//						new PlaylistFrame(uName, playlist).setVisible(true);
-					}
 				}
 				else if(o == panel.pause)//pauses song is song is playing
 				{
