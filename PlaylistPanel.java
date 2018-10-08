@@ -16,7 +16,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 /**
- * PlaylistPanel.java is the JPanel that acts as the GUI for the playlist page 
+ * The JPanel that displays the list of songs in the playlist.
  * 
  * @author Tam Tran
  * @since 09-05-2018
@@ -42,8 +42,8 @@ public class PlaylistPanel extends JPanel
 	
 	/**
 	 * Constructor for GUI playlist panel with components added 
-	 * @param username
-	 * @param playlist
+	 * @param username - the user's name 
+	 * @param playlist - the selected playlist 
 	 */
 	public PlaylistPanel(String username, String playlist)
 	{
@@ -63,9 +63,14 @@ public class PlaylistPanel extends JPanel
 		// set the size of the panel
 		this.setSize(new Dimension(805,453));
 		
+<<<<<<< HEAD
+		this.setName(this.playlist);			// set name of playlistPanel as the playlist name
+		
+=======
 		// set name of playlistPanel as the playlist name
 		this.setName(this.playlist);			
 				
+>>>>>>> b10707248394bee6146eacd2b0a020bb9ff4fb2f
 		// creating playlist name label
 		playlistName = new JLabel("Playlist Name: " + playlist);
 		playlistName.setSize(playlistName.getPreferredSize());
@@ -105,7 +110,7 @@ public class PlaylistPanel extends JPanel
 	}
 	
 	/**
-	 * method that updates the JList in the PlaylistPanel
+	 * Updates the JList in the PlaylistPanel
 	 */
 	public void updatePlaylist() 
 	{
@@ -129,14 +134,15 @@ public class PlaylistPanel extends JPanel
 		catch (Exception e) 																		// catch exception
 		{
 			e.printStackTrace();
-			
 		}
 	}
 	
 	/**
-	 * Gets the PlaylistActionListener variable 'listener'
-	 * @return listener, a PlaylistActionListener
+	 * Return the PlaylistActionListener as a variable
+	 * @return listener - the PlaylistActionListener
 	 */
-	public PlaylistActionListener getListener() { return listener; }
-
+	public PlaylistActionListener getListener() 
+	{ 
+		return listener; 
+	}
 }
