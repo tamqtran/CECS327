@@ -30,6 +30,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+/**
+ * 
+ * @author Austin Tao
+ * @since  10-02-2018
+ */
 public class CreatePlaylistDialog extends JDialog implements ActionListener, PropertyChangeListener {
 
 	private String typedText = null;

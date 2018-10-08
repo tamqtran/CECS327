@@ -63,14 +63,9 @@ public class PlaylistPanel extends JPanel
 		// set the size of the panel
 		this.setSize(new Dimension(805,453));
 		
-<<<<<<< HEAD
-		this.setName(this.playlist);			// set name of playlistPanel as the playlist name
-		
-=======
 		// set name of playlistPanel as the playlist name
 		this.setName(this.playlist);			
-				
->>>>>>> b10707248394bee6146eacd2b0a020bb9ff4fb2f
+
 		// creating playlist name label
 		playlistName = new JLabel("Playlist Name: " + playlist);
 		playlistName.setSize(playlistName.getPreferredSize());
