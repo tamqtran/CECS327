@@ -185,6 +185,7 @@ public class PlayButton {
 			
 			String username = uName;
 			ArrayList<String> songList = new ArrayList<String>();
+			int songIndex = songList.indexOf(song);
 			
 			public void updatePlaylist() 
 			{
@@ -243,19 +244,51 @@ public class PlayButton {
 					if((current == null) || (current!=null && (!(current.isActive()))))//checks if song has not started playing or if it is paused
 					{
 						try {
-							System.out.println(song + ".wav");
-							File file = new File(song + ".wav");
+							System.out.println(songList.get(songIndex) + ".wav");
+							File file = new File(songList.get(songIndex) + ".wav");
 							AudioInputStream player = AudioSystem.getAudioInputStream(file);
 							current = AudioSystem.getClip();
 							current.open(player);
 							current.setFramePosition(pos);
 							current.start();
+							if(songIndex == songList.size()-1)
+							{
+								songIndex = 0;
+							}
+							else
+							{
+								songIndex++;
+							}
+
 						} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
 					}
 				}
+//				else if(o == panel.skip)
+//				{
+//					if(!(songList.isEmpty()))
+//					{
+//						current.stop();
+//						System.out.println(songList.get(songIndex) + ".wav");
+//						File file = new File(songList.get(songIndex) + ".wav");
+//						AudioInputStream player = AudioSystem.getAudioInputStream(file);
+//						current = AudioSystem.getClip();
+//						current.open(player);
+//						current.setFramePosition(pos);
+//						current.start();
+//						
+//						if(songIndex == songList.size() -1)
+//						{
+//							songIndex = 0;
+//						}
+//						else
+//						{
+//							songIndex++;
+//						}
+//					}
+//				}
 				else if(o == panel.back)//stops song if it is playing and returns to playlist
 				{
 					if(current != null)
@@ -268,6 +301,8 @@ public class PlayButton {
 						current.flush();
 						current.close();
 					}
+					songList.clear();
+					songIndex = 0;
 					JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 					pFrame.dispose();
 					if(playlist.isEmpty())
