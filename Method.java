@@ -30,25 +30,6 @@ public class Method
 			JSONObject obj1 = new JSONObject(new JSONTokener(input));
 			sPassword = obj1.get("password").toString();
 			
-			// checking if another user has logged in
-			// true if someone logged in, false if someone is not
-			boolean loggedIn = (boolean) obj1.get("loggedIn");
-			
-			if(loggedIn == true)	
-			{
-				System.out.println("Error: Someone is already logged into this account");
-				return false;
-			}
-			else
-			{
-				// change so multiple users cant use it
-				obj1.put("loggedIn", true);
-				
-				FileWriter fileWriter = new FileWriter(username+".json");
-				fileWriter.write(obj1.toString());
-				fileWriter.flush();
-				fileWriter.close();
-			}
 		}
 		catch (Exception e) 
 		{
@@ -58,6 +39,45 @@ public class Method
 		if(password.equals(sPassword))
 			return true;
 		return false;
+	}
+	
+	/**
+	 * This method changes the loggedIn variable of the account JSON once user logs out
+	 * @param username
+	 * @return
+	 */
+	public Boolean logIn(String username)
+	{
+		try (InputStream input = new FileInputStream(username+".json")) 
+		{
+			JSONObject obj1 = new JSONObject(new JSONTokener(input));
+			
+			boolean loggedIn = (boolean) obj1.get("loggedIn");
+			
+			// checking if another user has logged in
+			// true if someone logged in, false if someone is not
+			if(loggedIn == true)	
+			{
+				System.out.println("Error: Someone is already logged into this account");
+				return false;
+			}
+			else
+			{
+				// change variable so multiple users cant use it
+				obj1.put("loggedIn", true);
+				
+				FileWriter fileWriter = new FileWriter(username+".json");
+				fileWriter.write(obj1.toString());
+				fileWriter.flush();
+				fileWriter.close();
+			}
+			
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		return true;
 	}
 	
 	/**
@@ -301,5 +321,9 @@ public class Method
 			e.printStackTrace();
 		}
 		return songs;
+	}
+	
+	public String[] getSearch(String search) {
+		return SearchMenuPanel.search(search);
 	}
 }

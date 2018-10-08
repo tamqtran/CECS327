@@ -42,6 +42,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
+import javax.swing.table.DefaultTableModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -134,6 +135,8 @@ public class Homepage
 		
 		playlistCreation = new CreatePlaylistDialog(frame, userName, dm, aSocket, serverPort); 	// create playlist creation dialog
 		playlistCreation.pack();									// pack playlist creation dialog
+		
+		frame.getRootPane().setDefaultButton(searchQuery_);
 		
 		frame.setVisible(true); 									// make the frame visible
 	}
@@ -279,11 +282,40 @@ public class Homepage
 		searchField = new JTextField(); 								// initialize searchField and searchQuery_
 		searchField.setText("Search for...	");
 		searchField.setColumns(15);
+		searchField.addMouseListener(new MouseAdapter() {				// Clear Textfield when you click on it
+			public void mouseClicked(MouseEvent e) {
+				searchField.setText("");
+
+				// Clears the Jtable
+				//DefaultTableModel model = (DefaultTableModel) results.getModel();
+				//model.setRowCount(0);
+			}
+		});
 		searchQuery_ = new JButton("Search");
+		searchQuery_.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+						System.out.println("Searching for: " + searchField.getText());
+						System.out.println("Current panel in ShiftingPanel is " + ShiftingPanel.getCurrentPanelName());
+						
+						// checks if the current panel is the same one as the one that just got clicked
+						if (!searchField.getText().equals(ShiftingPanel.getCurrentPanelName())) 
+						{
+							SearchMenuPanel newPanel = new SearchMenuPanel(userName, getSearchResults(searchField.getText()),searchField.getText());
+
+							ShiftingPanel.addComponent(newPanel);			// add the SearchMenuPanel to ShiftingPanel
+
+							ShiftingPanel.addResizeListenerTo(newPanel);	// assign a component listener to ShiftingPanel using newPanel
+						}
+						else 
+							System.out.println("Current panel in ShiftingPanel remains " + ShiftingPanel.getCurrentPanelName());
+					}
+				});
 		
 		// searchQuery_ gets assigned an action listener. However...
 		
 		//CONTAINS CODE THAT IS DEBUG ONLY; DOES NOT REFLECT FINAL PRODUCT
+		/*
 		searchQuery_.addActionListener(new ActionListener() 
 		{
 			@Override
@@ -322,7 +354,7 @@ public class Homepage
 			}	
 		});
 		//CONTAINS CODE THAT IS DEBUG ONLY; DOES NOT REFLECT FINAL PRODUCT
-		
+		*/
 		_SearchPanel.add(searchField);								// add searchField and searchQuery_ to _SearchPanel
 		_SearchPanel.add(searchQuery_);								// and set max dimensions
 		_SearchPanel.setMaximumSize(new Dimension(200,40));
@@ -602,6 +634,22 @@ public class Homepage
 		JSONObject obj = requestReply.UDPRequestReply("removePlaylist",arguments, aSocket, serverPort);
 	}
 
+	/** ORIGIN: SearchMenuPanel.java
+	 * Get search results 
+	 * @param
+	 */
+	String[] getSearchResults(String search) {
+		String [] arguments = {search};
+		JSONObject obj = requestReply.UDPRequestReply("getSearch", arguments, aSocket, serverPort);
+		String results  = obj.get("result").toString();
+		if (results.length() < 3) {
+			return null;
+		}
+		results = results.substring(2, results.length() - 2).replace("\",\"", ",");
+		System.out.println("These are the results" + results);
+		
+		return results.split(",");
+	}
 	/**
 	 * Format request into JSON Object
 	 * @param method call method
