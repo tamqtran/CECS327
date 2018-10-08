@@ -78,10 +78,17 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		// Testing. Dummy values to store in JTable
 		String data[][] = { {}, {}, {} };
 		String[] columns = { "Song Title", "Artist", "Album" };
-
-		DefaultTableModel model = new DefaultTableModel(null, columns);
-		for (int i = 0; i < search.length; i++) {
-			   model.addRow(search[i].split("_"));
+		DefaultTableModel model = null;
+		if (search != null) {
+			model = new DefaultTableModel(null, columns);
+			for (int i = 0; i < search.length; i++) {
+				   model.addRow(search[i].split("_"));
+			}
+		} else {
+			JLabel errorLabel = new JLabel("No results found for " + userSearch);
+			errorLabel.setSize(errorLabel.getPreferredSize());
+			errorLabel.setLocation(250,22);
+			this.add(errorLabel);
 		};
 		
 		// Creates a table to display the search results
