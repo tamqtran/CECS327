@@ -1,5 +1,4 @@
 import java.net.*;
-import java.util.Scanner;
 
 /**
  * This file is the file that initializes the testing JSON files to start
@@ -14,7 +13,6 @@ public class start
 		/*Start Client*/
 		int serverPort = 6733;
 		DatagramSocket aSocket = null;
-		Scanner sc = new Scanner(System.in);
 		
 		try 
 		{
@@ -29,8 +27,6 @@ public class start
 		/*End Client*/	
 		
 		// call initial Frame to start the program
-		Login begin = new Login(aSocket,serverPort);
+		new Login(aSocket,serverPort);
 	}
-	
-
 }

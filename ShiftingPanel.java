@@ -21,7 +21,7 @@ import javax.swing.border.BevelBorder;
  */
 public class ShiftingPanel extends JLayeredPane 
 {
-	private String username_, currentPanel;
+	private String currentPanel;
 	protected Component[] history, previousPanels, nextPanels;
 	
 	private JButton prevButton, nextButton;

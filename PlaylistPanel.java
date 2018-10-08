@@ -15,7 +15,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-
 /**
  * The JPanel that displays the list of songs in the playlist.
  * 
@@ -58,12 +57,20 @@ public class PlaylistPanel extends JPanel
 		// based on absolute layout to organize the components in the frame (https://docs.oracle.com/javase/tutorial/uiswing/layout/none.html)
 		this.setLayout(null);
 		
+		// set the border of this panel
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
+		// set the size of the panel
 		this.setSize(new Dimension(805,453));
 		
+<<<<<<< HEAD
 		this.setName(this.playlist);			// set name of playlistPanel as the playlist name
 		
+=======
+		// set name of playlistPanel as the playlist name
+		this.setName(this.playlist);			
+				
+>>>>>>> b10707248394bee6146eacd2b0a020bb9ff4fb2f
 		// creating playlist name label
 		playlistName = new JLabel("Playlist Name: " + playlist);
 		playlistName.setSize(playlistName.getPreferredSize());
