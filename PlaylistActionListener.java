@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableModel;
@@ -126,6 +127,16 @@ public class PlaylistActionListener implements ActionListener
 		case "artist(s)": artistLabel = label; break;
 		case "album": albumLabel = label; break;
 		}
+	}
+	
+	/**
+	 * The JButtons variables from Homepage (previousSong_, playPause_, nextSong_) are set to active
+	 * @param button: a JButton from Homepage
+	 */
+	public void setButtonOn(JButton button) 
+	{
+		button.setEnabled(true);
+		button.updateUI();
 	}
 	
 }
