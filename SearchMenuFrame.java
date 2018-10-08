@@ -15,8 +15,8 @@ public class SearchMenuFrame extends JFrame {
     setResizable(false);
     setSize(700,700);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    JPanel panel = new SearchMenuPanel(username);
-    this.add(panel);
+//    JPanel panel = new SearchMenuPanel(username);
+//    this.add(panel);
   }
   
 }

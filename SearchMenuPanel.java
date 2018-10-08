@@ -1,5 +1,7 @@
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+
 import java.util.*;
 import java.awt.event.*;
 import java.io.*;
@@ -38,8 +40,9 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 
 		// Custom Layout
 		this.setLayout(null);
-		this.setSize(new Dimension(700,600));
-
+		this.setSize(new Dimension(805,453));
+		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+		
 		//Displays Username on Panel
 		userLabel = new JLabel("User: " + username);
 		userLabel.setSize(new Dimension(100, 30));
@@ -55,7 +58,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		//Response Label. Displays whether action is successful or not
 		responseLabel = new JLabel("");
 		responseLabel.setSize(new Dimension(220, 50));
-		responseLabel.setLocation(245, 410);
+		responseLabel.setLocation(130, 340);
 		this.add(responseLabel);
 
 		/*
@@ -70,7 +73,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		// Play Button. Redirects user to PlaySong frame
 		playButton = new JButton("Play Song");
 		playButton.setSize(playButton.getPreferredSize());
-		playButton.setLocation(270, 400);
+		playButton.setLocation(9, 355);
 		playButton.addActionListener(this);
 		this.add(playButton);
 
@@ -89,7 +92,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		results.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		resultsJPS = new JScrollPane(results);
 		resultsJPS.setSize(new Dimension(400, 250));
-		resultsJPS.setLocation(50, 50);
+		resultsJPS.setLocation(10, 50);
 		// News JScrollPane else column names wont show up
 		this.add(resultsJPS);
 
@@ -97,13 +100,13 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		// pulls playlist from json file
 		playList = new JComboBox(grabPlaylists());
 		playList.setSize(new Dimension(110, 30));
-		playList.setLocation(560, 50);
+		playList.setLocation(265, 310);
 		this.add(playList);
 
 		// Another display label
-		playlistLabel = new JLabel("<html>Select a playlist to<br/> add a song to</html>");
+		playlistLabel = new JLabel("<html>Select a playlist to<br/> add a chosen song to:</html>");
 		playlistLabel.setSize(playlistLabel.getPreferredSize());
-		playlistLabel.setLocation(465, 50);
+		playlistLabel.setLocation(130, 310);
 		this.add(playlistLabel);
 
 		// Add Button. Allows user to add a song to the selected playlist
@@ -111,7 +114,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		// Cannot add if no song is selected
 		addButton = new JButton("Add Song");
 		addButton.setSize(addButton.getPreferredSize());
-		addButton.setLocation(300, 360);
+		addButton.setLocation(10, 315);
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//Checks if user selected a song
@@ -134,11 +137,12 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 						// Checks if the song is legal (songList json contains the name)
 						if (!songlistToAdd.toList().contains(selectedSong)) {
 							songlistToAdd.put(selectedSong);
-							responseLabel.setText("Success! Song was added to playlist");
+							responseLabel.setText("Success!" + selectedSong + " was added to playlist");
 							responseLabel.setForeground(Color.GREEN);
 						} else {
-							responseLabel.setText("Invalid! Song is alreadly in the playlist");
+							responseLabel.setText("Warning! " + selectedSong + "is already in the playlist");
 							responseLabel.setForeground(Color.RED);
+							System.out.println("Song already exists in playlist");
 						}
 						
 						// Changes written to the json file
@@ -232,7 +236,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 				String artist = results.getModel().getValueAt(row, 1).toString();
 				String album = results.getModel().getValueAt(row, 2).toString();
 				JFrame sFrame = (JFrame) this.getTopLevelAncestor();
-				sFrame.dispose();
+//				sFrame.dispose();
 				new PlayButton.PlayFrame(songTitle + "_" + artist + "_" + album, username).setVisible(true);
 			} else {
 				responseLabel.setText("No song is being selected");

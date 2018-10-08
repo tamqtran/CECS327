@@ -136,6 +136,8 @@ public class Homepage
 		playlistCreation = new CreatePlaylistDialog(frame, userName, dm, aSocket, serverPort); 	// create playlist creation dialog
 		playlistCreation.pack();									// pack playlist creation dialog
 		
+		frame.getRootPane().setDefaultButton(searchQuery_);
+		
 		frame.setVisible(true); 									// make the frame visible
 	}
 	
@@ -290,8 +292,9 @@ public class Homepage
 			}
 		});
 		searchQuery_ = new JButton("Search");
-		searchQuery_.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
+		searchQuery_.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
 						System.out.println("Searching for: " + searchField.getText());
 						System.out.println("Current panel in ShiftingPanel is " + ShiftingPanel.getCurrentPanelName());
 						
