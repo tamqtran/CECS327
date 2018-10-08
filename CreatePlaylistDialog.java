@@ -30,12 +30,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+/**
+ * 
+ * @author Austin Tao
+ * @since  10-02-2018
+ */
 public class CreatePlaylistDialog extends JDialog implements ActionListener, PropertyChangeListener {
 
 	private String typedText = null;
 	private JTextField textField;
 	private JOptionPane optionPane;
-	private DefaultListModel dlm;
+	private DefaultListModel<String> dlm;
 	
 	private String specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]";
 	private String username_;
@@ -45,7 +50,7 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 	DatagramSocket aSocket;
 	int serverPort;
 
-	public CreatePlaylistDialog(Frame homeFrame, String user, DefaultListModel dm, DatagramSocket aSocket,int serverPort) {
+	public CreatePlaylistDialog(Frame homeFrame, String user, DefaultListModel<String> dm, DatagramSocket aSocket,int serverPort) {
 		super(homeFrame, true);
 		username_ = user;									// assign locally the user's username
 		dlm = dm;											// assign locally the defaultlistmodel, still references dm (in Homepage)
@@ -132,7 +137,7 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 		
 		//Server side Add Playlist
 		String [] arguments = {username,playlist};
-		JSONObject obj = requestReply.UDPRequestReply("addPlaylist",arguments, aSocket, serverPort);
+		requestReply.UDPRequestReply("addPlaylist",arguments, aSocket, serverPort);
 		
 		//Server side get playlist
 		String [] arguments1 = {username};
@@ -196,7 +201,7 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 	 * Read playlists array from json file and add to gui list
 	 * @param dm defaultlistModel
 	 */
-	void getPlaylists(DefaultListModel dm) 
+	void getPlaylists(DefaultListModel<String> dm) 
 	{
 		dm.clear(); //clear list 
 		//JSONObject obj1;

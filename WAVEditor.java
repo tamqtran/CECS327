@@ -10,6 +10,11 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+/**
+ * @author Vincent Vu
+ * @since 10-07-2018
+ *
+ */
 public class WAVEditor {
  public static final String EXT = ".wav";
  static AudioFormat format;

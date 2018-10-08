@@ -14,7 +14,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 /**
- * PlaylistActionListener.java adds functionality to the buttons in PlaylistPanel.java
+ * ActionListener that provides functionality to PlaylistPanel
  * 
  * @author Tam Tran
  * @since 09-09-2018
@@ -27,8 +27,8 @@ public class PlaylistActionListener implements ActionListener
 	private JLabel titleLabel, artistLabel, albumLabel;
 	
 	/**
-	 * Constructors that adds functionality to the playlist panel
-	 * @param p
+	 * Constructor of PlaylistActionListener
+	 * @param p - PlaylistPane
 	 */
 	public PlaylistActionListener(PlaylistPanel p) 
 	{ 
@@ -76,9 +76,8 @@ public class PlaylistActionListener implements ActionListener
 			artistLabel.setText(artist); artistLabel.setVisible(true);
 			albumLabel.setText(album);	albumLabel.setVisible(true);
 			
-			// close and open new JFrame
-			JFrame sFrame = (JFrame) panel.getTopLevelAncestor();
-//			sFrame.dispose();
+
+			// open new JFrame
 			new PlayButton.PlayFrame(songTitle + "_" + artist + "_" + album, panel.username, panel.playlist).setVisible(true);
 		}
 		
@@ -116,8 +115,8 @@ public class PlaylistActionListener implements ActionListener
 	}
 	
 	/**
-	 * The JLabel variables from Homepage (title_, artist_, album_) are set to these labels in order to change their text whenever the song changes
-	 * @param label: a JLabel from Homepage
+	 * Sets variables to these labels in order to change their text whenever the song changes
+	 * @param label - a JLabel from Homepage
 	 */
 	public void setLabel(JLabel label) 
 	{
@@ -130,13 +129,12 @@ public class PlaylistActionListener implements ActionListener
 	}
 	
 	/**
-	 * The JButtons variables from Homepage (previousSong_, playPause_, nextSong_) are set to active
-	 * @param button: a JButton from Homepage
+	 * Set buttons to active
+	 * @param button - a JButton from Homepage
 	 */
 	public void setButtonOn(JButton button) 
 	{
 		button.setEnabled(true);
-		button.updateUI();
 	}
 	
 }
