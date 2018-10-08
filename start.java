@@ -1,8 +1,7 @@
 import java.net.*;
 
 /**
- * This file is the file that initializes the testing JSON files to start
- * This file starts the program
+ * This class represents the Client in the Client-Server interaction. Begins with opening the Login Frame
  * @author Duong Pham
  * @since 10-04-2018
  */

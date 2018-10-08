@@ -10,16 +10,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * 
- * @author Simba
+ * This class holds the methods that handles the request and replies on the Client side of the Client-Server interaction
+ * @author Duong Pham, Tam Tran
  * @since 10-05-2018
  */
 public class requestReply 
 {
 	/**
-	 * This method handles the UDP request and reply on the Client side 
-	 * @param method method to call
-	 * @param param arguments for the method
+	 * Handles the UDP request and reply on the Client side 
+	 * @param method - the method to call
+	 * @param param - arguments for the method
 	 * @return JSONObject reply from server
 	 */
 	static JSONObject UDPRequestReply(String method,String[] param, DatagramSocket aSocket, int serverPort) 
@@ -63,12 +63,11 @@ public class requestReply
 		return JsonReply;
 	}
 	
-	
 	/**
-	 * This method formats the request to send to the Server into a JSON Object
-	 * @param method call method
-	 * @param args argument of the method
-	 * @return return JSON object
+	 * Formats the request to send to the Server into a JSON Object
+	 * @param method - the method to call
+	 * @param args - argument of the method
+	 * @return JSONObject request for server
 	 * @throws JSONException
 	 */
 	static JSONObject JSONRequestObject(String method, Object[] args) throws JSONException
