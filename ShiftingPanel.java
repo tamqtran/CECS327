@@ -71,6 +71,8 @@ public class ShiftingPanel extends JLayeredPane
 		
 		this.add(c, JLayeredPane.DEFAULT_LAYER, ZERO);			// add component to layer 0		
 		
+		addResizeListenerTo((JPanel)c);
+		
 		if (nextPanels.length > 0) 								// if the length of nextPanels is zero, then the following is skipped
 		{
 			for (Component p : this.getComponentsInLayer(N_TWO)) 

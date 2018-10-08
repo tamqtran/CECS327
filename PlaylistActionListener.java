@@ -71,9 +71,9 @@ public class PlaylistActionListener implements ActionListener
 			album = model.getValueAt(0, 2).toString();
 			
 			//change text on labels in homepage
-			titleLabel.setText(songTitle);
-			artistLabel.setText(artist);
-			albumLabel.setText(album);			
+			titleLabel.setText(songTitle); titleLabel.setVisible(true);
+			artistLabel.setText(artist); artistLabel.setVisible(true);
+			albumLabel.setText(album);	albumLabel.setVisible(true);
 			
 			// close and open new JFrame
 			JFrame sFrame = (JFrame) panel.getTopLevelAncestor();

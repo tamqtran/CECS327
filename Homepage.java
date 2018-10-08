@@ -122,7 +122,7 @@ public class Homepage
 	private void initialize()
 	{ 									
 		frame = new JFrame("MusicService -- " + userName);			// initialize the frame itself
-		frame.setMinimumSize(new Dimension(750,450));				// and set min dimensions
+		frame.setMinimumSize(new Dimension(750,500));				// and set min dimensions
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		// and the default close operation for the frame
 		
 		addHighComponentsToHome(frame.getContentPane()); 			// initializes and loads the upper half of frame components into frame
@@ -198,7 +198,7 @@ public class Homepage
 
 							ShiftingPanel.addComponent(newPanel);			// add the PlaylistPanel to ShiftingPanel
 
-							ShiftingPanel.addResizeListenerTo(newPanel);	// assign a component listener to ShiftingPanel using newPanel
+//							ShiftingPanel.addResizeListenerTo(newPanel);	// assign a component listener to ShiftingPanel using newPanel
 						}
 						else 
 							System.out.println("Current panel in ShiftingPanel remains " + ShiftingPanel.getCurrentPanelName());
@@ -243,8 +243,10 @@ public class Homepage
 				} 
 				else 
 				{
-					removePlaylist(removedPlaylist, userName);					// the variable rp would represent the playlist name to be deleted
+					removePlaylist(removedPlaylist, userName);		// the variable rp would represent the playlist name to be deleted
 					getPlaylists(dm); 								// update the model (and thus the gui) afterwards
+					
+					// if the current song is from this playlist, remove visibility of the description panel
 					
 					ShiftingPanel.removeFromHistory(removedPlaylist);
 					System.out.println("The playlist --" + removedPlaylist + "-- was removed."); // system announcement
@@ -302,59 +304,22 @@ public class Homepage
 						if (!searchField.getText().equals(ShiftingPanel.getCurrentPanelName())) 
 						{
 							SearchMenuPanel newPanel = new SearchMenuPanel(userName, getSearchResults(searchField.getText()),searchField.getText());
-
+							
+							newPanel.setName("search - " + searchField.getText()); // set name of the new SearchMenuPanel
+							
+							newPanel.setLabel(title_);		// set labels to respond to changes
+							newPanel.setLabel(artist_);		// in this searchMenuPanel
+							newPanel.setLabel(album_);
+							
 							ShiftingPanel.addComponent(newPanel);			// add the SearchMenuPanel to ShiftingPanel
 
-							ShiftingPanel.addResizeListenerTo(newPanel);	// assign a component listener to ShiftingPanel using newPanel
+//							ShiftingPanel.addResizeListenerTo(newPanel);	// assign a component listener to ShiftingPanel using newPanel
 						}
 						else 
 							System.out.println("Current panel in ShiftingPanel remains " + ShiftingPanel.getCurrentPanelName());
 					}
 				});
-		
-		// searchQuery_ gets assigned an action listener. However...
-		
-		//CONTAINS CODE THAT IS DEBUG ONLY; DOES NOT REFLECT FINAL PRODUCT
-		/*
-		searchQuery_.addActionListener(new ActionListener() 
-		{
-			@Override
-			public void actionPerformed(ActionEvent e) 
-			{
-				// TODO Auto-generated method stub
-				
-				//DEBUG ONLY; DOES NOT REFLECT FINAL PRODUCT
-				isThereASong = !isThereASong; 								//
-				System.out.println("is there a song? " + isThereASong);		//
-				if (isThereASong) 
-				{															//
-					// addSong_
-					previousSong_.setText("\u2758" + "\u23F4");				//
-					playPause_.setText("\u2758" + "\u2758");				//
-					nextSong_.setText("\u23F5" + "\u2758");					//
-					// removeSong_
-				} 
-				else
-				{ 															//
-					// addSong_
-					previousSong_.setText("\u274C");						//
-					playPause_.setText("\u274C");							//
-					nextSong_.setText("\u274C");							//
-					// removeSong_
-				}															//
-				// addSong_
-				previousSong_.setEnabled(isThereASong);						//
-				playPause_.setEnabled(isThereASong);						//
-				nextSong_.setEnabled(isThereASong);							//
-				// removeSong_
-				currentTime_.setVisible(isThereASong);						//
-				timedSlider.setEnabled(isThereASong);						//
-				songTime_.setVisible(isThereASong);							//
-				//DEBUG ONLY; DOES NOT REFLECT FINAL PRODUCT
-			}	
-		});
-		//CONTAINS CODE THAT IS DEBUG ONLY; DOES NOT REFLECT FINAL PRODUCT
-		*/
+
 		_SearchPanel.add(searchField);								// add searchField and searchQuery_ to _SearchPanel
 		_SearchPanel.add(searchQuery_);								// and set max dimensions
 		_SearchPanel.setMaximumSize(new Dimension(200,40));
@@ -455,14 +420,17 @@ public class Homepage
 		title_ = new JLabel("Title");								// initialize title_ and set max dimensions and text
 		title_.setMaximumSize(new Dimension(150,20)); 
 		title_.setName("title");
+		title_.setVisible(false);
 		
 		artist_ = new JLabel("Artist(s)"); 							// initialize artist_ and set max dimensions and text
 		artist_.setMaximumSize(new Dimension(150,20)); 
 		artist_.setName("artist(s)");		
+		artist_.setVisible(false);
 		
 		album_ = new JLabel("Album"); 								// initialize album_ and set max dimensions and text
 		album_.setMaximumSize(new Dimension(150,20));		
 		album_.setName("album");
+		album_.setVisible(false);
 		
 		Description_Panel.add(Box.createRigidArea(new Dimension(1,1)));	// add rigid areas and labels
 		Description_Panel.add(title_);									// to Description_Panel
