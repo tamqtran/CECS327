@@ -46,7 +46,8 @@ import org.json.JSONObject;
  */
 public class Homepage 
 {
-	private String specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]";
+	// declare all variables
+	private static String specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]";
 	
 	private String 				userName;
 	private JFrame 				frame;

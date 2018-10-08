@@ -21,6 +21,10 @@ import javax.swing.border.BevelBorder;
  */
 public class ShiftingPanel extends JLayeredPane 
 {
+	// declare all variables
+	
+	private final Integer N_TWO = new Integer(-2), N_ONE = new Integer(-1), ZERO = new Integer(0);
+	
 	private String currentPanel;
 	protected Component[] history, previousPanels, nextPanels;
 	
@@ -28,7 +32,6 @@ public class ShiftingPanel extends JLayeredPane
 	
 	private Integer baseComponent = -1;
 	protected Integer currentComponent = 0;
-	private final Integer N_TWO = new Integer(-2), N_ONE = new Integer(-1), ZERO = new Integer(0);
 	
 	/**
 	 * Main constructor. Creates a JLayeredPane called ShiftingPanel
@@ -38,9 +41,6 @@ public class ShiftingPanel extends JLayeredPane
 	{
 		this.setMinimumSize(new Dimension(501,501));							// set minimum size
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));	// set border
-		
-		previousPanels = this.getComponentsInLayer(N_ONE);
-		nextPanels = this.getComponentsInLayer(N_TWO);
 	}
 	
 	/**
@@ -49,11 +49,11 @@ public class ShiftingPanel extends JLayeredPane
 	 */
 	public void addResizeListenerTo(JPanel panel) 
 	{
-		this.addComponentListener(new ComponentAdapter() 		// assign component listener to ShiftingPanel
+		this.addComponentListener(new ComponentAdapter() 	// assign component listener to ShiftingPanel
 		{		
 			public void componentResized(ComponentEvent e) 
 			{			
-				panel.setSize(getSize());  					//the size of the panel becomes the size of ShiftingPanel
+				panel.setSize(getSize());  					// the size of the panel becomes the size of ShiftingPanel
 			}
 		});
 	}
@@ -71,9 +71,9 @@ public class ShiftingPanel extends JLayeredPane
 		
 		this.add(c, JLayeredPane.DEFAULT_LAYER, ZERO);			// add component to layer 0		
 		
-		addResizeListenerTo((JPanel)c);
+		addResizeListenerTo((JPanel)c);			// add component listener to ShiftinPanel in relation to the Component c
 		
-		if (nextPanels.length > 0) 								// if the length of nextPanels is zero, then the following is skipped
+		if (nextPanels.length > 0) 				// if the length of nextPanels is zero, then the following is skipped
 		{
 			for (Component p : this.getComponentsInLayer(N_TWO)) 
 			{
@@ -102,18 +102,15 @@ public class ShiftingPanel extends JLayeredPane
 					System.out.println("Moving to previous panel...");	// System announcement
 					
 					// the current panel would be moved into nextPanels in pos 0 (shift)
-					
 					for (Component p: getShiftingPanel().getComponentsInLayer(ZERO)) 
 						getShiftingPanel().setLayer(p, N_TWO, 0);
 					
 					// the panel in pos 0 of previousPanels would become the current panel (shift)
-					
 					getShiftingPanel().setLayer(getShiftingPanel().getComponentsInLayer(N_ONE)[0], ZERO, 0);
 					
-					
-					currentMovedBack();		//update history and compensate currentComponent
+					currentMovedBack();			// compensate currentComponent
 										
-					checkHistory();
+					checkHistory();				// refresh and check history
 				}
 			});
 			break;
@@ -125,18 +122,15 @@ public class ShiftingPanel extends JLayeredPane
 					System.out.println("Moving to next panel...");	//System announcement
 					
 					// the current panel would be moved into previousPanels in pos 0 (shift)
-					
 					for (Component p: getShiftingPanel().getComponentsInLayer(ZERO)) 
 						getShiftingPanel().setLayer(p, N_ONE, 0);
 					
-					
 					// the panel in pos 0 for nextPanels would become the current panel (shift)
-					
 					getShiftingPanel().setLayer(getShiftingPanel().getComponentsInLayer(N_TWO)[0], ZERO, 0);
 					
-					currentMovedForward();		//compensate currentComponent
+					currentMovedForward();		// compensate currentComponent
 					
-					checkHistory();
+					checkHistory();				// refresh and check history
 				}
 			});
 			break;
@@ -220,10 +214,10 @@ public class ShiftingPanel extends JLayeredPane
 			if (history[i].getName().equals(history[i+1].getName())) 
 			{
 				this.remove(i+1);
-				++shift;
-				history = this.getComponents();
+				++shift;						// increment shift by one
+				history = this.getComponents(); // refresh history
 			} 
-			else i++;
+			else i++;							// add one to i if this element and its following element doesn't have the same name
 		}
 		baseComponent -= shift;
 	}
@@ -232,12 +226,12 @@ public class ShiftingPanel extends JLayeredPane
 	 * A void method that updates, then lists out a bunch of relevant information about the user's settings in regards to ShiftingPanel.
 	 */
 	private void checkHistory() {
-		updateHistory();		// update history parameters
+		updateHistory();															// update history parameters
 		System.out.println("Layer 0 is the current panel; Layer -1 is previous panels; Layer -2 is future panels:");
 		int i = 0;
-		for (Component p : history)						//system: the layer the component is in
+		for (Component p : history)													// system: the layer the component is in
 			System.out.println("Index: " + i++ + ", Layer: " + this.getLayer(p) 	// the position of each component in the layer
-			+ ", pos: " + this.getPosition(p) + ", name: " + p.getName());	// and the name of each component
+			+ ", pos: " + this.getPosition(p) + ", name: " + p.getName());			// and the name of each component
 		System.out.println("baseComponent is at index " + baseComponent 
 				+ "\ncurrentPanel is " + currentPanel + " at index " + currentComponent + "\n");
 	}
