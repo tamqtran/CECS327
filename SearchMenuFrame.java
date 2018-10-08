@@ -4,6 +4,10 @@ import javax.swing.*;
 public class SearchMenuFrame extends JFrame {
 	
 	private String username;
+
+  public static void main(String[] args) {
+	  new SearchMenuFrame("bill").setVisible(true);
+  }
 	
   public SearchMenuFrame(String username) {
 	this.username = username;
