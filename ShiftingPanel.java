@@ -41,6 +41,9 @@ public class ShiftingPanel extends JLayeredPane
 	{
 		this.setMinimumSize(new Dimension(501,501));							// set minimum size
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));	// set border
+		
+		previousPanels = this.getComponentsInLayer(N_ONE);
+		nextPanels = this.getComponentsInLayer(N_TWO);
 	}
 	
 	/**

@@ -13,14 +13,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-<<<<<<< HEAD
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
-=======
->>>>>>> cc731c9e289f4e4330a453f57c909b65ac99d63d
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -47,10 +46,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
+import javax.swing.table.DefaultTableModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 /**
  * The Homepage class creates a frame that houses the main piece of this music streaming application.
@@ -311,27 +312,9 @@ public class Homepage
 		searchQuery_.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-<<<<<<< HEAD
-						System.out.println("Searching for: " + searchField.getText());
-						System.out.println("Current panel in ShiftingPanel is " + ShiftingPanel.getCurrentPanelName());
-						
-						// checks if the current panel is the same one as the one that just got clicked
-						if (!searchField.getText().equals(ShiftingPanel.getCurrentPanelName())) 
-						{
-							SearchMenuPanel newPanel = new SearchMenuPanel(userName, getSearchResults(searchField.getText()),searchField.getText());
-							playlist = "x";
-							
-							newPanel.setName("search - " + searchField.getText()); // set name of the new SearchMenuPanel
-							
-							newPanel.setLabel(title_);		// set labels to respond to changes
-							newPanel.setLabel(artist_);		// in this searchMenuPanel
-							newPanel.setLabel(album_);
-							
-							ShiftingPanel.addComponent(newPanel);			// add the SearchMenuPanel to ShiftingPanel
-=======
 				System.out.println("Searching for: " + searchField.getText());
 				System.out.println("Current panel in ShiftingPanel is " + ShiftingPanel.getCurrentPanelName());
->>>>>>> cc731c9e289f4e4330a453f57c909b65ac99d63d
+
 
 				if (!codeDenial(searchField.getText())) // if special characters are used then this will go off
 				{
@@ -669,7 +652,7 @@ public class Homepage
 	 * Read playlists array from json file and add to gui list
 	 * @param dm defaultlistModel
 	 */
-	void getPlaylists(DefaultListModel<String> dm) 
+	public void getPlaylists(DefaultListModel<String> dm) 
 	{
 		dm.clear(); //clear list 
 

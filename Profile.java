@@ -155,7 +155,7 @@ public class Profile {
 					txtSearchMyPlaylists.setForeground(Color.RED);;
 				}else {
 					frame.dispose();
-					new PlaylistFrame(username,list_1.getSelectedValue().toString()).setVisible(true); 
+//					new PlaylistFrame(username,list_1.getSelectedValue().toString()).setVisible(true); 
 				}
 			}
 		});
