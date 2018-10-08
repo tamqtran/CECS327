@@ -31,7 +31,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 /**
- * 
+ * This is the Dialog that prompts up when a user wants to create a playlist
  * @author Austin Tao
  * @since  10-02-2018
  */
@@ -128,10 +128,10 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 		optionPane.setValue(button1);		// this sets the action of the text field to the enter button
 	}
 	
-	/** ORIGIN: Profile.java
+	/** 
 	 * Add playlist to JSON FILE
-	 * @param playlist playlist to be added
-	 * @param username current login user
+	 * @param playlist - playlist to be added
+	 * @param username - current login user
 	 */
 	 void addPlaylist(String playlist, String username) {
 		
@@ -164,11 +164,10 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 	 }
 	
 	 /**
-	  * This method checks the user's json file for their playlists' names against the variable 'playlist'.
-	  * This method returns true if none of the playlist names match 'playlist'.
-	  * @param playlist the name of the new playlist
-	  * @param username the username of the account this playlist name is to go into
-	  * @return boolean
+	  * Checks the user's json file for their playlists' names against the variable 'playlist'.
+	  * @param playlist- the name of the new playlist
+	  * @param username - the username of the account this playlist name is to go into
+	  * @return boolean - returns true if none of the playlist names match 'playlist'; false if there is
 	  */
 	 private boolean checkPlaylistNameUniqueness(String playlist, String username) {
 		// define name against all other playlist names in the user's account
@@ -197,9 +196,9 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 		setVisible(false);
 	}
 	
-	/** ORIGIN: Profile.java
+	/** 
 	 * Read playlists array from json file and add to gui list
-	 * @param dm defaultlistModel
+	 * @param dm - the defaultlistModel that holds the list of playlists
 	 */
 	void getPlaylists(DefaultListModel<String> dm) 
 	{
@@ -248,9 +247,9 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 		}
 	}*/
 	
-	/** ORIGIN: Login.java
-	 * A boolean method that abhors code injections.
-	 * @param input: A string, either username or password
+	/**
+	 * Detects special characters in the string
+	 * @param input - A string, either username or password
 	 * @return false if any special characters are found in input; true otherwise
 	 */
 	private boolean codeDenial (String input) {
