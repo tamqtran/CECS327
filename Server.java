@@ -1,15 +1,16 @@
+import java.io.BufferedReader; 
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
-// Delete?
 
 /**
- * 
- * @author Duong Pham
- * @since 09-25-2018
+ * @author nono
  *
  */
+
 public class Server implements Runnable{
     // Reception socket
     private DatagramSocket socket;

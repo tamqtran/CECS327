@@ -1,25 +1,6 @@
 import java.awt.*;
 import javax.swing.*;
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.border.BevelBorder;
 
-import java.util.*;
-import java.awt.event.*;
-import java.io.*;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import javax.swing.table.*;
-
-/**
- * 
- * @author Vincent Vu
- * @since 09-06-2018
- *
- */
 public class SearchMenuFrame extends JFrame {
 	
 	private String username;

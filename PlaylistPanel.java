@@ -1,4 +1,5 @@
 import java.awt.Dimension;
+import java.awt.event.ActionListener;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -15,8 +16,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+
 /**
- * The JPanel that displays the list of songs in the playlist.
+ * PlaylistPanel.java is the JPanel that acts as the GUI for the playlist page 
  * 
  * @author Tam Tran
  * @since 09-05-2018
@@ -42,8 +44,8 @@ public class PlaylistPanel extends JPanel
 	
 	/**
 	 * Constructor for GUI playlist panel with components added 
-	 * @param username - the user's name 
-	 * @param playlist - the selected playlist 
+	 * @param username
+	 * @param playlist
 	 */
 	public PlaylistPanel(String username, String playlist)
 	{
@@ -57,15 +59,19 @@ public class PlaylistPanel extends JPanel
 		// based on absolute layout to organize the components in the frame (https://docs.oracle.com/javase/tutorial/uiswing/layout/none.html)
 		this.setLayout(null);
 		
-		// set the border of this panel
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
-		// set the size of the panel
 		this.setSize(new Dimension(805,453));
 		
-		// set name of playlistPanel as the playlist name
-		this.setName(this.playlist);			
-
+		this.setName(this.playlist);			// set name of playlistPanel as the playlist name
+		
+//		// creating back to profile button
+//		backToProfileButton = new JButton("Back to Profile");
+//		backToProfileButton.setSize(backToProfileButton.getPreferredSize());
+//		backToProfileButton.setLocation(10, 10);
+//		backToProfileButton.addActionListener(listener);
+//		this.add(backToProfileButton);
+		
 		// creating playlist name label
 		playlistName = new JLabel("Playlist Name: " + playlist);
 		playlistName.setSize(playlistName.getPreferredSize());
@@ -105,7 +111,7 @@ public class PlaylistPanel extends JPanel
 	}
 	
 	/**
-	 * Updates the JList in the PlaylistPanel
+	 * method that updates the JList in the PlaylistPanel
 	 */
 	public void updatePlaylist() 
 	{
@@ -129,15 +135,14 @@ public class PlaylistPanel extends JPanel
 		catch (Exception e) 																		// catch exception
 		{
 			e.printStackTrace();
+			
 		}
 	}
 	
 	/**
-	 * Return the PlaylistActionListener as a variable
-	 * @return listener - the PlaylistActionListener
+	 * Gets the PlaylistActionListener variable 'listener'
+	 * @return listener, a PlaylistActionListener
 	 */
-	public PlaylistActionListener getListener() 
-	{ 
-		return listener; 
-	}
+	public PlaylistActionListener getListener() { return listener; }
+
 }

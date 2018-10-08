@@ -1,10 +1,20 @@
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.net.*;
+import java.util.Scanner;
+import java.io.*;
+import java.util.UUID;
+
+import org.json.JSONTokener;
+import org.json.JSONException;
+
 
 /**
  * This file is the file that initializes the testing JSON files to start
  * This file starts the program
- * @author Duong Pham
- * @since 10-04-2018
+ * @author Tam Tran
+ *
  */
 public class start 
 {
@@ -13,6 +23,7 @@ public class start
 		/*Start Client*/
 		int serverPort = 6733;
 		DatagramSocket aSocket = null;
+		Scanner sc = new Scanner(System.in);
 		
 		try 
 		{
@@ -27,6 +38,8 @@ public class start
 		/*End Client*/	
 		
 		// call initial Frame to start the program
-		new Login(aSocket,serverPort);
+		Login begin = new Login(aSocket,serverPort);
 	}
+	
+
 }
