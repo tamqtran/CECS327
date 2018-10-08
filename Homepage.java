@@ -195,6 +195,10 @@ public class Homepage
 							newPanel.getListener().setLabel(title_);		// set the labels from Description_Panel to follow the actions 
 							newPanel.getListener().setLabel(artist_);		// of the buttons from PlaylistPanel 
 							newPanel.getListener().setLabel(album_);
+							
+							newPanel.getListener().setButtonOn(previousSong_); // set buttons active when a song is selected 
+							newPanel.getListener().setButtonOn(playPause_);
+							newPanel.getListener().setButtonOn(nextSong_);
 
 							ShiftingPanel.addComponent(newPanel);			// add the PlaylistPanel to ShiftingPanel
 
