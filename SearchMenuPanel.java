@@ -22,9 +22,11 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 
 	private JButton playButton, addButton;
 
-	private JLabel playlistLabel, userLabel, responseLabel, searchLabel,
-				   titleLabel, artistLabel, albumLabel;
+	private JLabel 	playlistLabel, responseLabel, 
+//				   	userLabel, searchLabel,
+				   	titleLabel, artistLabel, albumLabel;
 
+	@SuppressWarnings("rawtypes")
 	private JComboBox playList;
 
 	private String username;
@@ -33,6 +35,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 	 * Constructor for SearchMenuPanel
 	 * @param username: username of the user
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public SearchMenuPanel(String username, String[] search, String userSearch) {
 		this.username = username;
 
@@ -77,7 +80,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 
 
 		// Testing. Dummy values to store in JTable
-		String data[][] = { {}, {}, {} };
+//		String data[][] = { {}, {}, {} };
 		String[] columns = { "Song Title", "Artist", "Album" };
 		DefaultTableModel model = null;
 		if (search != null) {
@@ -241,8 +244,6 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 				String songTitle = results.getModel().getValueAt(row, 0).toString();
 				String artist = results.getModel().getValueAt(row, 1).toString();
 				String album = results.getModel().getValueAt(row, 2).toString();
-				JFrame sFrame = (JFrame) this.getTopLevelAncestor();
-//				sFrame.dispose();
 				new PlayButton.PlayFrame(songTitle + "_" + artist + "_" + album, username).setVisible(true);
 				
 				//change text on labels in homepage

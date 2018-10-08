@@ -21,6 +21,7 @@ import javax.swing.table.DefaultTableModel;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+
 /**
  * @author Luciano Vega
    Playbutton handles songs and adds the features to play and pause a song.
@@ -157,7 +158,6 @@ public class PlayButton {
 					}
 					JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 					pFrame.dispose();
-//					new SearchMenuFrame(uName).setVisible(true);
 				}
 				else if(o == panel.pause)//pauses song if song is active and saves frame position to resume in play
 				{
