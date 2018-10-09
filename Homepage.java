@@ -583,6 +583,10 @@ public class Homepage
 			{			
 				System.out.println("Moving to next song...");
 				//do things here
+				if(playlist.equals("x"))
+				{
+					
+				}
 				
 				playPause_.setText("\u2758" + "\u2758");
 				isSongPlaying = true;							// the song will begin playing when it's all over			
