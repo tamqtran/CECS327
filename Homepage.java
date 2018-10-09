@@ -590,7 +590,7 @@ public class Homepage
 				
 				playPause_.setText("\u2758" + "\u2758");
 				isSongPlaying = true;							// the song will begin playing when it's all over			
-			}	
+			}	//
 		});
 	
 //		add removeSong_ here
