@@ -508,10 +508,28 @@ public class Homepage
 			{
 				if ((current!=null && ((current.isActive()))))
 				{	
-					pos = current.getFramePosition();
-					current.stop();
-					playPause_.setText("\u25B6");
-					isSongPlaying = false;;		
+					if(!(playlist.equals("x")))
+					{
+						pos = current.getFramePosition();
+						current.stop();
+						playPause_.setText("\u25B6");
+						isSongPlaying = false;	
+						if(songIndex == 0)
+						{
+							songIndex = songList.size()-1;
+						}
+						else
+						{
+							songIndex--;
+						}
+					}
+					else
+					{
+						pos = current.getFramePosition();
+						current.stop();
+						playPause_.setText("\u25B6");
+						isSongPlaying = false;
+					}
 				} 
 				else if((current == null) || (current!=null && (!(current.isActive()))))
 				{
