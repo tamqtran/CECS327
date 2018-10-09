@@ -536,6 +536,7 @@ public class Homepage
 					if(playlist.equals("x"))
 					{
 						try {
+							
 							System.out.println(title_+ "_" + artist_ + "_" + album_  + ".wav");
 							File file = new File(title_+ "_" + artist_ + "_" + album_  + ".wav");
 							AudioInputStream player = AudioSystem.getAudioInputStream(file);
@@ -552,7 +553,42 @@ public class Homepage
 					{
 						playPause_.setText("\u2758" + "\u2758");	
 						try {
-								genPlaylist(songList);
+								try (InputStream input = new FileInputStream(userName+".json"))
+								{
+
+									JSONObject obj = new JSONObject(new JSONTokener(input));								// turn into JSON object
+
+									JSONArray listOfSongs = obj.getJSONArray(playlist);										// grabs JSON array of songs by mapping the playlist name
+
+									for(int j = 0; j < listOfSongs.length(); j++)											// adds all songs from array into JList
+									{
+										String temp = listOfSongs.getString(j);
+										String[] transferSong = SearchMenuPanel.search(temp);
+
+										// get the list of .wav files and separate by song, artist, and album
+										String[] column = { "Song Title", "Artist", "Album" };
+										DefaultTableModel model = new DefaultTableModel(null, column);
+										model.setRowCount(0);
+										for (int i = 0; i < transferSong.length; i++) {
+											model.addRow(transferSong[i].split("_"));
+										};
+
+										// get selected song variables
+										String songTitle = model.getValueAt(0, 0).toString();
+										String artist = model.getValueAt(0, 1).toString();
+										String album = model.getValueAt(0, 2).toString();
+
+										//change text on labels in homepage
+										songList.add(songTitle + "_" + artist + "_" + album);
+									}
+									songIndex = songList.indexOf(title_+ "_" + artist_ + "_" + album_);
+								} catch (FileNotFoundException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 								System.out.println(songList.get(songIndex) + ".wav");
 								File file = new File(songList.get(songIndex) + ".wav");
 								AudioInputStream player = AudioSystem.getAudioInputStream(file);
@@ -595,6 +631,7 @@ public class Homepage
 							AudioInputStream player = AudioSystem.getAudioInputStream(file);
 							current = AudioSystem.getClip();
 							current.open(player);
+							pos = 0;
 							current.setFramePosition(pos);
 							current.start();
 							
