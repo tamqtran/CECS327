@@ -206,7 +206,7 @@ public class Homepage
 							PlaylistPanel newPanel = new PlaylistPanel(userName, list.getSelectedValue().toString());
 							playlist = list.getSelectedValue().toString();
 							newPanel.setName(list.getSelectedValue().toString());	// iniitalize a new PlaylistPanel and set the name of the PlaylistPanel
-
+							
 							newPanel.getListener().setLabel(title_);		// set the labels from Description_Panel to follow the actions 
 							newPanel.getListener().setLabel(artist_);		// of the buttons from PlaylistPanel 
 							newPanel.getListener().setLabel(album_);
@@ -319,13 +319,8 @@ public class Homepage
 						System.out.println("Searching for: " + searchField.getText());
 						System.out.println("Current panel in ShiftingPanel is " + ShiftingPanel.getCurrentPanelName());
 						
-						if (!codeDenial(searchField.getText())) // if special characters are used then this will go off
-						{
-							JOptionPane.showMessageDialog(frame, "You can't do that. Stop it!", "Inane warning", JOptionPane.WARNING_MESSAGE);
-							searchField.setText("");
-						}
 						// checks if the current panel is the same one as the one that just got clicked
-						else if (!searchField.getText().equals(ShiftingPanel.getCurrentPanelName())) 
+						if (!searchField.getText().equals(ShiftingPanel.getCurrentPanelName())) 
 						{
 							SearchMenuPanel newPanel = new SearchMenuPanel(userName, getSearchResults(searchField.getText()),searchField.getText());
 							playlist = "x";
@@ -587,7 +582,7 @@ public class Homepage
 										//change text on labels in homepage
 										songList.add(songTitle + "_" + artist + "_" + album);
 									}
-									songIndex = 0;
+									songIndex = songList.indexOf(o);
 								} catch (FileNotFoundException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
