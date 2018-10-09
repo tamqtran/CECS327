@@ -304,7 +304,7 @@ public class Homepage
 		searchField.setText("Search for...	");
 		searchField.setColumns(15);
 		searchField.addMouseListener(new MouseAdapter() {				// Clear Textfield when you click on it
-			public void mouseClicked(MouseEvent e) {/
+			public void mouseClicked(MouseEvent e) {//
 				searchField.setText("");
 
 				// Clears the Jtable
