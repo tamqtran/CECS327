@@ -1,6 +1,3 @@
-// This file has been created by Austin Tao on 10/2/2018.
-// Inspired by Oracle's CustomDialog.java example.
-
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,6 +29,7 @@ import org.json.JSONTokener;
 
 /**
  * This is the Dialog that prompts up when a user wants to create a playlist
+ * Inspired by Oracle's CustomDialog.java example.
  * @author Austin Tao
  * @since  10-02-2018
  */

@@ -231,7 +231,7 @@ public class Login implements ActionListener {
 	}
 
 	/**
-	 * A void method that can make a frame visible.
+	 * Make a frame visible.
 	 * @param b boolean (true/false) that determines visibility of the frame (where true makes it visible, and false makes it not visible
 	 */
 	public void setVisible(boolean b) {

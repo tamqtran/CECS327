@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import org.json.JSONException;
 
 /**
+ * This class represents the Client side of the Client-Server interaction
  * @author Duong Pham
  * @since 09-27-2018
  */
@@ -81,8 +82,8 @@ public class UDPClient
 	}
 	/**
 	 * Format request into JSON Object
-	 * @param method call method
-	 * @param args argument of the method
+	 * @param method - the call method
+	 * @param args - argument of the method
 	 * @return return json object
 	 * @throws JSONException
 	 */

@@ -7,7 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.*;
 
-/**
+/**This class represents the Server side of the Client-Server interaction
  * @author Duong Pham
  * @since 09-27-2018
  */
@@ -136,9 +136,9 @@ public class UDPServer
 	
 	/**
 	 * Creates the reply for the Server to send to the Client.
-	 * @param method
-	 * @param args
-	 * @param reply
+	 * @param method - the call method
+	 * @param args - argument of the method
+	 * @param reply - reply message
 	 * @return JSON message
 	 * @throws JSONException
 	 */
