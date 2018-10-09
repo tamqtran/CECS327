@@ -38,7 +38,9 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 
 	/**
 	 * Constructor for SearchMenuPanel
-	 * @param username: username of the user
+	 * @param username - username of the user
+	 * @param search - string that contains the song artist name, album name, and song title name
+	 * @param userSearch - the desired search from the user
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public SearchMenuPanel(String username, String[] search, String userSearch) {

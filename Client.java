@@ -21,8 +21,8 @@ public class Client implements Runnable{
 
     /**
      * Client constructor.
-     * @param receptionPort
-     * @param packetMaxLenght
+     * @param receptionPort - the socket that is being used
+     * @param packetMaxLenght - the max length of the packet
      */
     public Client(int receptionPort, int packetMaxLenght) {
         try {

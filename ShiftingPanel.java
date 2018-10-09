@@ -34,7 +34,6 @@ public class ShiftingPanel extends JLayeredPane
 	
 	/**
 	 * Main constructor. Creates a JLayeredPane called ShiftingPanel
-	 * @param user - the name of the user
 	 */
 	public ShiftingPanel() 
 	{

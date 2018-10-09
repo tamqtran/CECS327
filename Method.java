@@ -19,6 +19,7 @@ public class Method
 	/**
 	 * Get user's name
 	 * @param username - user that is making the request
+	 * @param password - user's entered password
 	 * @return user's name 
 	 */
 	public Boolean checkLogin(String username,String password) 
@@ -182,6 +183,7 @@ public class Method
 	 * Add playlist to JSON FiLE
 	 * @param username - user that is making the request
 	 * @param playlist - playlist to be added
+	 * @return boolean - true if adding playlist was successful, false if it was not
 	 */
 	 public boolean addPlaylist(String username, String playlist) 
 	 {
@@ -213,6 +215,7 @@ public class Method
 		 * Remove playlist from JSON FiLE
 		 * @param username - user that is making the request
 		 * @param playlist - playlist to be removed
+		 * @return boolean - true if adding playlist was successful, false if it was not
 		 */
 	public boolean removePlaylist(String username, String playlist) 
 	{
