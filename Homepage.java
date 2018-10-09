@@ -552,6 +552,7 @@ public class Homepage
 					{
 						playPause_.setText("\u2758" + "\u2758");	
 						try {
+								genPlaylist(songList);
 								System.out.println(songList.get(songIndex) + ".wav");
 								File file = new File(songList.get(songIndex) + ".wav");
 								AudioInputStream player = AudioSystem.getAudioInputStream(file);
