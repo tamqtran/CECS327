@@ -23,7 +23,7 @@ public class PlaylistActionListener implements ActionListener
 {
 	// declaring variables
 	private PlaylistPanel panel;
-	private String songTitle, artist, album;
+	private String song, songTitle, artist, album;
 	private JLabel titleLabel, artistLabel, albumLabel;
 	
 	/**
@@ -79,6 +79,7 @@ public class PlaylistActionListener implements ActionListener
 			// close and open new JFrame
 			JFrame sFrame = (JFrame) panel.getTopLevelAncestor();
 //			sFrame.dispose();
+			song = songTitle + "_" + artist + "_" + album;
 			new PlayButton.PlayFrame(songTitle + "_" + artist + "_" + album, panel.username, panel.playlist).setVisible(true);
 		}
 		
