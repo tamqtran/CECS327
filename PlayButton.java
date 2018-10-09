@@ -56,7 +56,10 @@ public class PlayButton {
 			uName = u;
 			playlist = pL;
 			song = s;
-			setTitle("Play");
+			
+			String[] songSpecifics = song.split("_");
+			
+			setTitle(uName + " plays " + songSpecifics[0] + " by " + songSpecifics[1]);
 			setSize(500, 200);
 			JPanel p = new PlayPanel(u, pL);
 			this.add(p);
@@ -71,7 +74,10 @@ public class PlayButton {
 			uName = u;
 			playlist = "";
 			song = s;
-			setTitle("Play");
+			
+			String[] songSpecifics = song.split("_");
+			
+			setTitle(uName + " plays " + songSpecifics[0] + " by " + songSpecifics[1]);
 			setSize(500, 200);
 			JPanel p = new PlayPanel(u);
 			this.add(p);
@@ -81,7 +87,7 @@ public class PlayButton {
 		
 		JButton play = new JButton("\u25B6");//play button
 		JButton back = new JButton("Back");//back button
-		JButton pause = new JButton("\u25F8");//pause button
+		JButton pause = new JButton("\u2758" + "\u2758");//pause button
 		PlayPanel(String u)//panel for playing a song from search menu
 		{
 			play.setFont(new Font("Dialog", Font.PLAIN, 30));
