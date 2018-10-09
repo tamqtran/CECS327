@@ -570,14 +570,41 @@ public class Homepage
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					playPause_.setText("\u2758" + "\u2758");	
+						playPause_.setText("\u2758" + "\u2758");	
 						}
-				}	
-			}
-		}});
+						try {
+							for(int i = 0; i < songList.size(); i++)
+							{
+								System.out.println(songList.get(songIndex) + ".wav");
+								File file = new File(songList.get(songIndex) + ".wav");
+								AudioInputStream player = AudioSystem.getAudioInputStream(file);
+								current = AudioSystem.getClip();
+								current.open(player);
+								current.setFramePosition(pos);
+								current.start();
+								if(songIndex == songList.size()-1)
+								{
+									songIndex = 0;
+								}
+								else
+								{
+									songIndex++;
+								}
+								while(current.isActive())
+								{
+								}
+							}
+
+						} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}	
+				}
+			}});
 		nextSong_ = new JButton("\u274C"); 						// initializes nextSong_ and add an
 		nextSong_.addActionListener(new ActionListener() 		// action listener to nextSong_
-		{ 			
+				{ 			
 			@Override 
 			public void actionPerformed(ActionEvent e) 
 			{			
