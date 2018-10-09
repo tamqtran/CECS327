@@ -67,7 +67,8 @@ public class WAVEditor {
                     // or if the song was paused
    try {
     InputStream song = new ByteArrayInputStream(buf);
-    AudioInputStream player = new AudioInputStream(song, format, frameLength);
+    //Don't ask about audioformat
+    AudioInputStream player = new AudioInputStream(song, new AudioFormat(44100,16,2,true,false), buf.length);
     current = AudioSystem.getClip();
     current.open(player);
     return current;
