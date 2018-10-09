@@ -69,6 +69,7 @@ public class Homepage
 	private Clip 				current;
 	private int					pos;//current frame position for song
 	private int					songIndex;
+	private ArrayList<String> songList = new ArrayList<String>();
 	
 	private String 				userName;
 	private String				playlist;
@@ -531,50 +532,8 @@ public class Homepage
 					}
 					else
 					{
-						ArrayList<String> songList = new ArrayList<String>();
-						{
-						
-						try (InputStream input = new FileInputStream(userName+".json"))
-						{
-
-							JSONObject obj = new JSONObject(new JSONTokener(input));								// turn into JSON object
-
-							JSONArray listOfSongs = obj.getJSONArray(playlist);										// grabs JSON array of songs by mapping the playlist name
-
-							for(int j = 0; j < listOfSongs.length(); j++)											// adds all songs from array into JList
-							{
-								String temp = listOfSongs.getString(j);
-								String[] transferSong = SearchMenuPanel.search(temp);
-
-								// get the list of .wav files and separate by song, artist, and album
-								String[] column = { "Song Title", "Artist", "Album" };
-								DefaultTableModel model = new DefaultTableModel(null, column);
-								model.setRowCount(0);
-								for (int i = 0; i < transferSong.length; i++) {
-									model.addRow(transferSong[i].split("_"));
-								};
-
-								// get selected song variables
-								String songTitle = model.getValueAt(0, 0).toString();
-								String artist = model.getValueAt(0, 1).toString();
-								String album = model.getValueAt(0, 2).toString();
-
-								//change text on labels in homepage
-								songList.add(songTitle + "_" + artist + "_" + album);
-							}
-							songIndex = songList.indexOf(title_+ "_" + artist_ + "_" + album_);
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 						playPause_.setText("\u2758" + "\u2758");	
-						}
 						try {
-							for(int i = 0; i < songList.size(); i++)
-							{
 								System.out.println(songList.get(songIndex) + ".wav");
 								File file = new File(songList.get(songIndex) + ".wav");
 								AudioInputStream player = AudioSystem.getAudioInputStream(file);
@@ -590,10 +549,6 @@ public class Homepage
 								{
 									songIndex++;
 								}
-								while(current.isActive())
-								{
-								}
-							}
 
 						} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
 							// TODO Auto-generated catch block
@@ -610,15 +565,38 @@ public class Homepage
 			{			
 				System.out.println("Moving to next song...");
 				//do things here
-				if(playlist.equals("x"))
+				if(!(playlist.equals("x")))
 				{
-					
+					if(!(songList.isEmpty()))
+						{
+						try{
+							current.stop();
+							System.out.println(songList.get(songIndex) + ".wav");
+							File file = new File(songList.get(songIndex) + ".wav");
+							AudioInputStream player = AudioSystem.getAudioInputStream(file);
+							current = AudioSystem.getClip();
+							current.open(player);
+							current.setFramePosition(pos);
+							current.start();
+							
+							if(songIndex == songList.size() -1)
+							{
+								songIndex = 0;
+							}
+							else
+							{
+								songIndex++;
+							}
+						}catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 				}
 				
 				playPause_.setText("\u2758" + "\u2758");
 				isSongPlaying = true;							// the song will begin playing when it's all over			
 			}	//
-		});
+		}});
 	
 //		add removeSong_ here
 		
@@ -663,7 +641,47 @@ public class Homepage
 				if (s == c) return false;
 		} return true;
 	}
-	
+
+	private void genPlaylist(ArrayList<String> a)
+	{
+		try (InputStream input = new FileInputStream(userName+".json"))
+		{
+
+			JSONObject obj = new JSONObject(new JSONTokener(input));								// turn into JSON object
+
+			JSONArray listOfSongs = obj.getJSONArray(playlist);										// grabs JSON array of songs by mapping the playlist name
+
+			for(int j = 0; j < listOfSongs.length(); j++)											// adds all songs from array into JList
+			{
+				String temp = listOfSongs.getString(j);
+				String[] transferSong = SearchMenuPanel.search(temp);
+
+				// get the list of .wav files and separate by song, artist, and album
+				String[] column = { "Song Title", "Artist", "Album" };
+				DefaultTableModel model = new DefaultTableModel(null, column);
+				model.setRowCount(0);
+				for (int i = 0; i < transferSong.length; i++) {
+					model.addRow(transferSong[i].split("_"));
+				};
+
+				// get selected song variables
+				String songTitle = model.getValueAt(0, 0).toString();
+				String artist = model.getValueAt(0, 1).toString();
+				String album = model.getValueAt(0, 2).toString();
+
+				//change text on labels in homepage
+				a.add(songTitle + "_" + artist + "_" + album);
+			}
+			songIndex = a.indexOf(title_+ "_" + artist_ + "_" + album_);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * A void method that can make a frame visible.
 	 * @param b boolean (true/false) that determines visibility of the frame (where true makes it visible, and false makes it not visible
