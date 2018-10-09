@@ -219,13 +219,20 @@ public class ShiftingPanel extends JLayeredPane
 			//check for adjacent elements that have the same name - if found, remove the second one
 			if (history[i].getName().equals(history[i+1].getName())) 
 			{
-				this.remove(i+1);
-				++shift;
-				history = this.getComponents();
+				this.remove(i+1);					// removes the second one
+				++shift;							// add one to shift
+				history = this.getComponents();		//update history
 			} 
+			else if ((history[i].getName().equals("Home") && history[i+1].getName().equals("Base Home")))
+			{	// singular scenario: base home -> playlist -> home, delete playlist
+				this.remove(i);	// removes item at index i from history
+				this.setLayer(history[i+1], ZERO, 0);	// sends the item at index i+1 to layer 0
+				++shift;								// proceed as normal
+				history = this.getComponents();
+			}
 			else i++;
 		}
-		baseComponent -= shift;
+		baseComponent -= shift;						//push compensation shift to baseComponent
 	}
 	
 	/**

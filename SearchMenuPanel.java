@@ -43,7 +43,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 
 		// Custom Layout
 		this.setLayout(null);
-		this.setSize(new Dimension(805,453));
+		this.setSize(new Dimension(804,455));
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
 //		//Displays Username on Panel

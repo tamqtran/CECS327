@@ -61,7 +61,7 @@ public class PlaylistPanel extends JPanel
 		
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
-		this.setSize(new Dimension(805,453));
+		this.setSize(new Dimension(804,455));
 		
 		this.setName(this.playlist);			// set name of playlistPanel as the playlist name
 		
