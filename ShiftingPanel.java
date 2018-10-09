@@ -21,7 +21,7 @@ import javax.swing.border.BevelBorder;
  */
 public class ShiftingPanel extends JLayeredPane 
 {
-	private String username_, currentPanel;
+	private String username_, currentPanel, songName;
 	protected Component[] history, previousPanels, nextPanels;
 	
 	private JButton prevButton, nextButton;
@@ -263,5 +263,18 @@ public class ShiftingPanel extends JLayeredPane
 		
 		if (previousPanels.length > 0) prevButton.setEnabled(true); else prevButton.setEnabled(false);	// set history buttons enable/disable
 		if (nextPanels.length > 0) nextButton.setEnabled(true); else nextButton.setEnabled(false);
+	}
+	
+	public String getSong() {
+		if (history[0].getClass() == PlaylistPanel.class) {
+			songName = ((PlaylistPanel)history[0]).getListener().getSong();
+		}
+		else if (history[0].getClass() == SearchMenuPanel.class) {
+			songName = ((SearchMenuPanel)history[0]).getSong();
+		} else songName = null;
+		
+		System.out.println("ShiftingPanel sees " + songName);
+		
+		return songName;
 	}
 }

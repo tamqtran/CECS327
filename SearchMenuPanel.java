@@ -15,7 +15,7 @@ import org.json.JSONTokener;
 
 import javax.swing.table.*;
 
-public class SearchMenuPanel extends JPanel implements ActionListener {
+public class SearchMenuPanel extends JPanel implements ActionListener, MouseListener {
 	
 	//Declaring variables
 
@@ -30,7 +30,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 
 	private JComboBox playList;
 
-	private String username;
+	private String username, songName, songTitle, artist, album;
 
 	/**
 	 * Constructor for SearchMenuPanel
@@ -103,6 +103,9 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		resultsJPS = new JScrollPane(results);
 		resultsJPS.setSize(new Dimension(400, 250));
 		resultsJPS.setLocation(10, 5);
+		
+		results.addMouseListener(this);
+		
 		// News JScrollPane else column names wont show up
 		this.add(resultsJPS);
 
@@ -243,18 +246,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		if (source == this.playButton) {
 			int row = this.results.getSelectedRow();
 			if (row != -1) {
-				String songTitle = results.getModel().getValueAt(row, 0).toString();
-				String artist = results.getModel().getValueAt(row, 1).toString();
-				String album = results.getModel().getValueAt(row, 2).toString();
-				JFrame sFrame = (JFrame) this.getTopLevelAncestor();
-//				sFrame.dispose();
-				new PlayButton.PlayFrame(songTitle + "_" + artist + "_" + album, username).setVisible(true);
-				
-				//change text on labels in homepage
-				titleLabel.setText(songTitle); titleLabel.setVisible(true);
-				artistLabel.setText(artist); artistLabel.setVisible(true);
-				albumLabel.setText(album);	albumLabel.setVisible(true);
-				
+				new PlayButton.PlayFrame(songName, username).setVisible(true);
 			} else {
 				responseLabel.setText("No song is being selected");
 				responseLabel.setForeground(Color.RED);
@@ -270,5 +262,54 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		case "artist(s)": artistLabel = label; break;
 		case "album": albumLabel = label; break;
 		}
+	}
+	
+	public String getSong() {
+		System.out.println("SearchMenuPanel song chosen: " + songName);
+		return songName;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		int row = this.results.getSelectedRow();
+		
+		System.out.println("row " +row);
+		
+		songTitle = results.getModel().getValueAt(row, 0).toString();
+		artist = results.getModel().getValueAt(row, 1).toString();
+		album = results.getModel().getValueAt(row, 2).toString();
+		
+		//change text on labels in homepage
+		titleLabel.setText(songTitle); titleLabel.setVisible(true);
+		artistLabel.setText(artist); artistLabel.setVisible(true);
+		albumLabel.setText(album);	albumLabel.setVisible(true);
+		
+		songName = songTitle + "_" + artist + "_" + album;	
+		System.out.println(songName + " clicked");
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

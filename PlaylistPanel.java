@@ -104,6 +104,7 @@ public class PlaylistPanel extends JPanel
 		songList.setModel(DLM);
 		songList.setSize(250,200);
 		songList.setLocation(10, 55);
+		songList.addMouseListener(listener);
 		this.add(songList);		
 		
 		// updates the list of songs in the playlist

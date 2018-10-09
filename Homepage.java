@@ -71,8 +71,7 @@ public class Homepage
 	private int					songIndex;
 	private ArrayList<String> songList = new ArrayList<String>();
 	
-	private String 				userName;
-	private String				playlist;
+	private String 				userName, playlist, songName;
 	private JFrame 				frame;
 	protected JTextField 		searchField;
 	private JPanel 				HIGH_panel, 
@@ -106,6 +105,8 @@ public class Homepage
 	
 	DatagramSocket aSocket;								//For server connection
 	int serverPort;
+	
+	private PlaylistActionListener PlaylistAction; 
 	
 	/**
 	 * Test driver for this class.
@@ -207,9 +208,11 @@ public class Homepage
 							playlist = list.getSelectedValue().toString();
 							newPanel.setName(list.getSelectedValue().toString());	// iniitalize a new PlaylistPanel and set the name of the PlaylistPanel
 							
+//							PlaylistAction = newPanel.getListener();
+							
 							newPanel.getListener().setLabel(title_);		// set the labels from Description_Panel to follow the actions 
 							newPanel.getListener().setLabel(artist_);		// of the buttons from PlaylistPanel 
-							newPanel.getListener().setLabel(album_);
+							newPanel.getListener().setLabel(album_);					
 							
 //							newPanel.getListener().setButtonOn(previousSong_); // set buttons active when a song is selected 
 //							newPanel.getListener().setButtonOn(playPause_);
@@ -330,7 +333,7 @@ public class Homepage
 							SearchMenuPanel newPanel = new SearchMenuPanel(userName, getSearchResults(searchField.getText()),searchField.getText());
 							playlist = "x";
 							
-							newPanel.setName("search - " + searchField.getText()); // set name of the new SearchMenuPanel
+							newPanel.setName("search '" + searchField.getText() + "'"); // set name of the new SearchMenuPanel
 							
 							newPanel.setLabel(title_);		// set labels to respond to changes
 							newPanel.setLabel(artist_);		// in this searchMenuPanel
@@ -525,119 +528,122 @@ public class Homepage
 //				isSongPlaying = true;								// the song is playing when it's all over
 //			}	
 //		});
-//		playPause_ = new JButton("\u25B6");							// initialize playPause_ and add an 
-//		playPause_.addActionListener(new ActionListener() 
-//		{ 		// action listener to playPause_
-//			@Override 
-//			public void actionPerformed(ActionEvent arg0) 
-//			{
-//				if ((current!=null && ((current.isActive()))))
-//				{	
-//					if(!(playlist.equals("x")))
-//					{
-//						pos = current.getFramePosition();
-//						current.stop();
-//						playPause_.setText("\u25B6");
-//						isSongPlaying = false;	
-//						if(songIndex == 0)
-//						{
-//							songIndex = songList.size()-1;
-//						}
-//						else
-//						{
-//							songIndex--;
-//						}
-//					}
-//					else
-//					{
-//						pos = current.getFramePosition();
-//						current.stop();
-//						playPause_.setText("\u25B6");
-//						isSongPlaying = false;
-//					}
-//				} 
-//				else if((current == null) || (current!=null && (!(current.isActive()))))
-//				{
-//					if(playlist.equals("x"))
-//					{
-//						try {
-//							
-//							System.out.println(title_+ "_" + artist_ + "_" + album_  + ".wav");
-//							File file = new File(title_+ "_" + artist_ + "_" + album_  + ".wav");
-//							AudioInputStream player = AudioSystem.getAudioInputStream(file);
-//							current = AudioSystem.getClip();
-//							current.open(player);
-//							current.setFramePosition(pos);
-//							current.start();
-//						} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
-//							// TODO Auto-generated catch block
-//							e1.printStackTrace();
-//						}
-//					}
-//					else
-//					{
-//						playPause_.setText("\u2758" + "\u2758");	
-//						try {
-//								try (InputStream input = new FileInputStream(userName+".json"))
-//								{
-//									songList.clear();
-//
-//									JSONObject obj = new JSONObject(new JSONTokener(input));								// turn into JSON object
-//
-//									JSONArray listOfSongs = obj.getJSONArray(playlist);										// grabs JSON array of songs by mapping the playlist name
-//
-//									for(int j = 0; j < listOfSongs.length(); j++)											// adds all songs from array into JList
-//									{
-//										String temp = listOfSongs.getString(j);
-//										String[] transferSong = SearchMenuPanel.search(temp);
-//
-//										// get the list of .wav files and separate by song, artist, and album
-//										String[] column = { "Song Title", "Artist", "Album" };
-//										DefaultTableModel model = new DefaultTableModel(null, column);
-//										model.setRowCount(0);
-//										for (int i = 0; i < transferSong.length; i++) {
-//											model.addRow(transferSong[i].split("_"));
-//										};
-//
-//										// get selected song variables
-//										String songTitle = model.getValueAt(0, 0).toString();
-//										String artist = model.getValueAt(0, 1).toString();
-//										String album = model.getValueAt(0, 2).toString();
-//
-//										//change text on labels in homepage
-//										songList.add(songTitle + "_" + artist + "_" + album);
-//									}
-//									songIndex = songList.indexOf(0);
-//								} catch (FileNotFoundException e) {
-//									// TODO Auto-generated catch block
-//									e.printStackTrace();
-//								} catch (IOException e) {
-//									// TODO Auto-generated catch block
-//									e.printStackTrace();
-//								}
-//								System.out.println(songList.get(songIndex) + ".wav");
-//								File file = new File(songList.get(songIndex) + ".wav");
-//								AudioInputStream player = AudioSystem.getAudioInputStream(file);
-//								current = AudioSystem.getClip();
-//								current.open(player);
-//								current.setFramePosition(pos);
-//								current.start();
-//								if(songIndex == songList.size()-1)
-//								{
-//									songIndex = 0;
-//								}
-//								else
-//								{
-//									songIndex++;
-//								}
-//
-//						} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
-//							// TODO Auto-generated catch block
-//							e1.printStackTrace();
-//						}
-//					}	
-//				}
-//			}});
+		
+		playPause_ = new JButton("\u25B6");							// initialize playPause_ and add an 
+		playPause_.addActionListener(new ActionListener() 
+		{ 		// action listener to playPause_
+			@Override 
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				if ((current!=null && ((current.isActive()))))
+				{	
+					if(!(playlist.equals("x")))
+					{
+						pos = current.getFramePosition();
+						current.stop();
+						playPause_.setText("\u25B6");
+						isSongPlaying = false;	
+						if(songIndex == 0)
+						{
+							songIndex = songList.size()-1;
+						}
+						else
+						{
+							songIndex--;
+						}
+					}
+					else
+					{
+						pos = current.getFramePosition();
+						current.stop();
+						playPause_.setText("\u25B6");
+						isSongPlaying = false;
+					}
+				} 
+				else if((current == null) || (current!=null && (!(current.isActive()))))
+				{
+					if(playlist.equals("x"))
+					{
+						try {
+							System.out.println(title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav");
+							File file = new File(title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav");
+							AudioInputStream player = AudioSystem.getAudioInputStream(file);
+							playPause_.setText("\u2758" + "\u2758");
+							current = AudioSystem.getClip();
+							current.open(player);
+							current.setFramePosition(pos);
+							current.start();
+						} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					else
+					{
+						playPause_.setText("\u2758" + "\u2758");	
+						try {
+								try (InputStream input = new FileInputStream(userName+".json"))
+								{
+									songList.clear();
+
+									JSONObject obj = new JSONObject(new JSONTokener(input));								// turn into JSON object
+
+									JSONArray listOfSongs = obj.getJSONArray(playlist);										// grabs JSON array of songs by mapping the playlist name
+
+									for(int j = 0; j < listOfSongs.length(); j++)											// adds all songs from array into JList
+									{
+										String temp = listOfSongs.getString(j);
+										String[] transferSong = SearchMenuPanel.search(temp);
+
+										// get the list of .wav files and separate by song, artist, and album
+										String[] column = { "Song Title", "Artist", "Album" };
+										DefaultTableModel model = new DefaultTableModel(null, column);
+										model.setRowCount(0);
+										for (int i = 0; i < transferSong.length; i++) {
+											model.addRow(transferSong[i].split("_"));
+										};
+
+										// get selected song variables
+										String songTitle = model.getValueAt(0, 0).toString();
+										String artist = model.getValueAt(0, 1).toString();
+										String album = model.getValueAt(0, 2).toString();
+
+										//change text on labels in homepage
+										songList.add(songTitle + "_" + artist + "_" + album);
+									}
+									songName = ShiftingPanel.getSong();
+									songIndex = songList.indexOf(songName);
+								} catch (FileNotFoundException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								System.out.println(songName + " " + songIndex);
+								System.out.println(songList.get(songIndex) + ".wav");
+								File file = new File(songList.get(songIndex) + ".wav");
+								AudioInputStream player = AudioSystem.getAudioInputStream(file);
+								current = AudioSystem.getClip();
+								current.open(player);
+								current.setFramePosition(pos);
+								current.start();
+								if(songIndex == songList.size()-1)
+								{
+									songIndex = 0;
+								}
+								else
+								{
+									songIndex++;
+								}
+
+						} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}	
+				}
+			}});
 //		nextSong_ = new JButton("\u274C"); 						// initializes nextSong_ and add an
 //		nextSong_.addActionListener(new ActionListener() 		// action listener to nextSong_
 //		{ 			
@@ -691,7 +697,7 @@ public class Homepage
 		// if there is a song, it will unlock and play automatically. but until then...
 		
 //		_SongButtons.add(previousSong_); 						// add buttons to _SongButtons
-//		_SongButtons.add(playPause_); 	
+		_SongButtons.add(playPause_); 	
 //		_SongButtons.add(nextSong_);
 		
 		Song_Panel.add(_SongBar); 								// add panels to Song_Panel
@@ -789,7 +795,7 @@ public class Homepage
 			return null;
 		}
 		results = results.substring(2, results.length() - 2).replace("\",\"", ",");
-		System.out.println("These are the results" + results);
+		System.out.println("These are the results:\n" + results);
 		
 		return results.split(",");
 	}

@@ -1,5 +1,8 @@
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
@@ -7,6 +10,7 @@ import java.io.InputStream;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.table.DefaultTableModel;
 
 import org.json.JSONArray;
@@ -19,7 +23,7 @@ import org.json.JSONTokener;
  * @author Tam Tran
  * @since 09-09-2018
  */
-public class PlaylistActionListener implements ActionListener
+public class PlaylistActionListener implements ActionListener, MouseListener
 {
 	// declaring variables
 	private PlaylistPanel panel;
@@ -35,7 +39,7 @@ public class PlaylistActionListener implements ActionListener
 		// initializing variables
 		this.panel = p;
 	}
-	
+		
 	/**
 	 * Adding functionality to buttons
 	 */
@@ -54,33 +58,8 @@ public class PlaylistActionListener implements ActionListener
 		
 		// select song button will close JFrame of PLaylistFram and open JFrame for Play Page with selected song
 		else if(source == panel.selectSongButton)
-		{
-			// search for the song title in the project folder
-			String[] transferSong = SearchMenuPanel.search(panel.songList.getSelectedValue().toString());
-		
-			// get the list of .wav files and separate by song, artist, and album
-			String[] column = { "Song Title", "Artist", "Album" };
-			DefaultTableModel model = new DefaultTableModel(null, column);
-			model.setRowCount(0);
-			for (int i = 0; i < transferSong.length; i++) {
-				model.addRow(transferSong[i].split("_"));
-			};
-			
-			// get selected song variables
-			songTitle = model.getValueAt(0, 0).toString();
-			artist = model.getValueAt(0, 1).toString();
-			album = model.getValueAt(0, 2).toString();
-			
-			//change text on labels in homepage
-			titleLabel.setText(songTitle); titleLabel.setVisible(true);
-			artistLabel.setText(artist); artistLabel.setVisible(true);
-			albumLabel.setText(album);	albumLabel.setVisible(true);
-			
-			// close and open new JFrame
-			JFrame sFrame = (JFrame) panel.getTopLevelAncestor();
-//			sFrame.dispose();
-			song = songTitle + "_" + artist + "_" + album;
-			new PlayButton.PlayFrame(songTitle + "_" + artist + "_" + album, panel.username, panel.playlist).setVisible(true);
+		{			
+			new PlayButton.PlayFrame(song, panel.username, panel.playlist).setVisible(true);
 		}
 		
 		// delete song button will delete song from JSON file and update JList in Playlist JPanel
@@ -139,5 +118,81 @@ public class PlaylistActionListener implements ActionListener
 		button.setEnabled(true);
 		button.updateUI();
 	}
+		
+	public String getSong() {
+		System.out.println("PlaylistPanel song chosen: " + song);
+		return song;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		JList list = (JList)e.getSource();
+		Rectangle r = list.getCellBounds(0, list.getLastVisibleIndex());
+		
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			if (r != null && r.contains(e.getPoint())) {// search for the song title in the project folder
+				String[] transferSong = SearchMenuPanel.search(list.getSelectedValue().toString());
+
+				// get the list of .wav files and separate by song, artist, and album
+				String[] column = { "Song Title", "Artist", "Album" };
+				DefaultTableModel model = new DefaultTableModel(null, column);
+				model.setRowCount(0);
+				for (int i = 0; i < transferSong.length; i++) {
+					model.addRow(transferSong[i].split("_"));
+				};
+
+				// get selected song variables
+				songTitle = model.getValueAt(0, 0).toString();
+				artist = model.getValueAt(0, 1).toString();
+				album = model.getValueAt(0, 2).toString();
+
+				//change text on labels in homepage
+				titleLabel.setText(songTitle); titleLabel.setVisible(true);
+				artistLabel.setText(artist); artistLabel.setVisible(true);
+				albumLabel.setText(album);	albumLabel.setVisible(true);
+
+				song = songTitle + "_" + artist + "_" + album;
+				System.out.println(song + " clicked");
+			}
+		}
+	}
+
+
+
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 }
