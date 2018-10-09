@@ -555,7 +555,6 @@ public class Homepage
 						try {
 								try (InputStream input = new FileInputStream(userName+".json"))
 								{
-									songList.clear();
 
 									JSONObject obj = new JSONObject(new JSONTokener(input));								// turn into JSON object
 
@@ -582,7 +581,7 @@ public class Homepage
 										//change text on labels in homepage
 										songList.add(songTitle + "_" + artist + "_" + album);
 									}
-									songIndex = 0;
+									songIndex = songList.indexOf(title_+ "_" + artist_ + "_" + album_);
 								} catch (FileNotFoundException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
