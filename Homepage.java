@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
@@ -88,12 +89,12 @@ public class Homepage
 								searchQuery_, logout_, previousHistory_, nextHistory_, // history buttons
 								previousSong_, playPause_, nextSong_
 								//, addSong_, removeSong_					// add these to _SongButtons
-								;	// addSong_ adds to a chosen playlist, removeSong_ removes the song from that playlist ONLY
+								;	// addSong_ adds to a chosen playlist (or a new one), removeSong_ removes the song from that playlist ONLY
 	private JLabel 				playlist_, username_, 
 								title_, artist_, album_,
 								currentTime_, songTime_;
-	private DefaultListModel 	dm;
-	private JList				playlist_List;
+	private DefaultListModel<String> 	dm;
+	private JList<?>			playlist_List;
 	private JScrollPane			UserSavedPanel;
 	private ShiftingPanel        ShiftingPanel; 		// ShiftingPanel is the big one
 	private JSlider				timedSlider;
@@ -106,7 +107,7 @@ public class Homepage
 	DatagramSocket aSocket;								//For server connection
 	int serverPort;
 	
-	private PlaylistActionListener PlaylistAction; 
+	Dimension shift;
 	
 	/**
 	 * Test driver for this class.
@@ -137,7 +138,7 @@ public class Homepage
 	private void initialize()
 	{ 									
 		frame = new JFrame("MusicService -- " + userName);			// initialize the frame itself
-		frame.setMinimumSize(new Dimension(750,500));				// and set min dimensions
+		frame.setMinimumSize(new Dimension(775,500));				// and set minimum dimensions
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		// and the default close operation for the frame
 		
 		addHighComponentsToHome(frame.getContentPane()); 			// initializes and loads the upper half of frame components into frame
@@ -149,9 +150,21 @@ public class Homepage
 		frame.setLocationRelativeTo(null); 							// sets frame location
 		
 		playlistCreation = new CreatePlaylistDialog(frame, userName, dm, aSocket, serverPort); 	// create playlist creation dialog
-		playlistCreation.pack();									// pack playlist creation dialog
+		playlistCreation.pack();																// pack playlist creation dialog
 		
-		frame.getRootPane().setDefaultButton(searchQuery_);
+		frame.getRootPane().setDefaultButton(searchQuery_);			// set enter key functionality to searchQuery_
+		
+		frame.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent arg0) {
+				// TODO Auto-generated method stub
+				
+				Dimension f = frame.getSize(), shift = new Dimension(196,147);
+				
+				ShiftingPanel.setSize((int)(f.getSize().getWidth() - shift.getWidth()), (int)(f.getSize().getHeight()- shift.getHeight()));
+				ShiftingPanel.updateUI();
+			}
+		});
 		
 		frame.setVisible(true); 									// make the frame visible
 	}
@@ -169,9 +182,11 @@ public class Homepage
 		HIGH_panel = new JPanel(); 									// initialize HIGH_panel and set layout
 		HIGH_panel.setLayout(new BoxLayout(HIGH_panel, BoxLayout.X_AXIS));
 		
+		HIGH_panel.add(Box.createHorizontalStrut(1));
+		
 		Playlist_Panel = new JPanel(); 								// initialize Playlist_Panel and set layout and set max dimensions
 		Playlist_Panel.setLayout(new BoxLayout(Playlist_Panel, BoxLayout.Y_AXIS));
-		Playlist_Panel.setMaximumSize(new Dimension(200,10000));
+		Playlist_Panel.setMaximumSize(new Dimension(200,1000));
 		
 		PlaylistTitle = new JPanel(); 								// initialize PlaylistTitle and set max dimensions
 		PlaylistTitle.setMaximumSize(new Dimension(100,10));
@@ -184,7 +199,7 @@ public class Homepage
 		playlist_List = new JList(dm);
 		playlist_List.setFont(new Font("Tahoma", Font.PLAIN, 14));		// set font for playlist_List
 		getPlaylists(dm);												// update list gui with playlist information from json
-		
+				
 		playlist_List.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				JList list = (JList)e.getSource();				// this rectangle bounds between the first and last entries on playlist_List
@@ -207,9 +222,7 @@ public class Homepage
 							PlaylistPanel newPanel = new PlaylistPanel(userName, list.getSelectedValue().toString());
 							playlist = list.getSelectedValue().toString();
 							newPanel.setName(list.getSelectedValue().toString());	// iniitalize a new PlaylistPanel and set the name of the PlaylistPanel
-							
-//							PlaylistAction = newPanel.getListener();
-							
+														
 							newPanel.getListener().setLabel(title_);		// set the labels from Description_Panel to follow the actions 
 							newPanel.getListener().setLabel(artist_);		// of the buttons from PlaylistPanel 
 							newPanel.getListener().setLabel(album_);					
@@ -219,8 +232,6 @@ public class Homepage
 //							newPanel.getListener().setButtonOn(nextSong_);
 
 							ShiftingPanel.addComponent(newPanel);			// add the PlaylistPanel to ShiftingPanel
-
-//							ShiftingPanel.addResizeListenerTo(newPanel);	// assign a component listener to ShiftingPanel using newPanel
 						}
 						else 
 							System.out.println("Current panel in ShiftingPanel remains " + ShiftingPanel.getCurrentPanelName());
@@ -259,10 +270,8 @@ public class Homepage
 				String removedPlaylist = (String) JOptionPane.showInputDialog(frame, "Which playlist are you removing?\n"
 						+ "(There's no going back once you do.)", "Playlist Removal", 
 						JOptionPane.PLAIN_MESSAGE, null, possibilities, null);
-				if (removedPlaylist == null) 
-				{													// the dialog was exited one way or another
-					System.out.println("No playlist was removed in the end..."); 
-				} 
+				if (removedPlaylist == null) System.out.println("No playlist was removed in the end..."); 
+				// the dialog was exited one way or another. Otherwise...
 				else 
 				{
 					removePlaylist(removedPlaylist, userName);		// the variable rp would represent the playlist name to be deleted
@@ -276,19 +285,19 @@ public class Homepage
 			}
 		});
 		
-		PlaylistOptions.add(Box.createRigidArea(new Dimension(6,6))); 	// set the layout with rigid areas
+		PlaylistOptions.add(Box.createRigidArea(new Dimension(6,5))); 	// set the layout with rigid areas
 		PlaylistOptions.add(createPlaylist_);							// and jbuttons for PlaylistOptions
 		PlaylistOptions.add(Box.createRigidArea(new Dimension(5,5)));
 		PlaylistOptions.add(removePlaylist_);
-		PlaylistOptions.add(Box.createRigidArea(new Dimension(10,10)));
+		PlaylistOptions.add(Box.createRigidArea(new Dimension(6,5)));
 		
-		Playlist_Panel.add(Box.createRigidArea(new Dimension(3,3))); 	// set the layout with rigid areas
+		Playlist_Panel.add(Box.createRigidArea(new Dimension(2,2))); 	// set the layout with rigid areas
 		Playlist_Panel.add(PlaylistTitle);								// and jpanels to Playlist_Panel
 		Playlist_Panel.add(Box.createRigidArea(new Dimension(2,2)));
 		Playlist_Panel.add(UserSavedPanel);
-		Playlist_Panel.add(Box.createRigidArea(new Dimension(2,2)));
+		Playlist_Panel.add(Box.createRigidArea(new Dimension(4,4)));
 		Playlist_Panel.add(PlaylistOptions);
-		Playlist_Panel.add(Box.createRigidArea(new Dimension(2,2)));
+		Playlist_Panel.add(Box.createRigidArea(new Dimension(3,3)));
 		
 		Playlist_Panel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED)); 	// set border type for Playlist_Panel
 		
@@ -320,11 +329,11 @@ public class Homepage
 			@Override
 			public void actionPerformed(ActionEvent e) {
 						System.out.println("Searching for: " + searchField.getText());
-						System.out.println("Current panel in ShiftingPanel is " + ShiftingPanel.getCurrentPanelName());
+						System.out.println("Current panel in ShiftingPanel is '" + ShiftingPanel.getCurrentPanelName() + "'");
 						
 						if (!codeDenial(searchField.getText())) // if special characters are used then this will go off
 						{
-							JOptionPane.showMessageDialog(frame, "You can't do that. Stop it!", "Inane warning", JOptionPane.WARNING_MESSAGE);
+							JOptionPane.showMessageDialog(frame, "You can't do that. Stop it!", "Inane warning - code injection rejection", JOptionPane.WARNING_MESSAGE);
 							searchField.setText("");
 						}
 						// checks if the current panel is the same one as the one that just got clicked
@@ -344,7 +353,7 @@ public class Homepage
 							ShiftingPanel.updateUI();
 						}
 						else 
-							System.out.println("Current panel in ShiftingPanel remains " + ShiftingPanel.getCurrentPanelName());
+							System.out.println("Current panel in ShiftingPanel remains '" + ShiftingPanel.getCurrentPanelName() + "'");
 					}
 				});
 
@@ -371,11 +380,11 @@ public class Homepage
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				System.out.println("Current panel in ShiftingPanel is " + ShiftingPanel.getCurrentPanelName());
+				System.out.println("Current panel in ShiftingPanel is '" + ShiftingPanel.getCurrentPanelName() + "'");
 				
 				if (ShiftingPanel.getComponents()[0].getName().equals("Base Home") 
 						|| ShiftingPanel.getComponents()[0].getName().equals("Home"))
-					System.out.println("Current panel in ShiftingPanel remains " + ShiftingPanel.getCurrentPanelName());
+					System.out.println("Current panel in ShiftingPanel remains '" + ShiftingPanel.getCurrentPanelName() + "'");
 				else 
 				{
 					JLabel titleLabel = new JLabel("'MusicService' - " + userName, JLabel.CENTER);	// initialize titleLabel
@@ -399,9 +408,9 @@ public class Homepage
 				//send logout message to server
 				String [] arguments = {userName};
 				requestReply.UDPRequestReply("loggedOut",arguments, aSocket, serverPort);
-				
+				System.out.println("Logging out..."); 				// system announcement
 		        new Login(aSocket, serverPort).setVisible(true); 	// creates new Login() object
-		        System.out.println("Logging out..."); 				// system announcement
+		        System.out.println("User '" + userName + "' logged out.");	// system announcement
 			}	
 		});
 		
@@ -430,7 +439,7 @@ public class Homepage
 		titleLabel.setFont(new Font("Tahoma", Font.PLAIN, 40));					// and set font
 		
 		HomePanel = new JPanel(new BorderLayout());					// initialize HomePanel, set size, and add titleLabel
-		HomePanel.setSize(800,451);						
+		HomePanel.setSize(804,454);						
 		HomePanel.add(titleLabel, BorderLayout.CENTER);
 		HomePanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED)); // and set border around it (debug testing only)
 		
@@ -439,6 +448,7 @@ public class Homepage
 		ShiftingPanel.addComponent(HomePanel);						// add HomePanel to ShiftingPanel
 		
 		Explore_Panel.add(TopPanel); 								// add TopPanel and ShiftingPanel to Explore_Panel
+		Explore_Panel.add(Box.createRigidArea(new Dimension(1,2)));
 		Explore_Panel.add(ShiftingPanel);
 		
 		HIGH_panel.add(Box.createRigidArea(new Dimension(1,1))); 	// add rigid areas and panels
@@ -458,7 +468,7 @@ public class Homepage
 		LOW_panel = new JPanel();									// initialize LOW_panel and set layout and max dimensions
 		LOW_panel.setLayout(new BoxLayout(LOW_panel, BoxLayout.X_AXIS));
 		LOW_panel.setMaximumSize(new Dimension(15000,100));
-		LOW_panel.add(Box.createHorizontalStrut(4));	 			// add horizontal strut to LOW_panel
+//		LOW_panel.add(Box.createHorizontalStrut(10));	 			// add horizontal strut to LOW_panel
 		
 		// small song album cover (m_CoverPanel) can go here later
 		
@@ -515,7 +525,7 @@ public class Homepage
 		
 //		addSong_ goes here
 		
-//		previousSong_ = new JButton("\u274C"); 						// initialize previousSong_ and add an
+//		previousSong_ = new JButton("\u2758" + "\u2758"); 						// initialize previousSong_ and add an
 //		previousSong_.addActionListener(new ActionListener()		// action listener to previousSong_
 //		{ 		
 //			@Override 
@@ -543,14 +553,8 @@ public class Homepage
 						current.stop();
 						playPause_.setText("\u25B6");
 						isSongPlaying = false;	
-						if(songIndex == 0)
-						{
-							songIndex = songList.size()-1;
-						}
-						else
-						{
-							songIndex--;
-						}
+						if(songIndex == 0)	songIndex = songList.size()-1;
+						else				songIndex--;
 					}
 					else
 					{
@@ -565,7 +569,7 @@ public class Homepage
 					if(playlist.equals("x"))
 					{
 						try {
-							System.out.println(title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav");
+							System.out.println(title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav seen in Homepage");
 							File file = new File(title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav");
 							AudioInputStream player = AudioSystem.getAudioInputStream(file);
 							playPause_.setText("\u2758" + "\u2758");
@@ -582,61 +586,54 @@ public class Homepage
 					{
 						playPause_.setText("\u2758" + "\u2758");	
 						try {
-								try (InputStream input = new FileInputStream(userName+".json"))
+							try (InputStream input = new FileInputStream(userName+".json"))
+							{
+								songList.clear();
+
+								JSONObject obj = new JSONObject(new JSONTokener(input));								// turn into JSON object
+
+								JSONArray listOfSongs = obj.getJSONArray(playlist);										// grabs JSON array of songs by mapping the playlist name
+
+								for(int j = 0; j < listOfSongs.length(); j++)											// adds all songs from array into JList
 								{
-									songList.clear();
+									String temp = listOfSongs.getString(j);
+									String[] transferSong = SearchMenuPanel.search(temp);
 
-									JSONObject obj = new JSONObject(new JSONTokener(input));								// turn into JSON object
+									// get the list of .wav files and separate by song, artist, and album
+									String[] column = { "Song Title", "Artist", "Album" };
+									DefaultTableModel model = new DefaultTableModel(null, column);
+									model.setRowCount(0);
+									for (int i = 0; i < transferSong.length; i++) {
+										model.addRow(transferSong[i].split("_"));
+									};
 
-									JSONArray listOfSongs = obj.getJSONArray(playlist);										// grabs JSON array of songs by mapping the playlist name
+									// get selected song variables
+									String songTitle = model.getValueAt(0, 0).toString();
+									String artist = model.getValueAt(0, 1).toString();
+									String album = model.getValueAt(0, 2).toString();
 
-									for(int j = 0; j < listOfSongs.length(); j++)											// adds all songs from array into JList
-									{
-										String temp = listOfSongs.getString(j);
-										String[] transferSong = SearchMenuPanel.search(temp);
-
-										// get the list of .wav files and separate by song, artist, and album
-										String[] column = { "Song Title", "Artist", "Album" };
-										DefaultTableModel model = new DefaultTableModel(null, column);
-										model.setRowCount(0);
-										for (int i = 0; i < transferSong.length; i++) {
-											model.addRow(transferSong[i].split("_"));
-										};
-
-										// get selected song variables
-										String songTitle = model.getValueAt(0, 0).toString();
-										String artist = model.getValueAt(0, 1).toString();
-										String album = model.getValueAt(0, 2).toString();
-
-										//change text on labels in homepage
-										songList.add(songTitle + "_" + artist + "_" + album);
-									}
-									songName = ShiftingPanel.getSong();
-									songIndex = songList.indexOf(songName);
-								} catch (FileNotFoundException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								} catch (IOException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+									//change text on labels in homepage
+									songList.add(songTitle + "_" + artist + "_" + album);
 								}
-								System.out.println(songName + " " + songIndex);
-								System.out.println(songList.get(songIndex) + ".wav");
-								File file = new File(songList.get(songIndex) + ".wav");
-								AudioInputStream player = AudioSystem.getAudioInputStream(file);
-								current = AudioSystem.getClip();
-								current.open(player);
-								current.setFramePosition(pos);
-								current.start();
-								if(songIndex == songList.size()-1)
-								{
-									songIndex = 0;
-								}
-								else
-								{
-									songIndex++;
-								}
-
+								songName = ShiftingPanel.getSong();
+								songIndex = songList.indexOf(songName);
+							} catch (FileNotFoundException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							System.out.println(songName + " of index " + songIndex + " seen at Homepage");
+							System.out.println(songList.get(songIndex) + ".wav");
+							File file = new File(songList.get(songIndex) + ".wav");
+							AudioInputStream player = AudioSystem.getAudioInputStream(file);
+							current = AudioSystem.getClip();
+							current.open(player);
+							current.setFramePosition(pos);
+							current.start();
+							if(songIndex == songList.size()-1)  songIndex = 0;
+							else								songIndex++;
 						} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -644,7 +641,7 @@ public class Homepage
 					}	
 				}
 			}});
-//		nextSong_ = new JButton("\u274C"); 						// initializes nextSong_ and add an
+//		nextSong_ = new JButton("\u2758" + "\u2758");			// initializes nextSong_ and add an
 //		nextSong_.addActionListener(new ActionListener() 		// action listener to nextSong_
 //		{ 			
 //			@Override 
@@ -708,9 +705,8 @@ public class Homepage
 		LOW_panel.add(Box.createRigidArea(new Dimension(2,2)));
 		LOW_panel.add(Song_Panel);
 		LOW_panel.add(Box.createRigidArea(new Dimension(1,1)));
-		
 		LOW_panel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));				
-		
+			
 		pane.add(LOW_panel); // add LOW_panel to pane (the content pane of frame)
 	}
 
@@ -756,7 +752,7 @@ public class Homepage
 	 * Read playlists array from json file and add to gui list
 	 * @param dm defaultlistModel
 	 */
-	void getPlaylists(DefaultListModel dm) 
+	void getPlaylists(DefaultListModel<String> dm) 
 	{
 		dm.clear(); //clear list 
 

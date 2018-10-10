@@ -43,7 +43,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 
 		// Custom Layout
 		this.setLayout(null);
-		this.setSize(new Dimension(804,455));
+//		this.setSize(new Dimension(804,455));
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
 //		//Displays Username on Panel
@@ -202,7 +202,6 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 			if (FilesInFolder[i].endsWith(EXT) && FilesInFolder[i].toLowerCase().contains(text.toLowerCase()))
 				searchResults.add(FilesInFolder[i].replace(EXT, ""));
 		}
-		;
 
 		return searchResults.toArray(new String[searchResults.size()]);
 	}
@@ -254,21 +253,33 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		}
 	}
 	
+	/**
+	 * A set method for labels. Doing so allows for manipulation with the local label to affect the input label
+	 * @param label: a JLabel, either title_, artist_, or album_ from Homepage.java
+	 */
 	public void setLabel(JLabel label) 
 	{
 		switch (label.getName()) 			// the three labels are named via label.setName(labelName)
 		{
-		case "title": titleLabel = label; break;
-		case "artist(s)": artistLabel = label; break;
-		case "album": albumLabel = label; break;
+		case "title": 		titleLabel = label;  break;
+		case "artist(s)": 	artistLabel = label; break;
+		case "album": 		albumLabel = label;  break;
 		}
 	}
 	
+	/**
+	 * A get method. Returns the currently selected song.
+	 * @return String - the title, artist(s), and album of the currently selected song
+	 */
 	public String getSong() {
 		System.out.println("SearchMenuPanel song chosen: " + songName);
 		return songName;
 	}
 
+	/**
+	 * An overridden MouseEvent method that detects what song has been clicked on.
+	 * @param e: a MouseEvent
+	 */
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub

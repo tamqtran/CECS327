@@ -21,7 +21,7 @@ import javax.swing.border.BevelBorder;
  */
 public class ShiftingPanel extends JLayeredPane 
 {
-	private String username_, currentPanel, songName;
+	private String currentPanel, songName;
 	protected Component[] history, previousPanels, nextPanels;
 	
 	private JButton prevButton, nextButton;
@@ -54,6 +54,7 @@ public class ShiftingPanel extends JLayeredPane
 			public void componentResized(ComponentEvent e) 
 			{			
 				panel.setSize(getSize());  					//the size of the panel becomes the size of ShiftingPanel
+				panel.updateUI();
 			}
 		});
 	}
@@ -71,8 +72,10 @@ public class ShiftingPanel extends JLayeredPane
 		
 		this.add(c, JLayeredPane.DEFAULT_LAYER, ZERO);			// add component to layer 0		
 		
-		addResizeListenerTo((JPanel)c);
+		c.setSize(getSize());
 		
+		addResizeListenerTo((JPanel)c);
+				
 		if (nextPanels.length > 0) 								// if the length of nextPanels is zero, then the following is skipped
 		{
 			for (Component p : this.getComponentsInLayer(N_TWO)) 
@@ -102,15 +105,13 @@ public class ShiftingPanel extends JLayeredPane
 					System.out.println("Moving to previous panel...");	// System announcement
 					
 					// the current panel would be moved into nextPanels in pos 0 (shift)
-					
 					for (Component p: getShiftingPanel().getComponentsInLayer(ZERO)) 
 						getShiftingPanel().setLayer(p, N_TWO, 0);
 					
 					// the panel in pos 0 of previousPanels would become the current panel (shift)
 					
 					getShiftingPanel().setLayer(getShiftingPanel().getComponentsInLayer(N_ONE)[0], ZERO, 0);
-					
-					
+							
 					currentMovedBack();		//update history and compensate currentComponent
 										
 					checkHistory();
@@ -124,12 +125,10 @@ public class ShiftingPanel extends JLayeredPane
 				public void actionPerformed(ActionEvent e) {
 					System.out.println("Moving to next panel...");	//System announcement
 					
-					// the current panel would be moved into previousPanels in pos 0 (shift)
-					
+					// the current panel would be moved into previousPanels in pos 0 (shift)		
 					for (Component p: getShiftingPanel().getComponentsInLayer(ZERO)) 
 						getShiftingPanel().setLayer(p, N_ONE, 0);
-					
-					
+						
 					// the panel in pos 0 for nextPanels would become the current panel (shift)
 					
 					getShiftingPanel().setLayer(getShiftingPanel().getComponentsInLayer(N_TWO)[0], ZERO, 0);
@@ -212,8 +211,7 @@ public class ShiftingPanel extends JLayeredPane
 	 */
 	private void reduceFurther() {
 		history = this.getComponents();
-		int shift = 0;
-		int i = 0;
+		int shift = 0, i = 0;
 		while(i < history.length-1) 
 		{
 			//check for adjacent elements that have the same name - if found, remove the second one
@@ -224,11 +222,11 @@ public class ShiftingPanel extends JLayeredPane
 				history = this.getComponents();		//update history
 			} 
 			else if ((history[i].getName().equals("Home") && history[i+1].getName().equals("Base Home")))
-			{	// singular scenario: base home -> playlist -> home, delete playlist
+			{	// singular scenario: 'base home -> playlist -> home', delete playlist, 'base home -> home' to 'base home'
 				this.remove(i);	// removes item at index i from history
 				this.setLayer(history[i+1], ZERO, 0);	// sends the item at index i+1 to layer 0
 				++shift;								// proceed as normal
-				history = this.getComponents();
+				history = this.getComponents();		//update history
 			}
 			else i++;
 		}
@@ -240,13 +238,12 @@ public class ShiftingPanel extends JLayeredPane
 	 */
 	private void checkHistory() {
 		updateHistory();		// update history parameters
-		System.out.println("Layer 0 is the current panel; Layer -1 is previous panels; Layer -2 is future panels:");
 		int i = 0;
 		for (Component p : history)						//system: the layer the component is in
 			System.out.println("Index: " + i++ + ", Layer: " + this.getLayer(p) 	// the position of each component in the layer
 			+ ", pos: " + this.getPosition(p) + ", name: " + p.getName());	// and the name of each component
 		System.out.println("baseComponent is at index " + baseComponent 
-				+ "\ncurrentPanel is " + currentPanel + " at index " + currentComponent + "\n");
+				+ "\ncurrentPanel is now '" + currentPanel + "' at index " + currentComponent + "\n");
 	}
 	
 	/**
@@ -259,12 +256,16 @@ public class ShiftingPanel extends JLayeredPane
 		nextPanels = this.getComponentsInLayer(N_TWO);		// assign nextPanels as the list of components in layer -2 of ShiftingPanel
 		
 		// system: tell the total number of panels in history, total number of previous panels, and total number of future panels
-		System.out.println(history.length + " total, " + previousPanels.length + " prev, " + nextPanels.length + " next");
+		System.out.println("ShiftingPanel layers: " + history.length + " total, " + previousPanels.length + " prev, " + nextPanels.length + " next");
 		
 		if (previousPanels.length > 0) prevButton.setEnabled(true); else prevButton.setEnabled(false);	// set history buttons enable/disable
 		if (nextPanels.length > 0) nextButton.setEnabled(true); else nextButton.setEnabled(false);
 	}
 	
+	/**
+	 * A get method that returns the current song selected in that panel. The code follows through on this get method regardless of class.
+	 * @return: a string stating the title, artist(s), and album of the currently selected song
+	 */
 	public String getSong() {
 		if (history[0].getClass() == PlaylistPanel.class) {
 			songName = ((PlaylistPanel)history[0]).getListener().getSong();

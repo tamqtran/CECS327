@@ -118,12 +118,20 @@ public class PlaylistActionListener implements ActionListener, MouseListener
 		button.setEnabled(true);
 		button.updateUI();
 	}
-		
+	
+	/**
+	 * A get method that returns the currently selected song.
+	 * @return String - the title, artist(s), and album of the currently selected song
+	 */
 	public String getSong() {
 		System.out.println("PlaylistPanel song chosen: " + song);
 		return song;
 	}
 
+	/**
+	 * An overridden MouseEvent method that detects what song has been clicked on.
+	 * @param e: a MouseEvent
+	 */
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -158,17 +166,11 @@ public class PlaylistActionListener implements ActionListener, MouseListener
 		}
 	}
 
-
-
-
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
-
-
-
 
 	@Override
 	public void mouseExited(MouseEvent e) {
@@ -176,23 +178,15 @@ public class PlaylistActionListener implements ActionListener, MouseListener
 		
 	}
 
-
-
-
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-
-
-
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
-	}
-
-	
+	}	
 }

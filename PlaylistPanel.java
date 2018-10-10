@@ -61,7 +61,7 @@ public class PlaylistPanel extends JPanel
 		
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
-		this.setSize(new Dimension(804,455));
+//		this.setSize(new Dimension(804,455));
 		
 		this.setName(this.playlist);			// set name of playlistPanel as the playlist name
 		
@@ -104,7 +104,7 @@ public class PlaylistPanel extends JPanel
 		songList.setModel(DLM);
 		songList.setSize(250,200);
 		songList.setLocation(10, 55);
-		songList.addMouseListener(listener);
+		songList.addMouseListener(listener);	// assign the mouse listener part of listener to songList
 		this.add(songList);		
 		
 		// updates the list of songs in the playlist
