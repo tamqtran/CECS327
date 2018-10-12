@@ -144,8 +144,5 @@ public class PlaylistPanel extends JPanel
 	 * Gets the PlaylistActionListener variable 'listener'
 	 * @return listener, a PlaylistActionListener
 	 */
-	public PlaylistActionListener getListener() { 
-		
-		return listener; }
-
+	public PlaylistActionListener getListener() { return listener; }
 }

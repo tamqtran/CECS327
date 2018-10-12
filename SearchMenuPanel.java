@@ -25,7 +25,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 
 	private JButton playButton, addButton;
 
-	private JLabel playlistLabel, userLabel, responseLabel, searchLabel,
+	private JLabel playlistLabel, userLabel, responseLabel, searchLabel, errorLabel,
 				   titleLabel, artistLabel, albumLabel;
 
 	private JComboBox playList;
@@ -91,9 +91,9 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 				   model.addRow(search[i].split("_"));
 			}
 		} else {
-			JLabel errorLabel = new JLabel("No results found for " + userSearch);
+			errorLabel = new JLabel("No results found for '" + userSearch + "'");
 			errorLabel.setSize(errorLabel.getPreferredSize());
-			errorLabel.setLocation(250,22);
+			errorLabel.setLocation(130, 315);
 			this.add(errorLabel);
 		};
 		
@@ -275,7 +275,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		System.out.println("SearchMenuPanel song chosen: " + songName);
 		return songName;
 	}
-
+	
 	/**
 	 * An overridden MouseEvent method that detects what song has been clicked on.
 	 * @param e: a MouseEvent
@@ -284,9 +284,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 		int row = this.results.getSelectedRow();
-		
-		System.out.println("row " +row);
-		
+				
 		songTitle = results.getModel().getValueAt(row, 0).toString();
 		artist = results.getModel().getValueAt(row, 1).toString();
 		album = results.getModel().getValueAt(row, 2).toString();
