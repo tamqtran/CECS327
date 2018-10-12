@@ -1,7 +1,5 @@
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -15,13 +13,9 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import org.json.JSONArray;
@@ -43,6 +37,7 @@ public class PlayButton {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 	}
+	@SuppressWarnings("serial")
 	static class PlayFrame extends JFrame{
 
 		/**
@@ -83,6 +78,7 @@ public class PlayButton {
 			this.add(p);
 		}
 	}
+	@SuppressWarnings("serial")
 	static class PlayPanel extends JPanel{
 		
 		JButton play = new JButton("\u25B6");//play button

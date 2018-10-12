@@ -1,14 +1,5 @@
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.net.*;
 import java.util.Scanner;
-import java.io.*;
-import java.util.UUID;
-
-import org.json.JSONTokener;
-import org.json.JSONException;
-
 
 /**
  * This file is the file that initializes the testing JSON files to start
@@ -18,12 +9,14 @@ import org.json.JSONException;
  */
 public class start 
 {
+	static Scanner sc;
+	
 	public static void main(String[] args) 
 	{
 		/*Start Client*/
 		int serverPort = 6733;
 		DatagramSocket aSocket = null;
-		Scanner sc = new Scanner(System.in);
+		sc = new Scanner(System.in);
 		
 		try 
 		{
@@ -38,7 +31,7 @@ public class start
 		/*End Client*/	
 		
 		// call initial Frame to start the program
-		Login begin = new Login(aSocket,serverPort);
+		new Login(aSocket,serverPort);
 	}
 	
 

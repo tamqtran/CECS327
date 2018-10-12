@@ -13,10 +13,7 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JTextField;
 
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.InputStream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -61,6 +58,7 @@ public class Profile {
 	/**
 	 * Initialize the contents of the frame.
 	 */
+	@SuppressWarnings("unchecked")
 	private void initialize() {
 		//FRAME
 		frame = new JFrame("'MusicService' Profile");
@@ -69,8 +67,9 @@ public class Profile {
 		frame.getContentPane().setLayout(null);
 		
 		//MODEL
-		DefaultListModel dm = new DefaultListModel();
+		DefaultListModel<String> dm = new DefaultListModel<String>();
 		
+		@SuppressWarnings("rawtypes")
 		JList list_1 = new JList();
 		list_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		list_1.setBounds(339, 81, 274, 279);
@@ -228,7 +227,7 @@ public class Profile {
 	 * Read playlists array from json file and add to gui list
 	 * @param dm defaultlistModel
 	 */
-	void getPlaylists(DefaultListModel dm) {
+	void getPlaylists(DefaultListModel<String> dm) {
 		dm.clear(); //clear list 
 		JSONObject obj1;
 		String pathname = username + ".json";

@@ -5,9 +5,6 @@ import javax.swing.border.BevelBorder;
 import java.util.*;
 import java.awt.event.*;
 import java.io.*;
-import javax.swing.event.*;
-import javax.swing.text.*;
-import javax.swing.text.Document;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,6 +12,7 @@ import org.json.JSONTokener;
 
 import javax.swing.table.*;
 
+@SuppressWarnings("serial")
 public class SearchMenuPanel extends JPanel implements ActionListener, MouseListener {
 	
 	//Declaring variables
@@ -28,6 +26,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 	private JLabel playlistLabel, userLabel, responseLabel, searchLabel, errorLabel,
 				   titleLabel, artistLabel, albumLabel;
 
+	@SuppressWarnings("rawtypes")
 	private JComboBox playList;
 
 	private String username, songName, songTitle, artist, album;
@@ -38,6 +37,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 	 * @param search - string that contains the song artist name, album name, and song title name
 	 * @param userSearch - the desired search from the user
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public SearchMenuPanel(String username, String[] search, String userSearch) {
 		this.username = username;
 
@@ -80,9 +80,8 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		playButton.addActionListener(this);
 		this.add(playButton);
 
-
-		// Testing. Dummy values to store in JTable
-		String data[][] = { {}, {}, {} };
+//		// Testing. Dummy values to store in JTable
+//		String data[][] = { {}, {}, {} };
 		String[] columns = { "Song Title", "Artist", "Album" };
 		DefaultTableModel model = null;
 		if (search != null) {

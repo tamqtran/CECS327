@@ -135,7 +135,8 @@ public class PlaylistActionListener implements ActionListener, MouseListener
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-		JList list = (JList)e.getSource();
+		@SuppressWarnings("unchecked")
+		JList<String> list = (JList<String>)e.getSource();
 		Rectangle r = list.getCellBounds(0, list.getLastVisibleIndex());
 		
 		if (e.getButton() == MouseEvent.BUTTON1) {

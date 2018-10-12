@@ -7,19 +7,18 @@ import java.util.UUID;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.json.JSONException;
 
 public class UDPClient
 {
-
+	static Scanner sc;
 	public static void main(String args[])
 	{
-	
+		
 		// args give message contents and server hostname
 	
 		DatagramSocket aSocket = null;
-		Scanner sc = new Scanner(System.in);
+		sc = new Scanner(System.in);
 	
 		// loop for client to send messages in
 		// INFINITE LOOP FOR NOW

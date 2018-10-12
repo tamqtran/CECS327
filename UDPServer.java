@@ -9,9 +9,11 @@ import java.io.*;
 
 public class UDPServer
 {
+	static Method json;
+	
 	public static void main(String args[]) throws SocketException
 	{
-		Method json = new Method();
+		json = new Method();
 	
 	//Removable Testing
 	/*
@@ -75,7 +77,7 @@ public class UDPServer
 			
 						//Method call
 						try 
-						{
+						{						
 							result = json.getClass().getMethod(method,argTypes).invoke(json, arguments);
 						} 
 						catch (Exception e) 

@@ -19,6 +19,7 @@ import javax.swing.border.BevelBorder;
  * @since 10/5/2018
  *
  */
+@SuppressWarnings("serial")
 public class ShiftingPanel extends JLayeredPane 
 {
 	private String currentPanel, songName;

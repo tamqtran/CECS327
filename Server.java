@@ -1,9 +1,6 @@
-import java.io.BufferedReader; 
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.SocketException;
 
 /**
@@ -16,7 +13,7 @@ public class Server implements Runnable{
     private DatagramSocket socket;
     // UDP packet to receive data into
     private DatagramPacket packet;
-    // Flag for initialisation
+    // Flag for initialization
     private boolean failedInit = true;
     
     public Server(int receptionPort, int packetMaxLenght) {
@@ -37,7 +34,7 @@ public class Server implements Runnable{
         if(failedInit){
             return;
         }
-        // Loop undefinitly
+        // Loop indefinitely
         while(true){
             try {
                 System.out.println("Server: Waiting for packet...");

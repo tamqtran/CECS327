@@ -1,8 +1,9 @@
-import java.awt.*;
 import javax.swing.*;
 
+@SuppressWarnings("serial")
 public class SearchMenuFrame extends JFrame {
 	
+	@SuppressWarnings("unused")
 	private String username;
 
   public static void main(String[] args) {

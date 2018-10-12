@@ -10,15 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.util.UUID;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
@@ -26,16 +18,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
+@SuppressWarnings("serial")
 public class CreatePlaylistDialog extends JDialog implements ActionListener, PropertyChangeListener {
 
 	private String typedText = null;
 	private JTextField textField;
 	private JOptionPane optionPane;
-	private DefaultListModel dlm;
+	private DefaultListModel<String> dlm;
 	
 	private String specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]";
 	private String username_;
@@ -45,7 +36,7 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 	DatagramSocket aSocket;
 	int serverPort;
 
-	public CreatePlaylistDialog(Frame homeFrame, String user, DefaultListModel dm, DatagramSocket aSocket,int serverPort) {
+	public CreatePlaylistDialog(Frame homeFrame, String user, DefaultListModel<String> dm, DatagramSocket aSocket,int serverPort) {
 		super(homeFrame, true);
 		username_ = user;									// assign locally the user's username
 		dlm = dm;											// assign locally the defaultlistmodel, still references dm (in Homepage)
@@ -132,7 +123,7 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 		
 		//Server side Add Playlist
 		String [] arguments = {username,playlist};
-		JSONObject obj = requestReply.UDPRequestReply("addPlaylist",arguments, aSocket, serverPort);
+		requestReply.UDPRequestReply("addPlaylist",arguments, aSocket, serverPort);
 		
 		//Server side get playlist
 		String [] arguments1 = {username};
@@ -196,7 +187,7 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 	 * Read playlists array from json file and add to gui list
 	 * @param dm defaultlistModel
 	 */
-	void getPlaylists(DefaultListModel dm) 
+	void getPlaylists(DefaultListModel<String> dm) 
 	{
 		dm.clear(); //clear list 
 		//JSONObject obj1;

@@ -1,6 +1,5 @@
 import java.io.BufferedReader; 
 import java.io.FileReader;
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -8,10 +7,12 @@ import java.net.SocketException;
 
 public class Client implements Runnable{
 	//Reception socket
-    private DatagramSocket socket;
+    @SuppressWarnings("unused")
+	private DatagramSocket socket;
     // UDP packet to receive data into
-    private DatagramPacket packet;
-    // Flag for initialisation
+    @SuppressWarnings("unused")
+	private DatagramPacket packet;
+    // Flag for initialization
     private boolean failedInit = true;
 
     /**
