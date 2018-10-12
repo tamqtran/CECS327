@@ -56,6 +56,7 @@ public class UDPServer
 						JSONObject JsonRequest=new JSONObject(new String(request.getData()));
 			
 						//Request Data
+						@SuppressWarnings("unused")
 						int ID = JsonRequest.getInt("id");
 						String method = JsonRequest.get("method").toString();
 						String param = JsonRequest.get("arguments").toString();
