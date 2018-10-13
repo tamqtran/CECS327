@@ -2,6 +2,7 @@
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -22,6 +23,8 @@ import javax.swing.border.BevelBorder;
 @SuppressWarnings("serial")
 public class ShiftingPanel extends JLayeredPane 
 {
+	private Homepage homeFrame;
+	
 	private String currentPanel, songName;
 	protected Component[] history, previousPanels, nextPanels;
 	
@@ -35,7 +38,8 @@ public class ShiftingPanel extends JLayeredPane
 	 * Main constructor. Creates a JLayeredPane called ShiftingPanel
 	 * @param user the name of the user
 	 */
-	public ShiftingPanel() {
+	public ShiftingPanel(Homepage home) {
+		homeFrame = home;
 		this.setMinimumSize(new Dimension(501,501));							// set minimum size
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));	// set border
 		
@@ -69,7 +73,6 @@ public class ShiftingPanel extends JLayeredPane
 		this.add(c, JLayeredPane.DEFAULT_LAYER, ZERO);			// add component to layer 0		
 		
 		c.setSize(getSize());					// set the size of the new component to the size of ShiftingPanel
-		
 		addResizeListenerTo((JPanel)c);
 				
 		if (nextPanels.length > 0) {			// if the length of nextPanels is zero, then the following is skipped
@@ -84,6 +87,8 @@ public class ShiftingPanel extends JLayeredPane
 		reduceFurther();						// nothing should happen here
 
 		updateAndCheck();
+		
+		setCurrentPlaylistInHomepage();
 	}
 	
 	/**
@@ -111,6 +116,8 @@ public class ShiftingPanel extends JLayeredPane
 					currentMovedBack();		//update history and compensate currentComponent
 					
 					updateAndCheck();
+					
+					setCurrentPlaylistInHomepage();
 				}
 			});
 			break;
@@ -132,11 +139,18 @@ public class ShiftingPanel extends JLayeredPane
 					currentMovedForward();		//compensate currentComponent
 					
 					updateAndCheck();
+					
+					setCurrentPlaylistInHomepage();
 				}
 			});
 			break;
 		}
 	}
+	
+	/**
+	 * A void method that sets a variable in a related Homepage object to the name of the current panel in ShiftingPanel.
+	 */
+	private void setCurrentPlaylistInHomepage() {homeFrame.setCurrentPlaylist(currentPanel);}
 	
 	/**
 	 * A get method that returns currentComponent parameter.
@@ -275,16 +289,16 @@ public class ShiftingPanel extends JLayeredPane
 			if (n == 0)	history[n].setVisible(true);
 			else 		history[n].setVisible(false);
 			
-			if (history[n].getClass() == PlaylistPanel.class) {
+			if (history[n].getClass() == PlaylistPanel.class)
 				((PlaylistPanel)history[n]).updatePlaylist();
-			}
 		}
 		
 		// system: tell the total number of panels in history, total number of previous panels, and total number of future panels
 		System.out.println("\nShiftingPanel layers: " + history.length + " total, " 
 		+ previousPanels.length + " prev, 1 current, " + nextPanels.length + " next");
 		
-		if (previousPanels.length > 0) prevButton.setEnabled(true); else prevButton.setEnabled(false);	// set history buttons enable/disable
+		// enable or disable the history buttons depending on the emptiness of the previousPanels and nextPanels variables
+		if (previousPanels.length > 0) prevButton.setEnabled(true); else prevButton.setEnabled(false);	
 		if (nextPanels.length > 0) nextButton.setEnabled(true); else nextButton.setEnabled(false);
 	}
 }

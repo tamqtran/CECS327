@@ -244,7 +244,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 	 * @return String - the title, artist(s), and album of the currently selected song
 	 */
 	public String getSong() {
-		System.out.println("SearchMenuPanel song chosen: " + songName);
+		System.out.println("SearchMenuPanel " + this.getName() + " - song chosen: " + songName);
 		return songName;
 	}
 	
@@ -255,19 +255,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-		int row = this.results.getSelectedRow();
-				
-		songTitle = results.getModel().getValueAt(row, 0).toString();
-		artist = results.getModel().getValueAt(row, 1).toString();
-		album = results.getModel().getValueAt(row, 2).toString();
-		
-		//change text on labels in homepage
-		titleLabel.setText(songTitle); titleLabel.setVisible(true);
-		artistLabel.setText(artist); artistLabel.setVisible(true);
-		albumLabel.setText(album);	albumLabel.setVisible(true);
-		
-		songName = songTitle + "_" + artist + "_" + album;	
-		System.out.println("SearchMenuPanel: '" + songName + "' clicked");
+
 	}
 
 	@Override
@@ -285,7 +273,19 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
+		int row = this.results.getSelectedRow();
 		
+		songTitle = results.getModel().getValueAt(row, 0).toString();
+		artist = results.getModel().getValueAt(row, 1).toString();
+		album = results.getModel().getValueAt(row, 2).toString();
+		
+		//change text on labels in homepage
+		titleLabel.setText(songTitle); titleLabel.setVisible(true);
+		artistLabel.setText(artist); artistLabel.setVisible(true);
+		albumLabel.setText(album);	albumLabel.setVisible(true);
+		
+		songName = songTitle + "_" + artist + "_" + album;	
+		System.out.println("SearchMenuPanel "+ this.getName() + ": '" + songName + "' selected");
 	}
 
 	@Override

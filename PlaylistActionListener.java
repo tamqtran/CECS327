@@ -110,7 +110,7 @@ public class PlaylistActionListener implements ActionListener, MouseListener {
 	 * @return String - the title, artist(s), and album of the currently selected song
 	 */
 	public String getSong() {
-		System.out.println("PlaylistPanel song chosen: " + song);
+		System.out.println("PlaylistPanel " + panel.getName() + " - song chosen: " + song);
 		return song;
 	}
 
@@ -120,6 +120,23 @@ public class PlaylistActionListener implements ActionListener, MouseListener {
 	 */
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
 		@SuppressWarnings("unchecked")
 		JList<String> list = (JList<String>)e.getSource();
@@ -147,27 +164,9 @@ public class PlaylistActionListener implements ActionListener, MouseListener {
 				albumLabel.setText(album);	albumLabel.setVisible(true);
 
 				song = songTitle + "_" + artist + "_" + album;
-				System.out.println("PlaylistPanel:\t '" + song + "' clicked");
+				System.out.println("PlaylistPanel " + panel.getName() +": '" + song + "' clicked");
 			}
 		}
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

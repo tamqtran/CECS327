@@ -92,9 +92,9 @@ public class Homepage
 	
 	private CreatePlaylistDialog playlistCreation;
 	
-//	private boolean isSongPlaying = false 				// starts false; changes depending on changes occurring in frame
+	private boolean isSongPlaying = false 				// starts false; changes depending on changes occurring in frame
 //					, isThereASong = false
-//	;
+	;
 	
 	DatagramSocket aSocket;								//For server connection
 	int serverPort;
@@ -346,9 +346,8 @@ public class Homepage
 
 					ShiftingPanel.addComponent(newPanel);			// add the SearchMenuPanel to ShiftingPanel
 
-					ShiftingPanel.updateUI();
-				}
-				else 
+					ShiftingPanel.updateUI();						// update UI of ShiftingPanel
+				} else 
 					System.out.println("Current panel in ShiftingPanel remains '" + ShiftingPanel.getCurrentPanelName() + "'\n");
 			}
 		});
@@ -381,14 +380,12 @@ public class Homepage
 				if (ShiftingPanel.getComponents()[0].getName().equals("Base Home") 
 						|| ShiftingPanel.getComponents()[0].getName().equals("Home"))
 					System.out.println("Current panel in ShiftingPanel remains '" + ShiftingPanel.getCurrentPanelName() + "'");
-				else 
-				{
+				else {
 					JLabel titleLabel = new JLabel("'MusicService' - " + userName, JLabel.CENTER);	// initialize titleLabel
-					titleLabel.setFont(new Font("Tahoma", Font.PLAIN, 40));					// and set font
+					titleLabel.setFont(new Font("Tahoma", Font.PLAIN, 40));							// and set font
 					createNewHomePanel(titleLabel);
 				}
 			}
-			
 		});
 		
 		_ProfilePanel = new JPanel();								// initialize _ProfilePanel and set layout
@@ -422,11 +419,11 @@ public class Homepage
 		TopPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
 //		ShiftingPanel (the one that keeps changing)
-		ShiftingPanel = new ShiftingPanel();						// initialize ShiftingPanel and set border
+		ShiftingPanel = new ShiftingPanel(this);						// initialize ShiftingPanel and set border
 		ShiftingPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		ShiftingPanel.setMinimumSize(new Dimension(500,500));
 		
-		ShiftingPanel.setHistorySwitch(previousHistory_);
+		ShiftingPanel.setHistorySwitch(previousHistory_);			// assign action listeners to previousHistory_ and nextHistory_
 		ShiftingPanel.setHistorySwitch(nextHistory_);
 		
 		JLabel titleLabel = new JLabel("'MusicService' - " + userName, JLabel.CENTER);	// initialize titleLabel
@@ -536,88 +533,77 @@ public class Homepage
 		playPause_.addActionListener(new ActionListener() { 		// action listener to playPause_
 			@Override 
 			public void actionPerformed(ActionEvent arg0) {
-				if (current!=null && current.isActive()) {	
-					if(!playlist.equals("x")) {
+				if (playlist.equals("Base Home") || playlist.equals("Home")) {}	// avoid it completely if playlist is set to a HomePanel 
+				else {
+					if (current!=null && current.isActive()) {	
 						pos = current.getFramePosition();
-						current.stop();
-						playPause_.setText("\u25B6");
-//						isSongPlaying = false;	
-						if(songIndex == 0)	songIndex = songList.size()-1;
-						else				songIndex--;
+						current.stop();	
+						if (!playlist.equals("x")) {		// procs ONLY if it's a search menu panel
+							if(songIndex == 0)	songIndex = songList.size()-1;
+							else				songIndex--;
+						}
+						playPause_.setText("\u25B6"); 
+						isSongPlaying = false;
+					} 
+					else if ((current == null) || (current!=null && !current.isActive())) {
+						try {
+							File file = null;
+							if (!playlist.equals("x")) {
+								try (InputStream input = new FileInputStream(userName+".json")) {
+									songList.clear();
+									JSONObject obj = new JSONObject(new JSONTokener(input));			// turn into JSON object
+									JSONArray listOfSongs = obj.getJSONArray(playlist);				// grabs JSON array of songs by mapping the playlist name
+									for(int j = 0; j < listOfSongs.length(); j++) {					// adds all songs from array into JList
+										String temp = listOfSongs.getString(j);
+										String[] transferSong = SearchMenuPanel.search(temp),
 
-					} else {
-						pos = current.getFramePosition();
-						current.stop();
-						playPause_.setText("\u25B6");
-//						isSongPlaying = false;
-					}	} else if ((current == null) || (current!=null && !current.isActive())) {
-						if (playlist.equals("x")) {
-							try {
-								System.out.println(title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav seen in Homepage");
-								File file = new File(title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav");
-								AudioInputStream player = AudioSystem.getAudioInputStream(file);
-								playPause_.setText("\u2758" + "\u2758");
-								current = AudioSystem.getClip();
-								current.open(player);
-								current.setFramePosition(pos);
-								current.start();
-							} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}	} else {
-								playPause_.setText("\u2758" + "\u2758");	
-								try {
-									try (InputStream input = new FileInputStream(userName+".json")) {
-										songList.clear();
-										JSONObject obj = new JSONObject(new JSONTokener(input));		// turn into JSON object
-										JSONArray listOfSongs = obj.getJSONArray(playlist);				// grabs JSON array of songs by mapping the playlist name
-										for(int j = 0; j < listOfSongs.length(); j++) {					// adds all songs from array into JList
-											String temp = listOfSongs.getString(j);
-											String[] transferSong = SearchMenuPanel.search(temp),
+												// get the list of .wav files and separate by song, artist, and album
+												column = { "Song Title", "Artist", "Album" };
+										DefaultTableModel model = new DefaultTableModel(null, column);
+										model.setRowCount(0);
+										for (int i = 0; i < transferSong.length; i++)
+											model.addRow(transferSong[i].split("_"));
 
-											// get the list of .wav files and separate by song, artist, and album
-													column = { "Song Title", "Artist", "Album" };
-											DefaultTableModel model = new DefaultTableModel(null, column);
-											model.setRowCount(0);
-											for (int i = 0; i < transferSong.length; i++)
-												model.addRow(transferSong[i].split("_"));
+										// get selected song variables
+										String songTitle = model.getValueAt(0, 0).toString(),
+												artist = model.getValueAt(0, 1).toString(),
+												album = model.getValueAt(0, 2).toString();
 
-											// get selected song variables
-											String songTitle = model.getValueAt(0, 0).toString(),
-													artist = model.getValueAt(0, 1).toString(),
-													album = model.getValueAt(0, 2).toString();
-
-											//change text on labels in homepage
-											songList.add(songTitle + "_" + artist + "_" + album);
-										}
-										songName = ShiftingPanel.getSong();
-										songIndex = songList.indexOf(songName);
-									} catch (FileNotFoundException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									} catch (IOException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
+										//change text on labels in homepage
+										songList.add(songTitle + "_" + artist + "_" + album);
 									}
-									System.out.println(songName + " of index " + songIndex + " seen at Homepage");
-									System.out.println(songList.get(songIndex) + ".wav");
-									File file = new File(songList.get(songIndex) + ".wav");
-									AudioInputStream player = AudioSystem.getAudioInputStream(file);
-									current = AudioSystem.getClip();
-									current.open(player);
-									current.setFramePosition(pos);
-									current.start();
-									if(songIndex == songList.size()-1)  songIndex = 0;
-									else								songIndex++;
-								} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}	
-							}	
-					}	
+									songName = ShiftingPanel.getSong();
+									songIndex = songList.indexOf(songName);
+								} catch (FileNotFoundException e) {
+									e.printStackTrace();
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+								System.out.println(songName + " of index " + songIndex + " seen at Homepage from " + ShiftingPanel.getCurrentPanelName());
+								System.out.println("Obtained " + songList.get(songIndex) + ".wav from songList");
+								file = new File(songList.get(songIndex) + ".wav");
+								if(songIndex == songList.size()-1)	songIndex = 0;
+								else					songIndex++;
+							}
+							else {
+								System.out.println(title_.getText() + "_" + artist_.getText() + "_" + album_.getText() + ".wav seen in Homepage from " + ShiftingPanel.getCurrentPanelName());
+								file = new File(title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav");
+							}
+							AudioInputStream player = AudioSystem.getAudioInputStream(file);
+							current = AudioSystem.getClip();
+							current.open(player);
+							current.setFramePosition(pos);
+							current.start();
+						} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
+							e1.printStackTrace();
+						}
+						playPause_.setText("\u2758" + "\u2758");
+						isSongPlaying = true;
+					}
+				}
 			}
 		});
-		
+
 //		nextSong_ = new JButton("\u2758" + "\u2758");			// initializes nextSong_ and add an
 //		nextSong_.addActionListener(new ActionListener() 		// action listener to nextSong_
 //		{ 			
@@ -686,7 +672,18 @@ public class Homepage
 			
 		pane.add(LOW_panel); // add LOW_panel to pane (the content pane of frame)
 	}
-
+	
+	/**
+	 * A void method used to set the string variable 'playlist'. ShiftingPanel uses this.
+	 * @param name: the name of the current playlist
+	 */
+	protected void setCurrentPlaylist(String name) {
+		if (name.contains("Search for:"))
+			playlist = "x";
+		else playlist = name;
+		System.out.println("currently looking at " + name);
+	}
+	
 	// FOR USE WITH SEARCHQUERY_	
 	/** ORIGIN: Login.java
 	 * A boolean method that abhors code injections.
