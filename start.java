@@ -31,7 +31,7 @@ public class start
 		/*End Client*/	
 		
 		// call initial Frame to start the program
-		new Login(aSocket,serverPort);
+		new Login(aSocket,serverPort, null);
 	}
 	
 

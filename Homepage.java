@@ -7,6 +7,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -109,7 +110,7 @@ public class Homepage
 	 */
 	public static void main(String[] args) 
 	{ // test
-		new Homepage("allan",null, 6733);
+		new Homepage("allan",null, 6733, null);
 	}
 	
 	/**
@@ -118,18 +119,18 @@ public class Homepage
 	 * @param aSocket: a socket
 	 * @param serverPort: the server port
 	 */
-	public Homepage(String user, DatagramSocket aSocket, int serverPort) 
+	public Homepage(String user, DatagramSocket aSocket, int serverPort, Frame base) 
 	{																// main constructor
 		userName = user; 											// takes the username from input
 		this.aSocket = aSocket;										// takes the socket from input
 		this.serverPort = serverPort;								// takes the serverPort from input
-		initialize();												// initializes the frame
+		initialize(base);												// initializes the frame
 	}
 	
 	/**
 	 * The main initialization method. Initializes the frame and sets off everything else into motion.
 	 */
-	private void initialize()
+	private void initialize(Frame base)
 	{ 									
 		frame = new JFrame("MusicService -- " + userName);			// initialize the frame itself
 		frame.setMinimumSize(new Dimension(775,500));				// and set minimum dimensions
@@ -141,7 +142,7 @@ public class Homepage
 		frame.pack(); 												// packs the frame together
 		
 		frame.setSize(new Dimension(1000,600)); 					// sets the size of the frame
-		frame.setLocationRelativeTo(null); 							// sets frame location
+		frame.setLocationRelativeTo(base); 							// sets frame location
 		
 		playlistCreation = new CreatePlaylistDialog(frame, userName, dm, aSocket, serverPort); 	// create playlist creation dialog
 		playlistCreation.pack();																// pack playlist creation dialog
@@ -155,7 +156,8 @@ public class Homepage
 				
 				Dimension f = frame.getSize(), shift = new Dimension(196,147); // an insanely precise Dimension object
 				
-				ShiftingPanel.setSize((int)(f.getSize().getWidth() - shift.getWidth()), (int)(f.getSize().getHeight()- shift.getHeight()));
+				ShiftingPanel.setSize((int)(f.getSize().getWidth() - shift.getWidth()), 
+										(int)(f.getSize().getHeight()- shift.getHeight()));
 				ShiftingPanel.updateUI(); // update the UI of ShiftingPanel after changing the size
 			}
 		});
@@ -408,7 +410,7 @@ public class Homepage
 				String [] arguments = {userName};
 				requestReply.UDPRequestReply("loggedOut",arguments, aSocket, serverPort);
 				System.out.println("Logging out..."); 				// system announcement
-		        new Login(aSocket, serverPort).setVisible(true); 	// creates new Login() object
+		        new Login(aSocket, serverPort, frame).setVisible(true); 	// creates new Login() object
 		        System.out.println("User '" + userName + "' logged out.");	// system announcement
 			}	
 		});

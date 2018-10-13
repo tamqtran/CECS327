@@ -4,6 +4,7 @@
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
@@ -42,7 +43,7 @@ public class Login implements ActionListener {
 	 */
 	public static void main (String[] args) {
 		//testing only
-		new Login(null,6733);
+		new Login(null,6733, null);
 	}
 	
 	/**
@@ -50,11 +51,11 @@ public class Login implements ActionListener {
 	 * @param aSocket: a socket
 	 * @param serverPort: a server port
 	 */
-	public Login(DatagramSocket aSocket, int serverPort) {
+	public Login(DatagramSocket aSocket, int serverPort, Frame base) {
 		frame = new JFrame("'MusicService' Login");
 		frame.setSize(300,175);
 		
-		frame.setLocationRelativeTo(null);
+		frame.setLocationRelativeTo(base);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -131,7 +132,7 @@ public class Login implements ActionListener {
 					frame.dispose(); 					//close the login
 					//then redirect to homepage with their data
 //					new Profile(user).setVisible(true); 	//version 1
-					new Homepage(user,aSocket, serverPort).setVisible(true);	//version 2
+					new Homepage(user,aSocket, serverPort, frame).setVisible(true);	//version 2
 				} 
 				else if(confirmPassword(user, pass) == false)
 					message = "Incorrect password; try again.";
