@@ -1,7 +1,3 @@
-/*
- * This file was created by Austin Tao on 9/20/2018.
- */
-
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -55,7 +51,7 @@ import org.json.JSONTokener;
 
 /**
  * The Homepage class creates a frame that houses the main piece of this music streaming application.
- * @author Austin
+ * @author Austin Tao
  * @since 9/20/2018
  */
 public class Homepage 
@@ -96,8 +92,9 @@ public class Homepage
 	
 	private CreatePlaylistDialog playlistCreation;
 	
-	private boolean isSongPlaying = false, 				// starts false; changes depending on changes occurring in frame
-					isThereASong = false;
+//	private boolean isSongPlaying = false 				// starts false; changes depending on changes occurring in frame
+//					, isThereASong = false
+//	;
 	
 	DatagramSocket aSocket;								//For server connection
 	int serverPort;
@@ -108,8 +105,7 @@ public class Homepage
 	 * Test driver for this class.
 	 * @param args: a list of arguments. If none, then it will act as an empty array.
 	 */
-	public static void main(String[] args) 
-	{ // test
+	public static void main(String[] args) { // test
 		new Homepage("allan",null, 6733, null);
 	}
 	
@@ -119,8 +115,7 @@ public class Homepage
 	 * @param aSocket: a socket
 	 * @param serverPort: the server port
 	 */
-	public Homepage(String user, DatagramSocket aSocket, int serverPort, Frame base) 
-	{																// main constructor
+	public Homepage(String user, DatagramSocket aSocket, int serverPort, Frame base) {
 		userName = user; 											// takes the username from input
 		this.aSocket = aSocket;										// takes the socket from input
 		this.serverPort = serverPort;								// takes the serverPort from input
@@ -130,8 +125,7 @@ public class Homepage
 	/**
 	 * The main initialization method. Initializes the frame and sets off everything else into motion.
 	 */
-	private void initialize(Frame base)
-	{ 									
+	private void initialize(Frame base) { 									
 		frame = new JFrame("MusicService -- " + userName);			// initialize the frame itself
 		frame.setMinimumSize(new Dimension(775,500));				// and set minimum dimensions
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		// and the default close operation for the frame
@@ -185,7 +179,7 @@ public class Homepage
 		Playlist_Panel.setMaximumSize(new Dimension(200,1000));
 		
 		PlaylistTitle = new JPanel(); 								// initialize PlaylistTitle and set max dimensions
-		PlaylistTitle.setMaximumSize(new Dimension(100,10));
+		PlaylistTitle.setMaximumSize(new Dimension(100,15));
 		
 		playlist_ = new JLabel("My Playlists"); 					// initialize playlist_ label
 		playlist_.setFont(new Font("Tahoma", Font.PLAIN, 15)); 		// set font for playlist_
@@ -210,14 +204,14 @@ public class Homepage
 						System.out.println("Index identified: " + index);	// system: shows the index of the clicked item
 						System.out.println("Index name: " + list.getSelectedValue().toString()); // system: shows the name of the clicked item
 						
-						System.out.println("Current panel in ShiftingPanel is " + ShiftingPanel.getCurrentPanelName());
+						System.out.println("Current panel in ShiftingPanel is '" + ShiftingPanel.getCurrentPanelName() + "'");
 						
 						// checks if the current panel is the same one as the one that just got clicked
 						if (!list.getSelectedValue().toString().equals(ShiftingPanel.getCurrentPanelName())) 
 						{
 							PlaylistPanel newPanel = new PlaylistPanel(userName, list.getSelectedValue().toString());
 							playlist = list.getSelectedValue().toString();
-							newPanel.setName(list.getSelectedValue().toString());	// iniitalize a new PlaylistPanel and set the name of the PlaylistPanel
+							newPanel.setName(list.getSelectedValue().toString());	// initialize a new PlaylistPanel and set the name of the PlaylistPanel
 														
 							newPanel.getListener().setLabel(title_);		// set the labels from Description_Panel to follow the actions 
 							newPanel.getListener().setLabel(artist_);		// of the buttons from PlaylistPanel 
@@ -230,14 +224,14 @@ public class Homepage
 							ShiftingPanel.addComponent(newPanel);			// add the PlaylistPanel to ShiftingPanel
 						}
 						else 
-							System.out.println("Current panel in ShiftingPanel remains " + ShiftingPanel.getCurrentPanelName());
+							System.out.println("Current panel in ShiftingPanel remains '" + ShiftingPanel.getCurrentPanelName() + "'\n");
 					}		//System announces that nothing has changed and that the current panel remained the same as before
 				}
 			}
 		});
 		
 		UserSavedPanel = new JScrollPane(playlist_List); 				// initialize UserSavedPanel using playlist_List
-		
+		UserSavedPanel.setMaximumSize(new Dimension (300,700));
 		
 		PlaylistOptions = new JPanel(); 								// initialize PlaylistOptions and set layout
 		PlaylistOptions.setLayout(new BoxLayout(PlaylistOptions, BoxLayout.X_AXIS));
@@ -287,11 +281,11 @@ public class Homepage
 		PlaylistOptions.add(removePlaylist_);
 		PlaylistOptions.add(Box.createRigidArea(new Dimension(6,5)));
 		
-		Playlist_Panel.add(Box.createRigidArea(new Dimension(2,2))); 	// set the layout with rigid areas
+		Playlist_Panel.add(Box.createVerticalStrut(5)); 	// set the layout with rigid areas
 		Playlist_Panel.add(PlaylistTitle);								// and jpanels to Playlist_Panel
-		Playlist_Panel.add(Box.createRigidArea(new Dimension(2,2)));
+		Playlist_Panel.add(Box.createVerticalStrut(5));
 		Playlist_Panel.add(UserSavedPanel);
-		Playlist_Panel.add(Box.createRigidArea(new Dimension(4,4)));
+		Playlist_Panel.add(Box.createVerticalStrut(5));
 		Playlist_Panel.add(PlaylistOptions);
 		Playlist_Panel.add(Box.createRigidArea(new Dimension(3,3)));
 		
@@ -324,39 +318,40 @@ public class Homepage
 		searchQuery_.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-						System.out.println("Searching for: " + searchField.getText());
-						System.out.println("Current panel in ShiftingPanel is '" + ShiftingPanel.getCurrentPanelName() + "'");
-						
-						if (!codeDenial(searchField.getText())) // if special characters are used then this will go off
-						{
-							JOptionPane.showMessageDialog(frame, "You can't do that. Stop it!", "Inane warning - code injection rejection", JOptionPane.WARNING_MESSAGE);
-							searchField.setText("");
-						}
-						// checks if the current panel is the same one as the one that just got clicked
-						else if (!searchField.getText().equals(ShiftingPanel.getCurrentPanelName())) 
-						{
-							SearchMenuPanel newPanel = new SearchMenuPanel(userName, getSearchResults(searchField.getText()),searchField.getText());
-							playlist = "x";
-							
-							String title = " ";
-							if (!searchField.getText().equals("")) {
-								title = searchField.getText();
-							}
-							
-							newPanel.setName("search --" + title + "--"); // set name of the new SearchMenuPanel
-							
-							newPanel.setLabel(title_);		// set labels to respond to changes
-							newPanel.setLabel(artist_);		// in this searchMenuPanel
-							newPanel.setLabel(album_);
-							
-							ShiftingPanel.addComponent(newPanel);			// add the SearchMenuPanel to ShiftingPanel
-							
-							ShiftingPanel.updateUI();
-						}
-						else 
-							System.out.println("Current panel in ShiftingPanel remains '" + ShiftingPanel.getCurrentPanelName() + "'");
-					}
-				});
+				String text = searchField.getText();
+				if (text.equals("")) text = "<blank>";
+
+				System.out.println("Searching for: " + text);
+				System.out.println("Current panel in ShiftingPanel is '" + ShiftingPanel.getCurrentPanelName() + "'");
+
+				if (!codeDenial(searchField.getText())) // if special characters are used then this will go off
+				{
+					JOptionPane.showMessageDialog(frame, "You can't do that. Stop it!", "Inane warning - code injection rejection", JOptionPane.WARNING_MESSAGE);
+					searchField.setText("");
+				}
+				// checks if the current panel is the same one as the one that just got clicked
+
+
+				else if (!("Search for: " + text).equals(ShiftingPanel.getCurrentPanelName())) 
+				{
+					SearchMenuPanel newPanel = new SearchMenuPanel(userName, getSearchResults(searchField.getText()), searchField.getText());
+					playlist = "x";
+					// set name of the new SearchMenuPanel
+					newPanel.setName("Search for: " + text); 
+					
+					// set labels to respond to changes in this searchMenuPanel
+					newPanel.setLabel(title_);		
+					newPanel.setLabel(artist_);		
+					newPanel.setLabel(album_);
+
+					ShiftingPanel.addComponent(newPanel);			// add the SearchMenuPanel to ShiftingPanel
+
+					ShiftingPanel.updateUI();
+				}
+				else 
+					System.out.println("Current panel in ShiftingPanel remains '" + ShiftingPanel.getCurrentPanelName() + "'\n");
+			}
+		});
 
 		_SearchPanel.add(searchField);								// add searchField and searchQuery_ to _SearchPanel
 		_SearchPanel.add(searchQuery_);								// and set max dimensions
@@ -400,10 +395,8 @@ public class Homepage
 		_ProfilePanel.setLayout(new FlowLayout());
 		username_ = new JLabel("User: " + userName + "  ");			// initialize username_ and logout_
 		logout_ = new JButton("Logout");
-		logout_.addActionListener(new ActionListener() 
-		{ 	// assign action listener to logout_
-			public void actionPerformed(ActionEvent e) 
-			{
+		logout_.addActionListener(new ActionListener() { 	// assign action listener to logout_
+			public void actionPerformed(ActionEvent e) {
 				frame.dispose();									// disposes of current frame
 				
 				//send logout message to server
@@ -451,7 +444,7 @@ public class Homepage
 		Explore_Panel.add(TopPanel); 								// add TopPanel and ShiftingPanel to Explore_Panel
 		Explore_Panel.add(Box.createRigidArea(new Dimension(1,2)));
 		Explore_Panel.add(ShiftingPanel);
-		
+
 		HIGH_panel.add(Box.createRigidArea(new Dimension(1,1))); 	// add rigid areas and panels
 		HIGH_panel.add(Playlist_Panel);								// to HIGH_panel
 		HIGH_panel.add(Box.createRigidArea(new Dimension(1,1)));
@@ -464,8 +457,7 @@ public class Homepage
 	 * This initialization method handles the lower half of the frame.
 	 * @param pane: the frame's content pane
 	 */
-	private void addLowComponentsToHome(Container pane) 
-	{
+	private void addLowComponentsToHome(Container pane) {
 		LOW_panel = new JPanel();									// initialize LOW_panel and set layout and max dimensions
 		LOW_panel.setLayout(new BoxLayout(LOW_panel, BoxLayout.X_AXIS));
 		LOW_panel.setMaximumSize(new Dimension(15000,100));
@@ -541,107 +533,91 @@ public class Homepage
 //		});
 		
 		playPause_ = new JButton("\u25B6");							// initialize playPause_ and add an 
-		playPause_.addActionListener(new ActionListener() 
-		{ 		// action listener to playPause_
+		playPause_.addActionListener(new ActionListener() { 		// action listener to playPause_
 			@Override 
-			public void actionPerformed(ActionEvent arg0) 
-			{
-				if ((current!=null && ((current.isActive()))))
-				{	
-					if(!(playlist.equals("x")))
-					{
+			public void actionPerformed(ActionEvent arg0) {
+				if (current!=null && current.isActive()) {	
+					if(!playlist.equals("x")) {
 						pos = current.getFramePosition();
 						current.stop();
 						playPause_.setText("\u25B6");
-						isSongPlaying = false;	
+//						isSongPlaying = false;	
 						if(songIndex == 0)	songIndex = songList.size()-1;
 						else				songIndex--;
-					}
-					else
-					{
+
+					} else {
 						pos = current.getFramePosition();
 						current.stop();
 						playPause_.setText("\u25B6");
-						isSongPlaying = false;
-					}
-				} 
-				else if((current == null) || (current!=null && (!(current.isActive()))))
-				{
-					if(playlist.equals("x"))
-					{
-						try {
-							System.out.println(title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav seen in Homepage");
-							File file = new File(title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav");
-							AudioInputStream player = AudioSystem.getAudioInputStream(file);
-							playPause_.setText("\u2758" + "\u2758");
-							current = AudioSystem.getClip();
-							current.open(player);
-							current.setFramePosition(pos);
-							current.start();
-						} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
-					else
-					{
-						playPause_.setText("\u2758" + "\u2758");	
-						try {
-							try (InputStream input = new FileInputStream(userName+".json"))
-							{
-								songList.clear();
-
-								JSONObject obj = new JSONObject(new JSONTokener(input));								// turn into JSON object
-
-								JSONArray listOfSongs = obj.getJSONArray(playlist);										// grabs JSON array of songs by mapping the playlist name
-
-								for(int j = 0; j < listOfSongs.length(); j++)											// adds all songs from array into JList
-								{
-									String temp = listOfSongs.getString(j);
-									String[] transferSong = SearchMenuPanel.search(temp);
-
-									// get the list of .wav files and separate by song, artist, and album
-									String[] column = { "Song Title", "Artist", "Album" };
-									DefaultTableModel model = new DefaultTableModel(null, column);
-									model.setRowCount(0);
-									for (int i = 0; i < transferSong.length; i++) {
-										model.addRow(transferSong[i].split("_"));
-									};
-
-									// get selected song variables
-									String songTitle = model.getValueAt(0, 0).toString();
-									String artist = model.getValueAt(0, 1).toString();
-									String album = model.getValueAt(0, 2).toString();
-
-									//change text on labels in homepage
-									songList.add(songTitle + "_" + artist + "_" + album);
-								}
-								songName = ShiftingPanel.getSong();
-								songIndex = songList.indexOf(songName);
-							} catch (FileNotFoundException e) {
+//						isSongPlaying = false;
+					}	} else if ((current == null) || (current!=null && !current.isActive())) {
+						if (playlist.equals("x")) {
+							try {
+								System.out.println(title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav seen in Homepage");
+								File file = new File(title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav");
+								AudioInputStream player = AudioSystem.getAudioInputStream(file);
+								playPause_.setText("\u2758" + "\u2758");
+								current = AudioSystem.getClip();
+								current.open(player);
+								current.setFramePosition(pos);
+								current.start();
+							} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
 								// TODO Auto-generated catch block
-								e.printStackTrace();
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							System.out.println(songName + " of index " + songIndex + " seen at Homepage");
-							System.out.println(songList.get(songIndex) + ".wav");
-							File file = new File(songList.get(songIndex) + ".wav");
-							AudioInputStream player = AudioSystem.getAudioInputStream(file);
-							current = AudioSystem.getClip();
-							current.open(player);
-							current.setFramePosition(pos);
-							current.start();
-							if(songIndex == songList.size()-1)  songIndex = 0;
-							else								songIndex++;
-						} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
+								e1.printStackTrace();
+							}	} else {
+								playPause_.setText("\u2758" + "\u2758");	
+								try {
+									try (InputStream input = new FileInputStream(userName+".json")) {
+										songList.clear();
+										JSONObject obj = new JSONObject(new JSONTokener(input));		// turn into JSON object
+										JSONArray listOfSongs = obj.getJSONArray(playlist);				// grabs JSON array of songs by mapping the playlist name
+										for(int j = 0; j < listOfSongs.length(); j++) {					// adds all songs from array into JList
+											String temp = listOfSongs.getString(j);
+											String[] transferSong = SearchMenuPanel.search(temp),
+
+											// get the list of .wav files and separate by song, artist, and album
+													column = { "Song Title", "Artist", "Album" };
+											DefaultTableModel model = new DefaultTableModel(null, column);
+											model.setRowCount(0);
+											for (int i = 0; i < transferSong.length; i++)
+												model.addRow(transferSong[i].split("_"));
+
+											// get selected song variables
+											String songTitle = model.getValueAt(0, 0).toString(),
+													artist = model.getValueAt(0, 1).toString(),
+													album = model.getValueAt(0, 2).toString();
+
+											//change text on labels in homepage
+											songList.add(songTitle + "_" + artist + "_" + album);
+										}
+										songName = ShiftingPanel.getSong();
+										songIndex = songList.indexOf(songName);
+									} catch (FileNotFoundException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									} catch (IOException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+									System.out.println(songName + " of index " + songIndex + " seen at Homepage");
+									System.out.println(songList.get(songIndex) + ".wav");
+									File file = new File(songList.get(songIndex) + ".wav");
+									AudioInputStream player = AudioSystem.getAudioInputStream(file);
+									current = AudioSystem.getClip();
+									current.open(player);
+									current.setFramePosition(pos);
+									current.start();
+									if(songIndex == songList.size()-1)  songIndex = 0;
+									else								songIndex++;
+								} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}	
+							}	
 					}	
-				}
-			}});
+			}
+		});
+		
 //		nextSong_ = new JButton("\u2758" + "\u2758");			// initializes nextSong_ and add an
 //		nextSong_.addActionListener(new ActionListener() 		// action listener to nextSong_
 //		{ 			
@@ -717,11 +693,9 @@ public class Homepage
 	 * @param input: A string, either username or password
 	 * @return false if any special characters are found in input; true otherwise
 	 */
-	private boolean codeDenial (String input) 
-	{
+	private boolean codeDenial (String input) {
 		//denies if input has the following: "[!@#$%&*()_+=|<>?{}\\[\\]~-]" (code injection prevention)
-		for (char c : input.toCharArray()) 
-		{
+		for (char c : input.toCharArray()) {
 			for (char s : specials.toCharArray())
 				if (s == c) return false;
 		} return true;
@@ -743,8 +717,7 @@ public class Homepage
 	 * A void method that can make a frame visible.
 	 * @param b boolean (true/false) that determines visibility of the frame (where true makes it visible, and false makes it not visible
 	 */
-	public void setVisible(boolean b) 
-	{
+	public void setVisible(boolean b) {
 		// TODO Auto-generated method stub
 		frame.setVisible(b);
 	}
@@ -753,8 +726,7 @@ public class Homepage
 	 * Read playlists array from json file and add to gui list
 	 * @param dm defaultlistModel
 	 */
-	void getPlaylists(DefaultListModel<String> dm) 
-	{
+	void getPlaylists(DefaultListModel<String> dm) {
 		dm.clear(); //clear list 
 
 		String [] arguments = {userName};
@@ -773,8 +745,7 @@ public class Homepage
 	 * @param playlist playlist to be removed
 	 * @param username current login user
 	 */
-	void removePlaylist(String playlist, String username) 
-	{
+	void removePlaylist(String playlist, String username) {
 		//Server side playlist removal
 		String [] arguments = {username,playlist};
 		requestReply.UDPRequestReply("removePlaylist",arguments, aSocket, serverPort);
@@ -788,13 +759,12 @@ public class Homepage
 		String [] arguments = {search};
 		JSONObject obj = requestReply.UDPRequestReply("getSearch", arguments, aSocket, serverPort);
 		String results  = obj.get("result").toString();
-		if (results.length() < 3) {
-			return null;
-		}
-		results = results.substring(2, results.length() - 2).replace("\",\"", ",");
+		
+		if (results.length() < 3) return null;
+		results = results.substring(2, results.length() - 2).replace("\",\"", "\n");
 		System.out.println("These are the results:\n" + results);
 		
-		return results.split(",");
+		return results.split("\n");
 	}
 	/**
 	 * Format request into JSON Object
@@ -808,23 +778,19 @@ public class Homepage
 		//Arguments
 		JSONArray jsonArgs = new JSONArray();
 		for (int i=0; i<args.length; i++)
-		{
 			jsonArgs.put(args[i]);
-		}
-
+		
 		//JSON Object
 		JSONObject jsonRequest = new JSONObject();
-		try 
-		{
+		try {
 			jsonRequest.put("id", UUID.randomUUID().hashCode());
 			jsonRequest.put("method", method);
 			jsonRequest.put("arguments", jsonArgs);
-		}
-		catch (JSONException e)
-		{
+			
+		} catch (JSONException e) {
 			System.out.println(e);
-		}
-		return jsonRequest;
+			
+		} return jsonRequest;
 	}
 
 	/**
@@ -835,8 +801,7 @@ public class Homepage
 	 */
 	JSONObject UDPRequestReply(String method,String[] param) {
 		JSONObject JsonReply = null;
-		try 
-		{
+		try {
 			byte [] m;
 
 			// opening client side
@@ -862,15 +827,13 @@ public class Homepage
 
 			System.out.println("Reply: " + new String(reply.getData()));
 			System.out.println("Type a message to send or x to exit.");
-		}
-		catch (SocketException e)
-		{
+			
+		} catch (SocketException e) {
 			System.out.println("Socket: " + e.getMessage());
-		}
-		catch (IOException e)
-		{
+			
+		} catch (IOException e) {
 			System.out.println("IO: " + e.getMessage());
-		}
-		return JsonReply;
+			
+		} return JsonReply;
 	}
 }

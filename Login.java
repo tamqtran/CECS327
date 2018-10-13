@@ -23,6 +23,11 @@ import javax.swing.JTextField;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+/**
+ * The Login class creates a login that serves as the gateway into our music streaming application.
+ * @author Austin Tao
+ * @since 8/30/2018
+ */
 public class Login implements ActionListener {
 	private JFrame frame;
 	protected JTextField usernameField;
@@ -73,10 +78,10 @@ public class Login implements ActionListener {
 	private void addComponentsToPane (Container pane){
 		pane.setLayout(new BoxLayout(pane, BoxLayout.PAGE_AXIS));
 		
-		userPanel = new JPanel();	userPanel.setLayout(new BoxLayout(userPanel, BoxLayout.LINE_AXIS));
-		passPanel = new JPanel();	passPanel.setLayout(new BoxLayout(passPanel, BoxLayout.LINE_AXIS));
-		buttonPanel = new JPanel();	buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
-		errorPanel = new JPanel();	errorPanel.setLayout(new BoxLayout(errorPanel, BoxLayout.LINE_AXIS));
+		userPanel = new JPanel();		userPanel.setLayout(new BoxLayout(userPanel, BoxLayout.LINE_AXIS));
+		passPanel = new JPanel();		passPanel.setLayout(new BoxLayout(passPanel, BoxLayout.LINE_AXIS));
+		buttonPanel = new JPanel();		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
+		errorPanel = new JPanel();		errorPanel.setLayout(new BoxLayout(errorPanel, BoxLayout.LINE_AXIS));
 		
 		nLabel = new JLabel("Username:");
 		usernameField = new JTextField(); usernameField.setColumns(15);
@@ -120,28 +125,20 @@ public class Login implements ActionListener {
 		String user = usernameField.getText();
 		String pass = String.valueOf(passwordField.getPassword());
 		
-		System.out.println("Typed User: " + user + "\nTyped Pass: " + pass); //system
+		System.out.println("Typed User: " + user + ", Typed Pass: " + pass); //system
 		
-		if ((!user.isEmpty()) && (!pass.isEmpty())) 
-		{
-			if (isUser(user) && codeDenial(user)) 
-			{
-				if (codeDenial(pass) && confirmPassword(user, pass) && singleUser(user)) 
-				{
-					System.out.println("Success. Redirecting..."); //system
-					frame.dispose(); 					//close the login
-					//then redirect to homepage with their data
-//					new Profile(user).setVisible(true); 	//version 1
-					new Homepage(user,aSocket, serverPort, frame).setVisible(true);	//version 2
-				} 
-				else if(confirmPassword(user, pass) == false)
+		if ((!user.isEmpty()) && (!pass.isEmpty())) {
+			if (isUser(user) && codeDenial(user)) {
+				if (codeDenial(pass) && confirmPassword(user, pass) && singleUser(user)) {
+					System.out.println("Success. Redirecting..."); 	// system
+					frame.dispose(); 		// close the login, then redirect to homepage with their data
+					new Homepage(user,aSocket, serverPort, frame).setVisible(true);
+				} else if(confirmPassword(user, pass) == false) {
 					message = "Incorrect password; try again.";
-				else if(singleUser(user) == false)
+				} else if(singleUser(user) == false) {
 					message = "Sorry, this account is already occupied";
-			}
-			else message = "No such user; try again.";
-		} 
-		else message = "Fill out both boxes.";
+			}	} else message = "No such user; try again.";
+		} else message = "Fill out both boxes.";
 		
 		eLabel.setText(message);
 		eLabel.setSize(eLabel.getPreferredSize());
@@ -174,15 +171,13 @@ public class Login implements ActionListener {
 	 */
 	private boolean confirmPassword (String user, String pass) {
 		//find the user that has this username and this password from whatever json file they're stored in
-		//if pass == json.username_pass then true
-
+		
 		String [] arguments = {user,pass};
 		
 		// checking password
 		JSONObject obj = requestReply.UDPRequestReply("checkLogin",arguments, aSocket, serverPort);
 		
-		if(obj.get("result").equals(true))
-			return true;
+		if(obj.get("result").equals(true)) return true;
 		return false;
 	}
 	
@@ -191,8 +186,7 @@ public class Login implements ActionListener {
 	 * @param user: The name of the user
 	 * @return a boolean determining if there is a user active on the account
 	 */
-	private boolean singleUser(String user) 
-	{
+	private boolean singleUser(String user) {
 		//find the user that has this username from whatever json file they're stored in
 		String [] arguments = {user};
 		
@@ -200,8 +194,7 @@ public class Login implements ActionListener {
 		JSONObject obj = requestReply.UDPRequestReply("logIn",arguments, aSocket, serverPort);
 		
 		// if there is no user using the account, return true
-		if(obj.get("result").equals(true))
-			return true;
+		if(obj.get("result").equals(true))	return true;
 		
 		// if there is a user, return false
 		return false;

@@ -45,14 +45,11 @@ public class requestReply
 			//Format datagram reply into JSONObject
 			JsonReply=new JSONObject(new String(reply.getData()));
 			
-			System.out.println("Reply: " + new String(reply.getData()));
-		}
-		catch (SocketException e)
-		{
+			System.out.println("Reply: " + new String(reply.getData()).trim());	
+			// trim() is to remove the buffer space in the console
+		} catch (SocketException e) {
 			System.out.println("Socket: " + e.getMessage());
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			System.out.println("IO: " + e.getMessage());
 		}
 		return JsonReply;
@@ -66,25 +63,20 @@ public class requestReply
 	 * @return return JSON object
 	 * @throws JSONException
 	 */
-	static JSONObject JSONRequestObject(String method, Object[] args) throws JSONException
-	{
-	        //Arguments
-	        JSONArray jsonArgs = new JSONArray();
-	        for (int i=0; i<args.length; i++)
-	        {
+	static JSONObject JSONRequestObject(String method, Object[] args) throws JSONException {
+	       
+	        JSONArray jsonArgs = new JSONArray(); //Arguments
+	        for (int i=0; i<args.length; i++) {
 	        	jsonArgs.put(args[i]);
 	        }
 	
-	        //Json Object
-	        JSONObject jsonRequest = new JSONObject();
-	        try 
-	        {
+	        
+	        JSONObject jsonRequest = new JSONObject(); //Json Object
+	        try {
 	                jsonRequest.put("id", UUID.randomUUID().hashCode());
 	                jsonRequest.put("method", method);
 	                jsonRequest.put("arguments", jsonArgs);
-	        }
-	        catch (JSONException e)
-	        {
+	        } catch (JSONException e) {
 	                System.out.println(e);
 	        }
 	        return jsonRequest;

@@ -23,8 +23,7 @@ import org.json.JSONTokener;
  * @author Tam Tran
  * @since 09-09-2018
  */
-public class PlaylistActionListener implements ActionListener, MouseListener
-{
+public class PlaylistActionListener implements ActionListener, MouseListener {
 	// declaring variables
 	private PlaylistPanel panel;
 	private String song, songTitle, artist, album;
@@ -34,8 +33,7 @@ public class PlaylistActionListener implements ActionListener, MouseListener
 	 * Constructors that adds functionality to the playlist panel
 	 * @param p
 	 */
-	public PlaylistActionListener(PlaylistPanel p) 
-	{ 
+	public PlaylistActionListener(PlaylistPanel p) { 
 		// initializing variables
 		this.panel = p;
 	}
@@ -44,35 +42,29 @@ public class PlaylistActionListener implements ActionListener, MouseListener
 	 * Adding functionality to buttons
 	 */
 	@Override
-	public void actionPerformed(ActionEvent e) 
-	{
+	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 		
 		// back to profile button will close JFrame of PlaylistFrame and open JFrame of Profile Page of current user
-		if (source == panel.backToProfileButton)
-		{
+		if (source == panel.backToProfileButton) {
 			JFrame pFrame = (JFrame) panel.getTopLevelAncestor();
 			pFrame.dispose();
 			new Profile(panel.username).setVisible(true);
 		}
 		
 		// select song button will close JFrame of PLaylistFram and open JFrame for Play Page with selected song
-		else if(source == panel.selectSongButton)
-		{			
+		else if(source == panel.selectSongButton) {			
 			new PlayButton.PlayFrame(song, panel.username, panel.playlist).setVisible(true);
 		}
 		
 		// delete song button will delete song from JSON file and update JList in Playlist JPanel
-		else if(source == panel.deleteSongButton)
-		{
+		else if(source == panel.deleteSongButton) {
 			// initialize variables to refer to JSON file
 			String username = panel.username;
 			String playlistName = panel.playlist;
 			String songName = panel.songList.getSelectedValue().toString();
 			
-			
-			try (InputStream input = new FileInputStream(username+".json")) 	// read JSON file
-			{
+			try (InputStream input = new FileInputStream(username+".json")) {	// read JSON file
 			    JSONObject JSONfile = new JSONObject(new JSONTokener(input));	// turn into JSON object
 			    
 			    JSONArray pJSON = JSONfile.getJSONArray(playlistName);			// grabs JSON array of songs by mapping the playlist name
@@ -84,14 +76,11 @@ public class PlaylistActionListener implements ActionListener, MouseListener
 				fileWriter.flush();
 				fileWriter.close();
 			    
-			}
-			catch (Exception f) 												// catch exception
-			{
+			} catch (Exception f) { 												// catch exception
 				f.printStackTrace();
 			}
 			
 			panel.updatePlaylist();												// update JList in the Playlist Panel
-			
 		}
 	}
 	
@@ -99,13 +88,11 @@ public class PlaylistActionListener implements ActionListener, MouseListener
 	 * The JLabel variables from Homepage (title_, artist_, album_) are set to these labels in order to change their text whenever the song changes
 	 * @param label: a JLabel from Homepage
 	 */
-	public void setLabel(JLabel label) 
-	{
-		switch (label.getName()) 			// the three labels are named via label.setName(labelName)
-		{
-		case "title": titleLabel = label; break;
-		case "artist(s)": artistLabel = label; break;
-		case "album": albumLabel = label; break;
+	public void setLabel(JLabel label) {
+		switch (label.getName()) {			// the three labels are named via label.setName(labelName)
+		case "title": 		titleLabel = label;  break;
+		case "artist(s)": 	artistLabel = label; break;
+		case "album": 		albumLabel = label;  break;
 		}
 	}
 	
@@ -113,8 +100,7 @@ public class PlaylistActionListener implements ActionListener, MouseListener
 	 * The JButtons variables from Homepage (previousSong_, playPause_, nextSong_) are set to active
 	 * @param button: a JButton from Homepage
 	 */
-	public void setButtonOn(JButton button) 
-	{
+	public void setButtonOn(JButton button) {
 		button.setEnabled(true);
 		button.updateUI();
 	}
@@ -147,10 +133,9 @@ public class PlaylistActionListener implements ActionListener, MouseListener
 				String[] column = { "Song Title", "Artist", "Album" };
 				DefaultTableModel model = new DefaultTableModel(null, column);
 				model.setRowCount(0);
-				for (int i = 0; i < transferSong.length; i++) {
+				for (int i = 0; i < transferSong.length; i++)
 					model.addRow(transferSong[i].split("_"));
-				};
-
+				
 				// get selected song variables
 				songTitle = model.getValueAt(0, 0).toString();
 				artist = model.getValueAt(0, 1).toString();
@@ -162,7 +147,7 @@ public class PlaylistActionListener implements ActionListener, MouseListener
 				albumLabel.setText(album);	albumLabel.setVisible(true);
 
 				song = songTitle + "_" + artist + "_" + album;
-				System.out.println(song + " clicked");
+				System.out.println("PlaylistPanel:\t '" + song + "' clicked");
 			}
 		}
 	}

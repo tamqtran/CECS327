@@ -1,4 +1,3 @@
-
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -60,26 +59,19 @@ public class PlaylistPanel extends JPanel
 		
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
-//		this.setSize(new Dimension(804,455));
-		
 		this.setName(this.playlist);			// set name of playlistPanel as the playlist name
-		
-//		// creating back to profile button
-//		backToProfileButton = new JButton("Back to Profile");
-//		backToProfileButton.setSize(backToProfileButton.getPreferredSize());
-//		backToProfileButton.setLocation(10, 10);
-//		backToProfileButton.addActionListener(listener);
-//		this.add(backToProfileButton);
 		
 		// creating playlist name label
 		playlistName = new JLabel("Playlist Name: " + playlist);
 		playlistName.setSize(playlistName.getPreferredSize());
 		playlistName.setLocation(10, 10);
+		playlistName.setName("playlistLabel");
 		this.add(playlistName);
 		
 		playlistAuthor = new JLabel("Author: " + this.username);
 		playlistAuthor.setSize(playlistName.getPreferredSize());
 		playlistAuthor.setLocation(10, 30);
+		playlistAuthor.setName("authorLabel");
 		this.add(playlistAuthor);
 		
 		// creating select song button
@@ -87,6 +79,7 @@ public class PlaylistPanel extends JPanel
 		selectSongButton.setSize(selectSongButton.getPreferredSize());
 		selectSongButton.setLocation(270, 55);
 		selectSongButton.addActionListener(listener);
+		selectSongButton.setName("selectSong");
 		this.add(selectSongButton);
 	
 		// creating delete song button
@@ -94,6 +87,7 @@ public class PlaylistPanel extends JPanel
 		deleteSongButton.setSize(deleteSongButton.getPreferredSize());
 		deleteSongButton.setLocation(270, 85);
 		deleteSongButton.addActionListener(listener);
+		deleteSongButton.setName("deleteSong");
 		this.add(deleteSongButton);
 		
 		// creating list of songs in the playlist
@@ -104,6 +98,7 @@ public class PlaylistPanel extends JPanel
 		songList.setSize(250,200);
 		songList.setLocation(10, 55);
 		songList.addMouseListener(listener);	// assign the mouse listener part of listener to songList
+		songList.setName("songList");
 		this.add(songList);		
 		
 		// updates the list of songs in the playlist
@@ -113,29 +108,16 @@ public class PlaylistPanel extends JPanel
 	/**
 	 * method that updates the JList in the PlaylistPanel
 	 */
-	public void updatePlaylist() 
-	{
-		
-		try (InputStream input = new FileInputStream(username+".json")) 							// read JSON file
-		{
-			DefaultListModel<String> model = (DefaultListModel<String>) this.songList.getModel();	// grabs model for JList
-			
+	public void updatePlaylist() {
+		try (InputStream input = new FileInputStream(username+".json")) {							// read JSON file
+			DefaultListModel<String> model = (DefaultListModel<String>) this.songList.getModel();	// grabs model for JList	
 			model.removeAllElements();																// clears JList
-			
-		    JSONObject obj = new JSONObject(new JSONTokener(input));								// turn into JSON object
-		    
-		    JSONArray listOfSongs = obj.getJSONArray(playlist);										// grabs JSON array of songs by mapping the playlist name
-		    
+		    JSONObject obj = new JSONObject(new JSONTokener(input));								// turn into JSON object  
+		    JSONArray listOfSongs = obj.getJSONArray(playlist);										// grabs JSON array of songs by mapping the playlist name  
 		    for(int i = 0; i < listOfSongs.length(); i++)											// adds all songs from array into JList
-		    {
 		    	model.addElement(listOfSongs.getString(i));
-		    }
-
-		}
-		catch (Exception e) 																		// catch exception
-		{
+		} catch (Exception e) {																		// catch exception
 			e.printStackTrace();
-			
 		}
 	}
 	

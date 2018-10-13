@@ -35,8 +35,7 @@ public class ShiftingPanel extends JLayeredPane
 	 * Main constructor. Creates a JLayeredPane called ShiftingPanel
 	 * @param user the name of the user
 	 */
-	public ShiftingPanel() 
-	{
+	public ShiftingPanel() {
 		this.setMinimumSize(new Dimension(501,501));							// set minimum size
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));	// set border
 		
@@ -48,12 +47,9 @@ public class ShiftingPanel extends JLayeredPane
 	 * A method that assigns a component listener w/ a particular componentResized() method to the input panel.
 	 * @param panel: a JPanel
 	 */
-	public void addResizeListenerTo(JPanel panel) 
-	{
-		this.addComponentListener(new ComponentAdapter() 		// assign component listener to ShiftingPanel
-		{		
-			public void componentResized(ComponentEvent e) 
-			{			
+	protected void addResizeListenerTo(JPanel panel) {
+		this.addComponentListener(new ComponentAdapter() { 		// assign component listener to ShiftingPanel
+			public void componentResized(ComponentEvent e) {			
 				panel.setSize(getSize());  					//the size of the panel becomes the size of ShiftingPanel
 				panel.updateUI();
 			}
@@ -65,30 +61,29 @@ public class ShiftingPanel extends JLayeredPane
 	 * and the components accordingly to this new inclusion.
 	 * @param c: the component that is being added to ShiftingPanel
 	 */
-	public void addComponent(Component c) 
-	{
+	protected void addComponent(Component c) {
 		//move current panel in layer 0 to layer -1 in pos 0
 		for (Component p : this.getComponentsInLayer(ZERO))
 			this.setLayer(p, N_ONE, 0);
 		
 		this.add(c, JLayeredPane.DEFAULT_LAYER, ZERO);			// add component to layer 0		
 		
-		c.setSize(getSize());
+		c.setSize(getSize());					// set the size of the new component to the size of ShiftingPanel
 		
 		addResizeListenerTo((JPanel)c);
 				
-		if (nextPanels.length > 0) 								// if the length of nextPanels is zero, then the following is skipped
-		{
-			for (Component p : this.getComponentsInLayer(N_TWO)) 
-			{
-				this.remove(p);
+		if (nextPanels.length > 0) {			// if the length of nextPanels is zero, then the following is skipped
+			for (Component p : this.getComponentsInLayer(N_TWO)) {
+				this.remove(p);					
 				currentMovedForward();			// for each item in nextPanels, remove that item from there
 				baseComponent--;				// decrement baseComponent to compensate for each panel that is lost
 			}
 		}
 		
 		baseComponent++;						// add one to baseComponent location
-		checkHistory();							// show current history parameters	
+		reduceFurther();						// nothing should happen here
+
+		updateAndCheck();
 	}
 	
 	/**
@@ -96,7 +91,7 @@ public class ShiftingPanel extends JLayeredPane
 	 * Both buttons together function as the panel switcher for ShiftingPanel.
 	 * @param button: a JButton, either previousHistory_ or nextHistory_
 	 */
-	public void setHistorySwitch(JButton button) {
+	protected void setHistorySwitch(JButton button) {
 		switch(button.getName()) {
 		case "previous panel": 
 			prevButton = button;	// assign previousHistory_ as prevButton and assign an action listener to it
@@ -114,8 +109,8 @@ public class ShiftingPanel extends JLayeredPane
 					getShiftingPanel().setLayer(getShiftingPanel().getComponentsInLayer(N_ONE)[0], ZERO, 0);
 							
 					currentMovedBack();		//update history and compensate currentComponent
-										
-					checkHistory();
+					
+					updateAndCheck();
 				}
 			});
 			break;
@@ -136,7 +131,7 @@ public class ShiftingPanel extends JLayeredPane
 					
 					currentMovedForward();		//compensate currentComponent
 					
-					checkHistory();
+					updateAndCheck();
 				}
 			});
 			break;
@@ -165,109 +160,13 @@ public class ShiftingPanel extends JLayeredPane
 	 * A get method that returns this ShiftingPanel.
 	 * @return this ShiftingPanel class
 	 */
-	protected ShiftingPanel getShiftingPanel() {return this;}	
-	
-	/**
-	 * A void method that increments currentComponent.
-	 */
-	protected void currentMovedBack() {currentComponent++;}
-	
-	/**
-	 * A void method that decrements currentComponent.
-	 */
-	protected void currentMovedForward() {currentComponent--;}
-	
-	/**
-	 * This void method removes all instances of a given playlist name from the history parameter.
-	 * @param playlistName: the name of the playlist that is being removed
-	 */
-	public void removeFromHistory(String playlistName) {
-		System.out.print("Before:");				// system: before the wipe
-		checkHistory();
-		
-		int shift = 0, i = 0;
-		for (Component p : history) 				// for each component in history...
-		{
-			if (p.getName().equals(playlistName)) 	// if that component has the same name as playlistName...
-			{
-				this.remove(i);						// remove that element at i
-				++shift;							// pre-increment the shift
-			}
-			else i++;								// otherwise increment i
-		}
-		baseComponent -= shift;						// compensate baseComponent with shift
-		
-		System.out.println("Middle:");				// system: all instances of playlistName removed from history
-		checkHistory();
-		
-		reduceFurther();	// redundancy checker
-		
-		System.out.println("After:");				// system: after clearing the redundancies.
-		checkHistory();
-	}
-	
-	/**
-	 * A void method that removes redundancies within the history parameter.
-	 * Ex: HOME, king, queen, king, jack -> remove queen -> HOME, king, king, jack -> reduceFurther() -> HOME, king, jack
-	 */
-	private void reduceFurther() {
-		history = this.getComponents();
-		int shift = 0, i = 0;
-		while(i < history.length-1) 
-		{
-			//check for adjacent elements that have the same name - if found, remove the second one
-			if (history[i].getName().equals(history[i+1].getName())) 
-			{
-				this.remove(i+1);					// removes the second one
-				++shift;							// add one to shift
-				history = this.getComponents();		//update history
-			} 
-			else if ((history[i].getName().equals("Home") && history[i+1].getName().equals("Base Home")))
-			{	// singular scenario: 'base home -> playlist -> home', delete playlist, 'base home -> home' to 'base home'
-				this.remove(i);	// removes item at index i from history
-				this.setLayer(history[i+1], ZERO, 0);	// sends the item at index i+1 to layer 0
-				++shift;								// proceed as normal
-				history = this.getComponents();		//update history
-			}
-			else i++;
-		}
-		baseComponent -= shift;						//push compensation shift to baseComponent
-	}
-	
-	/**
-	 * A void method that updates, then lists out a bunch of relevant information about the user's settings in regards to ShiftingPanel.
-	 */
-	private void checkHistory() {
-		updateHistory();		// update history parameters
-		int i = 0;
-		for (Component p : history)						//system: the layer the component is in
-			System.out.println("Index: " + i++ + ", Layer: " + this.getLayer(p) 	// the position of each component in the layer
-			+ ", pos: " + this.getPosition(p) + ", name: " + p.getName());	// and the name of each component
-		System.out.println("baseComponent is at index " + baseComponent 
-				+ "\ncurrentPanel is now '" + currentPanel + "' at index " + currentComponent + "\n");
-	}
-	
-	/**
-	 * A void method that updates all history parameters and sets the history buttons enable/disable functions.
-	 */
-	private void updateHistory() {
-		history = this.getComponents();						// assign history to the list of components of ShiftingPanel
-		currentPanel = history[0].getName();				// assign currentPanel as the name of the first component in history
-		previousPanels = this.getComponentsInLayer(N_ONE);	// assign previousPanels as the list of components in layer -1 of ShiftingPanel
-		nextPanels = this.getComponentsInLayer(N_TWO);		// assign nextPanels as the list of components in layer -2 of ShiftingPanel
-		
-		// system: tell the total number of panels in history, total number of previous panels, and total number of future panels
-		System.out.println("ShiftingPanel layers: " + history.length + " total, " + previousPanels.length + " prev, " + nextPanels.length + " next");
-		
-		if (previousPanels.length > 0) prevButton.setEnabled(true); else prevButton.setEnabled(false);	// set history buttons enable/disable
-		if (nextPanels.length > 0) nextButton.setEnabled(true); else nextButton.setEnabled(false);
-	}
+	protected ShiftingPanel getShiftingPanel() {return this;}
 	
 	/**
 	 * A get method that returns the current song selected in that panel. The code follows through on this get method regardless of class.
 	 * @return: a string stating the title, artist(s), and album of the currently selected song
 	 */
-	public String getSong() {
+	protected String getSong() {
 		if (history[0].getClass() == PlaylistPanel.class) {
 			songName = ((PlaylistPanel)history[0]).getListener().getSong();
 		}
@@ -278,5 +177,114 @@ public class ShiftingPanel extends JLayeredPane
 		System.out.println("ShiftingPanel sees " + songName);
 		
 		return songName;
+	}
+	
+	/**
+	 * A void method that increments currentComponent.
+	 */
+	protected void currentMovedBack() {currentComponent++; baseComponent--;}
+	
+	/**
+	 * A void method that decrements currentComponent.
+	 */
+	protected void currentMovedForward() {currentComponent--; baseComponent++;}
+	
+	/**
+	 * This void method removes all instances of a given playlist name from the history parameter.
+	 * @param playlistName: the name of the playlist that is being removed
+	 */
+	protected void removeFromHistory(String playlistName) {
+		System.out.print("Before:");				// system: before the wipe
+		checkHistory();
+		
+		int shift = 0, i = 0;
+		for (Component p : history) {				// for each component in history...
+			if (p.getName().equals(playlistName)) {	// if that component has the same name as playlistName...
+				this.remove(i);						// remove that element at i
+				++shift;							// pre-increment the shift
+			} else i++;								// otherwise increment i
+		}
+		baseComponent -= shift;						// compensate baseComponent with shift
+		
+		System.out.println("Middle:");				// system: all instances of playlistName removed from history
+		checkHistory();
+		
+		reduceFurther();							// redundancy checker
+		
+		System.out.println("After:");				// system: after clearing the redundancies.
+		updateAndCheck();
+	}
+	
+	/**
+	 * A void method that removes redundancies within the history parameter.
+	 * Ex: HOME, king, queen, king, jack -> remove queen -> HOME, king, king, jack -> reduceFurther() -> HOME, king, jack
+	 */
+	private void reduceFurther() {
+		history = this.getComponents();
+		int shift = 0, i = 0;
+		while(i < history.length-1) {
+			//check for adjacent elements that have the same name - if found, remove the second one
+			if (history[i].getName().equals(history[i+1].getName())) {
+				this.remove(i+1);					// removes the second one
+				++shift;							// add one to shift
+				history = this.getComponents();		//update history
+			} else if ((history[i].getName().equals("Home") && history[i+1].getName().equals("Base Home")))	{	
+				// singular scenario: 'base home -> playlist -> home', delete playlist, 'base home -> home' to 'base home'
+				this.remove(i);	// removes item at index i from history
+				this.setLayer(history[i+1], ZERO, 0);	// sends the item at index i+1 to layer 0
+				++shift;								// proceed as normal
+				history = this.getComponents();		//update history
+			} else i++;
+		}
+		baseComponent -= shift;						//push compensation shift to baseComponent
+	}
+	
+	private void updateAndCheck() {
+		updateEverything();		// update every panel in ShiftingPanel, and ShiftingPanel
+		checkHistory();			// check the state of ShiftingPanel
+	}
+	
+	/**
+	 * A void method that updates, then lists out a bunch of relevant information about the user's settings in regards to ShiftingPanel.
+	 */
+	private void checkHistory() {
+		int i = 0;
+		for (Component p : history)	{					//system: the layer the component is in
+			System.out.print("Index: " + i + "\tLayer: " + this.getLayer(p) 	// the position of each component in the layer
+			+ "\tpos: " + this.getPosition(p) + "\t  name: " + p.getName());			// and the name of each component
+			
+			if ((i++ == 0) && p.getName().equals(currentPanel)) {
+				System.out.println("\t<CURRENT>");
+			} else System.out.println();
+		} System.out.println("Indices of -- baseComponent: " + baseComponent + ", currentComponent: " + currentComponent + "\n");
+	}
+	
+	/**
+	 * A void method that updates all history parameters and sets the history buttons enable/disable functions.
+	 */
+	private void updateEverything() {
+		history = this.getComponents();						// assign history to the list of components of ShiftingPanel
+		currentPanel = history[0].getName();				// assign currentPanel as the name of the first component in history
+		previousPanels = this.getComponentsInLayer(N_ONE);	// assign previousPanels as the list of components in layer -1 of ShiftingPanel
+		nextPanels = this.getComponentsInLayer(N_TWO);		// assign nextPanels as the list of components in layer -2 of ShiftingPanel
+		
+		// this will:
+		// - change visibility for all the panels in history s.t. only the current panel (at index 0 of history) is functional
+		// - update the panels to any changes that may have occurred in one panel (playlist panels only)
+		for (int n = 0; n < history.length; n++) {
+			if (n == 0)	history[n].setVisible(true);
+			else 		history[n].setVisible(false);
+			
+			if (history[n].getClass() == PlaylistPanel.class) {
+				((PlaylistPanel)history[n]).updatePlaylist();
+			}
+		}
+		
+		// system: tell the total number of panels in history, total number of previous panels, and total number of future panels
+		System.out.println("\nShiftingPanel layers: " + history.length + " total, " 
+		+ previousPanels.length + " prev, 1 current, " + nextPanels.length + " next");
+		
+		if (previousPanels.length > 0) prevButton.setEnabled(true); else prevButton.setEnabled(false);	// set history buttons enable/disable
+		if (nextPanels.length > 0) nextButton.setEnabled(true); else nextButton.setEnabled(false);
 	}
 }

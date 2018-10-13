@@ -43,30 +43,21 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 
 		// Custom Layout
 		this.setLayout(null);
-//		this.setSize(new Dimension(804,455));
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 				
 		//Response Label. Displays whether action is successful or not
 		responseLabel = new JLabel("");
 		responseLabel.setSize(new Dimension(320, 50));
 		responseLabel.setLocation(130, 295);
+		responseLabel.setName("response");
 		this.add(responseLabel);
 
-		/*
-		// Back button. Tries to match the playlist page visually
-		// Main functionality is to go back to Profile Frame
-		backButton = new JButton("Back");
-		backButton.setSize(backButton.getPreferredSize());
-		backButton.setLocation(20, 10);
-		backButton.addActionListener(this);
-		this.add(backButton); */
-
-		// Play Button. Redirects user to PlaySong frame
-		playButton = new JButton("Play Song");
-		playButton.setSize(playButton.getPreferredSize());
-		playButton.setLocation(9, 310);
-		playButton.addActionListener(this);
-		this.add(playButton);
+//		// Play Button. Redirects user to PlaySong frame
+//		playButton = new JButton("Play Song");
+//		playButton.setSize(playButton.getPreferredSize());
+//		playButton.setLocation(9, 310);
+//		playButton.addActionListener(this);
+//		this.add(playButton);
 
 //		// Testing. Dummy values to store in JTable
 //		String data[][] = { {}, {}, {} };
@@ -90,7 +81,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		resultsJPS = new JScrollPane(results);
 		resultsJPS.setSize(new Dimension(400, 250));
 		resultsJPS.setLocation(10, 5);
-		
+		resultsJPS.setName("resultsJPS");
 		results.addMouseListener(this);
 		
 		// News JScrollPane else column names wont show up
@@ -101,12 +92,14 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		playList = new JComboBox(grabPlaylists());
 		playList.setSize(new Dimension(110, 30));
 		playList.setLocation(280, 265);
+		playList.setName("playlist_dd");
 		this.add(playList);
 
 		// Another display label
 		playlistLabel = new JLabel("<html>Select a playlist to<br/> add a chosen song to:</html>");
 		playlistLabel.setSize(playlistLabel.getPreferredSize());
 		playlistLabel.setLocation(140, 265);
+		playlistLabel.setName("playlistLabel");
 		this.add(playlistLabel);
 
 		// Add Button. Allows user to add a song to the selected playlist
@@ -114,6 +107,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		// Cannot add if no song is selected
 		addButton = new JButton("Add Song");
 		addButton.setSize(addButton.getPreferredSize());
+		addButton.setName("addButton");
 		addButton.setLocation(10, 270);
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -217,14 +211,6 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 	// Action Listener for buttons
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
-
-		/*
-		// If the user clicks back, take the user to Profile Frame
-		if (source == this.backButton) {
-			JFrame sFrame = (JFrame) this.getTopLevelAncestor();
-			sFrame.dispose();
-			new Profile(this.username).setVisible(true);
-		} */
 		
 		//If the user clicks play, play the selected song.
 		// Display success message if successful
@@ -246,14 +232,13 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 	 */
 	public void setLabel(JLabel label) 
 	{
-		switch (label.getName()) 			// the three labels are named via label.setName(labelName)
-		{
+		switch (label.getName()) { 			// the three labels are named via label.setName(labelName)
 		case "title": 		titleLabel = label;  break;
 		case "artist(s)": 	artistLabel = label; break;
 		case "album": 		albumLabel = label;  break;
 		}
 	}
-	
+
 	/**
 	 * A get method. Returns the currently selected song.
 	 * @return String - the title, artist(s), and album of the currently selected song
@@ -282,7 +267,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		albumLabel.setText(album);	albumLabel.setVisible(true);
 		
 		songName = songTitle + "_" + artist + "_" + album;	
-		System.out.println(songName + " clicked");
+		System.out.println("SearchMenuPanel: '" + songName + "' clicked");
 	}
 
 	@Override
