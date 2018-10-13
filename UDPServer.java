@@ -46,7 +46,7 @@ public class UDPServer
 				System.out.println("Waiting for request...");
 				aSocket.receive(request);
 				System.out.println("Request from Port: "+ request.getPort());
-				System.out.println("Request: "+new String(request.getData()));
+				System.out.println("Request: "+new String(request.getData()).trim());
 			
 				new Thread(new Runnable() 
 				{
@@ -94,7 +94,7 @@ public class UDPServer
 							DatagramPacket reply = new DatagramPacket(rep, rep.length, request.getAddress(), request.getPort());
 							//Just for testing
 							System.out.println("Reply to port: "+ request.getPort());
-							System.out.println("Reply: "+new String(reply.getData()));
+							System.out.println("Reply: "+new String(reply.getData()).trim());
 							
 							aSocket.send(reply);
 						} 
