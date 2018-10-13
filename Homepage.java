@@ -148,15 +148,15 @@ public class Homepage
 		
 		frame.getRootPane().setDefaultButton(searchQuery_);			// set enter key functionality to searchQuery_
 		
-		frame.addComponentListener(new ComponentAdapter() {
+		frame.addComponentListener(new ComponentAdapter() {			// add a component listener between the frame and ShiftingPanel
 			@Override
 			public void componentResized(ComponentEvent arg0) {
 				// TODO Auto-generated method stub
 				
-				Dimension f = frame.getSize(), shift = new Dimension(196,147);
+				Dimension f = frame.getSize(), shift = new Dimension(196,147); // an insanely precise Dimension object
 				
 				ShiftingPanel.setSize((int)(f.getSize().getWidth() - shift.getWidth()), (int)(f.getSize().getHeight()- shift.getHeight()));
-				ShiftingPanel.updateUI();
+				ShiftingPanel.updateUI(); // update the UI of ShiftingPanel after changing the size
 			}
 		});
 		
@@ -336,7 +336,12 @@ public class Homepage
 							SearchMenuPanel newPanel = new SearchMenuPanel(userName, getSearchResults(searchField.getText()),searchField.getText());
 							playlist = "x";
 							
-							newPanel.setName("search '" + searchField.getText() + "'"); // set name of the new SearchMenuPanel
+							String title = " ";
+							if (!searchField.getText().equals("")) {
+								title = searchField.getText();
+							}
+							
+							newPanel.setName("search --" + title + "--"); // set name of the new SearchMenuPanel
 							
 							newPanel.setLabel(title_);		// set labels to respond to changes
 							newPanel.setLabel(artist_);		// in this searchMenuPanel

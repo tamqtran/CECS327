@@ -23,7 +23,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 
 	private JButton playButton, addButton;
 
-	private JLabel playlistLabel, userLabel, responseLabel, searchLabel, errorLabel,
+	private JLabel playlistLabel, responseLabel, errorLabel,
 				   titleLabel, artistLabel, albumLabel;
 
 	@SuppressWarnings("rawtypes")
@@ -45,19 +45,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		this.setLayout(null);
 //		this.setSize(new Dimension(804,455));
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-		
-//		//Displays Username on Panel
-//		userLabel = new JLabel("User: " + username);
-//		userLabel.setSize(new Dimension(100, 30));
-//		userLabel.setLocation(10, 5);
-//		this.add(userLabel);
-
-//		//Displays what is being searched
-//		searchLabel = new JLabel("Searching for: " + userSearch);
-//		searchLabel.setSize(new Dimension(200, 30));
-//		searchLabel.setLocation(10,18);
-//		this.add(searchLabel);
-		
+				
 		//Response Label. Displays whether action is successful or not
 		responseLabel = new JLabel("");
 		responseLabel.setSize(new Dimension(320, 50));
