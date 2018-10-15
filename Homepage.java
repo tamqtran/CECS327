@@ -619,14 +619,14 @@ public class Homepage
 									myInputStream = new ByteArrayInputStream(Arrays.copyOfRange(byteSong, 0, 20*64000));
 									playMusic(myInputStream);
 								}
-								if(i == 100 || i==size/64000) {
+								if(i == 100 || i==size/64000/2) {
 								try {
 									 // use line listener to take care of synchronous call
 									current.addLineListener(new LineListener() {
 								        public void update(LineEvent event) {
 								            if (event.getType() == LineEvent.Type.STOP) {
 								            	
-								            	System.out.println("INHERE");
+								            	//System.out.println("INHERE");
 								            	clipFrame = current.getFramePosition();
 								            	
 								            	myInputStream = new ByteArrayInputStream((Arrays.copyOfRange(byteSong, 0 ,packet*64000)));
