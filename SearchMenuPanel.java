@@ -64,7 +64,13 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		String[] columns = { "Song Title", "Artist", "Album" };
 		DefaultTableModel model = null;
 		if (search != null) {
-			model = new DefaultTableModel(null, columns);
+			model = new DefaultTableModel(null, columns)
+			 {
+			    public boolean isCellEditable(int row, int column)
+			    {
+			      return false;//This causes all cells to be not editable
+			    }
+			  };
 			for (int i = 0; i < search.length; i++) {
 				   model.addRow(search[i].split("_"));
 			}
