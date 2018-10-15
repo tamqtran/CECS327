@@ -641,10 +641,10 @@ public class Homepage
 								        			current.setFramePosition(clipFrame);
 								        			if(isSongPlaying)
 								        				current.start();
-								        			clipSyn=true;
 								        		}catch(Exception e) {
 								        			e.printStackTrace();
 								        		}
+								            	clipSyn=true;
 								            }
 								            
 								        }
