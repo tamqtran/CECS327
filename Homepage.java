@@ -643,10 +643,10 @@ public class Homepage
 								        		}catch(Exception e) {
 								        			e.printStackTrace();
 								        		}
-								            	clipSyn=true;
 								            }
+								            clipSyn=true;
 								        }
-
+								        
 								    });
 								    
 								}catch(Exception e) {
