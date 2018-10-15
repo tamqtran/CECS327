@@ -621,13 +621,15 @@ public class Homepage
 									playMusic(myInputStream);
 								}
 								if(i>20 && clipSyn == true) {
+								clipSyn=false;
 								try {
-									clipSyn=false;
+									
 									 // use line listener to take care of synchronous call
 									current.addLineListener(new LineListener() {
 								        public void update(LineEvent event) {
+								    
 								            if (event.getType() == LineEvent.Type.STOP) {
-								            	
+								            	 
 								            	//System.out.println("INHERE");
 								            	clipFrame = current.getFramePosition();
 								            	
@@ -639,14 +641,13 @@ public class Homepage
 								        			current.setFramePosition(clipFrame);
 								        			if(isSongPlaying)
 								        				current.start();
-								        			
+								        			clipSyn=true;
 								        		}catch(Exception e) {
 								        			e.printStackTrace();
 								        		}
 								            }
-								            clipSyn=true;
+								            
 								        }
-								        
 								    });
 								    
 								}catch(Exception e) {
