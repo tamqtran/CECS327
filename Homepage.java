@@ -104,6 +104,7 @@ public class Homepage
 	int serverPort;
 	static int packet = 0;
 	static int clipFrame = 0;
+	static boolean clipSyn = true;
 	static byte[] byteSong;
 	static InputStream myInputStream;
 	Dimension shift;
@@ -619,8 +620,9 @@ public class Homepage
 									myInputStream = new ByteArrayInputStream(Arrays.copyOfRange(byteSong, 0, 20*64000));
 									playMusic(myInputStream);
 								}
-								if(i == 100 || i==size/64000/2) {
+								if(i>20 && clipSyn == true) {
 								try {
+									clipSyn=false;
 									 // use line listener to take care of synchronous call
 									current.addLineListener(new LineListener() {
 								        public void update(LineEvent event) {
@@ -641,7 +643,7 @@ public class Homepage
 								        		}catch(Exception e) {
 								        			e.printStackTrace();
 								        		}
-								            	
+								            	clipSyn=true;
 								            }
 								        }
 
