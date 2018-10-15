@@ -43,10 +43,10 @@ public class UDPServer
 			while(true)
 			{
 				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
-				System.out.println("Waiting for request...");
+				//System.out.println("Waiting for request...");
 				aSocket.receive(request);
-				System.out.println("Request from Port: "+ request.getPort());
-				System.out.println("Request: "+new String(request.getData()).trim());
+				//System.out.println("Request from Port: "+ request.getPort());
+				//System.out.println("Request: "+new String(request.getData()).trim());
 			
 				new Thread(new Runnable() 
 				{
@@ -93,8 +93,8 @@ public class UDPServer
 							//rep = JSONReply(method,arguments,result).toString().getBytes("utf-8");
 							DatagramPacket reply = new DatagramPacket(rep, rep.length, request.getAddress(), request.getPort());
 							//Just for testing
-							System.out.println("Reply to port: "+ request.getPort());
-							System.out.println("Reply: "+new String(reply.getData()).trim());
+							//System.out.println("Reply to port: "+ request.getPort());
+							//System.out.println("Reply: "+new String(reply.getData()).trim());
 							
 							aSocket.send(reply);
 						} 

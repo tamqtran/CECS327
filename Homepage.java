@@ -11,6 +11,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,11 +22,14 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.BorderFactory;
@@ -58,7 +62,7 @@ public class Homepage
 {
 	private String specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]";
 	
-	private Clip 				current;
+	private static Clip 				current;
 	private int					pos;//current frame position for song
 	private int					songIndex;
 	private ArrayList<String> songList = new ArrayList<String>();
@@ -542,6 +546,7 @@ public class Homepage
 					if (current!=null && current.isActive()) {	
 						pos = current.getFramePosition();
 						current.stop();	
+						isSongPlaying = false;
 						if (!playlist.equals("x")) {		// procs ONLY if it's a search menu panel
 							if(songIndex == 0)	songIndex = songList.size()-1;
 							else				songIndex--;
@@ -594,11 +599,107 @@ public class Homepage
 								file = new File(title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav");
 							}
 							AudioInputStream player = AudioSystem.getAudioInputStream(file);
-							current = AudioSystem.getClip();
+							
+							String [] arguments = {title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav","-1"};
+							JSONObject obj = requestReply.UDPRequestReply("playSong", arguments, aSocket, serverPort);
+							int size = obj.getInt("result");
+							byteSong = new byte[size];
+							isSongPlaying = true;
+
+							new Thread(new Runnable() 
+							{
+								@Override
+								public void run() 
+								{
+							for(int i = 0; i<=size/64000; i++) {
+								if(isSongPlaying) {
+							try 
+							{		
+								if(i==20) {
+									myInputStream = new ByteArrayInputStream(Arrays.copyOfRange(byteSong, 0, 20*64000));
+									playMusic(myInputStream);
+								}
+								if(i == 100 || i==size/64000) {
+								try {
+									 // use line listener to take care of synchronous call
+									current.addLineListener(new LineListener() {
+								        public void update(LineEvent event) {
+								            if (event.getType() == LineEvent.Type.STOP) {
+								            	
+								            	System.out.println("INHERE");
+								            	clipFrame = current.getFramePosition();
+								            	
+								            	myInputStream = new ByteArrayInputStream((Arrays.copyOfRange(byteSong, 0 ,packet*64000)));
+								            	try {
+								        			AudioInputStream audioIn = AudioSystem.getAudioInputStream(myInputStream);
+								        			current = AudioSystem.getClip();
+								        			current.open(audioIn);
+								        			current.setFramePosition(clipFrame);
+								        			if(isSongPlaying)
+								        				current.start();
+								        			
+								        		}catch(Exception e) {
+								        			e.printStackTrace();
+								        		}
+								            	
+								            }
+								        }
+
+								    });
+								    
+								}catch(Exception e) {
+									e.printStackTrace();
+								}
+
+								}
+							
+								byte [] m;
+						
+								InetAddress aHost = InetAddress.getByName("localhost");
+									
+								//Request
+								arguments[1] = String.valueOf(i*64000);
+								m = requestReply.JSONRequestObject("playSong",arguments).toString().getBytes("utf-8");
+								DatagramPacket request = new DatagramPacket(m, m.length, aHost, serverPort);
+								aSocket.send(request);
+									
+								//Reply
+								byte[] buffer = new byte[64000];
+								
+								DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+									
+								aSocket.receive(reply);
+								
+								if(size - i*64000 > 64000) {
+									//System.out.println(i);
+									System.arraycopy(reply.getData(), 0, byteSong, i*64000, 64000);
+								}
+								else
+								{
+									System.arraycopy(reply.getData(), 0, byteSong, i*64000, size - i*64000);
+									//System.out.println("numb: "+i);
+								}
+
+							}
+							catch (SocketException e)
+							{
+								System.out.println("Socket: " + e.getMessage());
+							}
+							catch (IOException e)
+							{
+								System.out.println("IO: " + e.getMessage());
+							}
+							packet++;
+							}
+							
+								}
+								}}).start();
+							
+							/*current = AudioSystem.getClip();
 							current.open(player);
 							current.setFramePosition(pos);
-							current.start();
-						} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
+							current.start();*/
+						} catch ( IOException | UnsupportedAudioFileException e1) {
 							e1.printStackTrace();
 						}
 						playPause_.setText("\u2758" + "\u2758");
