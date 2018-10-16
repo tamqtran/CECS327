@@ -552,8 +552,10 @@ public class Homepage
 							if(songIndex == 0)	songIndex = songList.size()-1;
 							else				songIndex--;
 						}
+						current.close();
 						playPause_.setText("\u25B6"); 
 						isSongPlaying = false;
+						
 					} 
 					else if ((current == null) || (current!=null && !current.isActive())) {
 						try {
@@ -606,7 +608,7 @@ public class Homepage
 							int size = obj.getInt("result");
 							byteSong = new byte[size];
 							isSongPlaying = true;
-
+							
 							new Thread(new Runnable() 
 							{
 								@Override
@@ -620,19 +622,24 @@ public class Homepage
 									myInputStream = new ByteArrayInputStream(Arrays.copyOfRange(byteSong, 0, 20*64000));
 									playMusic(myInputStream);
 								}
-								if(i>20 && clipSyn == true) {
-								clipSyn=false;
+								//ClipSyn still has problem if you play a song, stop it, then play it again
+								//ClipSyn is used to make sure that only one clip linelistener is running at a time
+								
+								if(i>20 && i%10 == 0) {
+									if(clipSyn == true) {
+										clipSyn = false;
 								try {
 									
 									 // use line listener to take care of synchronous call
 									current.addLineListener(new LineListener() {
+										
 								        public void update(LineEvent event) {
-								    
+								        	System.out.println("outhere");
 								            if (event.getType() == LineEvent.Type.STOP) {
-								            	 
-								            	//System.out.println("INHERE");
-								            	clipFrame = current.getFramePosition();
 								            	
+								            	System.out.println("INHERE");
+								            	clipFrame = current.getFramePosition();
+								            	//current.stop();
 								            	myInputStream = new ByteArrayInputStream((Arrays.copyOfRange(byteSong, 0 ,packet*64000)));
 								            	try {
 								        			AudioInputStream audioIn = AudioSystem.getAudioInputStream(myInputStream);
@@ -654,7 +661,7 @@ public class Homepage
 									e.printStackTrace();
 								}
 
-								}
+								}}
 							
 								byte [] m;
 						
@@ -706,7 +713,7 @@ public class Homepage
 							e1.printStackTrace();
 						}
 						playPause_.setText("\u2758" + "\u2758");
-						isSongPlaying = true;
+						//isSongPlaying = true;
 					}
 				}
 			}
