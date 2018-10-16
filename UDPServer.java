@@ -87,10 +87,10 @@ public class UDPServer
 						}
 			
 						//Reply
-						byte[] rep = null;
+						byte[] rep = (byte[]) result;
 						try 
 						{
-							rep = JSONReply(method,arguments,result).toString().getBytes("utf-8");
+							//rep = JSONReply(method,arguments,result).toString().getBytes("utf-8");
 							DatagramPacket reply = new DatagramPacket(rep, rep.length, request.getAddress(), request.getPort());
 							//Just for testing
 							System.out.println("Reply to port: "+ request.getPort());
