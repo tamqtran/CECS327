@@ -104,11 +104,12 @@ public class Homepage
 	int serverPort;
 	static int packet = 0;
 	static int clipFrame = 0;
-	static boolean clipSyn = true;
+	boolean clipSyn = false;
 	static byte[] byteSong;
 	static InputStream myInputStream;
 	Dimension shift;
-	Thread play;
+	int tester = 0;
+	LineListener k;
 	
 	/**
 	 * Test driver for this class.
@@ -548,13 +549,12 @@ public class Homepage
 						pos = current.getFramePosition();
 						current.stop();	
 						isSongPlaying = false;
+						clipSyn=false;
 						if (!playlist.equals("x")) {		// procs ONLY if it's a search menu panel
 							if(songIndex == 0)	songIndex = songList.size()-1;
 							else				songIndex--;
 						}
-						current.close();
 						playPause_.setText("\u25B6"); 
-						isSongPlaying = false;
 						
 					} 
 					else if ((current == null) || (current!=null && !current.isActive())) {
@@ -608,7 +608,8 @@ public class Homepage
 							int size = obj.getInt("result");
 							byteSong = new byte[size];
 							isSongPlaying = true;
-							
+							clipSyn=false;
+							packet = 0;
 							new Thread(new Runnable() 
 							{
 								@Override
@@ -621,25 +622,26 @@ public class Homepage
 								if(i==20) {
 									myInputStream = new ByteArrayInputStream(Arrays.copyOfRange(byteSong, 0, 20*64000));
 									playMusic(myInputStream);
+									clipSyn=true;
 								}
 								//ClipSyn still has problem if you play a song, stop it, then play it again
 								//ClipSyn is used to make sure that only one clip linelistener is running at a time
-								
-								if(i>20 && i%10 == 0) {
-									if(clipSyn == true) {
-										clipSyn = false;
+								if(i%10==0 && clipSyn) {
+										clipSyn=false;
+										tester++;
+										System.out.println("TESTER++: "+tester);
 								try {
 									
 									 // use line listener to take care of synchronous call
 									current.addLineListener(new LineListener() {
 										
 								        public void update(LineEvent event) {
+								        	//event.getLine().close();
 								        	System.out.println("outhere");
 								            if (event.getType() == LineEvent.Type.STOP) {
-								            	
 								            	System.out.println("INHERE");
 								            	clipFrame = current.getFramePosition();
-								            	//current.stop();
+								            	current.stop();
 								            	myInputStream = new ByteArrayInputStream((Arrays.copyOfRange(byteSong, 0 ,packet*64000)));
 								            	try {
 								        			AudioInputStream audioIn = AudioSystem.getAudioInputStream(myInputStream);
@@ -651,17 +653,19 @@ public class Homepage
 								        		}catch(Exception e) {
 								        			e.printStackTrace();
 								        		}
-								            	clipSyn=true;
+								            	clipSyn = true;
+								            	tester--;
+								            	System.out.println("Tester--" + tester);
 								            }
-								            
+								        	
 								        }
 								    });
 								    
 								}catch(Exception e) {
 									e.printStackTrace();
 								}
-
-								}}
+								
+								}
 							
 								byte [] m;
 						
@@ -700,6 +704,8 @@ public class Homepage
 								System.out.println("IO: " + e.getMessage());
 							}
 							packet++;
+							}else {
+								break;
 							}
 							
 								}
