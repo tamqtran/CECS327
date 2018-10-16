@@ -55,6 +55,7 @@ public class Login implements ActionListener {
 	 * The main constructor. Constructs the frame for the login.
 	 * @param aSocket: a socket
 	 * @param serverPort: a server port
+	 * @param base: the frame
 	 */
 	public Login(DatagramSocket aSocket, int serverPort, Frame base) {
 		frame = new JFrame("'MusicService' Login");

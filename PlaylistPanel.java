@@ -42,8 +42,8 @@ public class PlaylistPanel extends JPanel
 	
 	/**
 	 * Constructor for GUI playlist panel with components added 
-	 * @param username
-	 * @param playlist
+	 * @param username - user's name
+	 * @param playlist - user's chosen playlist
 	 */
 	public PlaylistPanel(String username, String playlist)
 	{
