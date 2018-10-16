@@ -143,7 +143,7 @@ public class PlaylistActionListener implements ActionListener, MouseListener {
 		Rectangle r = list.getCellBounds(0, list.getLastVisibleIndex());
 		
 		if (e.getButton() == MouseEvent.BUTTON1) {
-			if (r != null && r.contains(e.getPoint())) {// search for the song title in the project folder
+			if (e.getClickCount() == 2 && r != null && r.contains(e.getPoint())) {// search for the song title in the project folder
 				String[] transferSong = SearchMenuPanel.search(list.getSelectedValue().toString());
 
 				// get the list of .wav files and separate by song, artist, and album

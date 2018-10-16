@@ -62,7 +62,7 @@ public class Homepage
 {
 	private String specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]";
 	
-	private static Clip 				current;
+	private volatile static Clip 				current;
 	private int					pos;//current frame position for song
 	private int					songIndex;
 	private ArrayList<String> songList = new ArrayList<String>();
@@ -102,13 +102,15 @@ public class Homepage
 	
 	DatagramSocket aSocket;								//For server connection
 	int serverPort;
-	static int packet = 0;
+	static volatile int packet = 0;
 	static int clipFrame = 0;
 	static boolean clipSyn = true;
-	static byte[] byteSong;
+	static volatile byte[] byteSong;
 	static InputStream myInputStream;
 	Dimension shift;
 	Thread play;
+	boolean pause = false;
+	String currentSong = "";
 	
 	/**
 	 * Test driver for this class.
@@ -545,9 +547,10 @@ public class Homepage
 				if (playlist.equals("Base Home") || playlist.equals("Home")) {}	// avoid it completely if playlist is set to a HomePanel 
 				else {
 					if (current!=null && current.isActive()) {	
-						pos = current.getFramePosition();
+						clipFrame = current.getFramePosition();
 						current.stop();	
 						isSongPlaying = false;
+						pause = true;
 						if (!playlist.equals("x")) {		// procs ONLY if it's a search menu panel
 							if(songIndex == 0)	songIndex = songList.size()-1;
 							else				songIndex--;
@@ -558,6 +561,23 @@ public class Homepage
 						
 					} 
 					else if ((current == null) || (current!=null && !current.isActive())) {
+						String song = title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav";
+						if (pause && song.equals(currentSong)) {
+							myInputStream = new ByteArrayInputStream((Arrays.copyOfRange(byteSong, 0 ,packet*64000)));
+			            	try {
+			            		current.close();
+			        			AudioInputStream audioIn = AudioSystem.getAudioInputStream(myInputStream);
+			        			current = AudioSystem.getClip();
+			        			current.open(audioIn);
+			        			myInputStream.close();
+			        			current.setFramePosition(clipFrame);
+			        			current.start();
+			        			isSongPlaying = true;
+			        			playPause_.setText("\u2758" + "\u2758");
+			        		}catch(Exception e) {
+			        			e.printStackTrace();
+			        		} 
+						} else {
 						try {
 							File file = null;
 							if (!playlist.equals("x")) {
@@ -601,6 +621,7 @@ public class Homepage
 								System.out.println(title_.getText() + "_" + artist_.getText() + "_" + album_.getText() + ".wav seen in Homepage from " + ShiftingPanel.getCurrentPanelName());
 								file = new File(title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav");
 							}
+							currentSong = title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav";
 							AudioInputStream player = AudioSystem.getAudioInputStream(file);
 							
 							String [] arguments = {title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav","-1"};
@@ -608,7 +629,8 @@ public class Homepage
 							int size = obj.getInt("result");
 							byteSong = new byte[size];
 							isSongPlaying = true;
-							
+							packet = 0;
+							pause = false;
 							new Thread(new Runnable() 
 							{
 								@Override
@@ -618,48 +640,17 @@ public class Homepage
 								if(isSongPlaying) {
 							try 
 							{		
-								if(i==20) {
+							/**	if(i==20) {
 									myInputStream = new ByteArrayInputStream(Arrays.copyOfRange(byteSong, 0, 20*64000));
 									playMusic(myInputStream);
-								}
+								}*/
 								//ClipSyn still has problem if you play a song, stop it, then play it again
 								//ClipSyn is used to make sure that only one clip linelistener is running at a time
 								
 								if(i>20 && i%10 == 0) {
 									if(clipSyn == true) {
 										clipSyn = false;
-								try {
-									
-									 // use line listener to take care of synchronous call
-									current.addLineListener(new LineListener() {
-										
-								        public void update(LineEvent event) {
-								        	System.out.println("outhere");
-								            if (event.getType() == LineEvent.Type.STOP) {
-								            	
-								            	System.out.println("INHERE");
-								            	clipFrame = current.getFramePosition();
-								            	//current.stop();
-								            	myInputStream = new ByteArrayInputStream((Arrays.copyOfRange(byteSong, 0 ,packet*64000)));
-								            	try {
-								        			AudioInputStream audioIn = AudioSystem.getAudioInputStream(myInputStream);
-								        			current = AudioSystem.getClip();
-								        			current.open(audioIn);
-								        			current.setFramePosition(clipFrame);
-								        			if(isSongPlaying)
-								        				current.start();
-								        		}catch(Exception e) {
-								        			e.printStackTrace();
-								        		}
-								            	clipSyn=true;
-								            }
-								            
-								        }
-								    });
-								    
-								}catch(Exception e) {
-									e.printStackTrace();
-								}
+								
 
 								}}
 							
@@ -704,11 +695,49 @@ public class Homepage
 							
 								}
 								}}).start();
+							while (packet != 20);
+							myInputStream = new ByteArrayInputStream(Arrays.copyOfRange(byteSong, 0, 20*64000));
+							playMusic(myInputStream);
+							myInputStream.close();
+							try {
+								
+								 // use line listener to take care of synchronous call
+								current.addLineListener(new LineListener() {
+									
+							        public void update(LineEvent event) {
+							        	System.out.println("outhere");
+							            if (event.getType() == LineEvent.Type.STOP && !pause) {
+							            	
+							            	System.out.println("INHERE");
+							            	clipFrame = current.getFramePosition();
+							            	//current.stop();
+							            	myInputStream = new ByteArrayInputStream((Arrays.copyOfRange(byteSong, 0 ,packet*64000)));
+							            	try {
+							        			AudioInputStream audioIn = AudioSystem.getAudioInputStream(myInputStream);
+							        			current = AudioSystem.getClip();
+							        			current.open(audioIn);
+							        			myInputStream.close();
+							        			current.setFramePosition(clipFrame);
+							        			if(isSongPlaying)
+							        				current.start();
+							        		}catch(Exception e) {
+							        			e.printStackTrace();
+							        		}
+							            	clipSyn=true;
+							            }
+							            
+							        }
+							    });
+							    
+							}catch(Exception e) {
+								e.printStackTrace();
+							}
 							
 							/*current = AudioSystem.getClip();
 							current.open(player);
 							current.setFramePosition(pos);
 							current.start();*/
+						
 						} catch ( IOException | UnsupportedAudioFileException e1) {
 							e1.printStackTrace();
 						}
@@ -717,7 +746,7 @@ public class Homepage
 					}
 				}
 			}
-		});
+			}});
 
 //		nextSong_ = new JButton("\u2758" + "\u2758");			// initializes nextSong_ and add an
 //		nextSong_.addActionListener(new ActionListener() 		// action listener to nextSong_
