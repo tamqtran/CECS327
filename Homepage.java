@@ -123,6 +123,7 @@ public class Homepage
 	 * @param user: the name of the user
 	 * @param aSocket: a socket
 	 * @param serverPort: the server port
+	 * @param base: the frame
 	 */
 	public Homepage(String user, DatagramSocket aSocket, int serverPort, Frame base) {
 		userName = user; 											// takes the username from input
