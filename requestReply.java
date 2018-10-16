@@ -42,10 +42,13 @@ public class requestReply
 				
 			aSocket.receive(reply);
 			
-			//Format datagram reply into JSONObject
-			JsonReply=new JSONObject(new String(reply.getData()));
+			String r = new String(reply.getData(), "utf-8");
+			// System.out.println(r);
 			
-			System.out.println("Reply: " + new String(reply.getData()).trim());	
+			//Format datagram reply into JSONObject
+			JsonReply=new JSONObject(r);
+			
+			System.out.println("Reply: " + r.trim());	
 			// trim() is to remove the buffer space in the console
 		} catch (SocketException e) {
 			System.out.println("Socket: " + e.getMessage());

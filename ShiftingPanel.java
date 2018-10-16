@@ -107,7 +107,7 @@ public class ShiftingPanel extends JLayeredPane
 					
 					// the current panel would be moved into nextPanels in pos 0 (shift)
 					for (Component p: getShiftingPanel().getComponentsInLayer(ZERO)) 
-						getShiftingPanel().setLayer(p, N_TWO, 0);
+						getShiftingPanel().setLayer(p, N_TWO);
 					
 					// the panel in pos 0 of previousPanels would become the current panel (shift)
 					
@@ -134,7 +134,7 @@ public class ShiftingPanel extends JLayeredPane
 						
 					// the panel in pos 0 for nextPanels would become the current panel (shift)
 					
-					getShiftingPanel().setLayer(getShiftingPanel().getComponentsInLayer(N_TWO)[0], ZERO, 0);
+					getShiftingPanel().setLayer(getShiftingPanel().getComponentsInLayer(N_TWO)[nextPanels.length-1], ZERO, 0);
 					
 					currentMovedForward();		//compensate currentComponent
 					
