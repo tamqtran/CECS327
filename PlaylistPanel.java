@@ -75,12 +75,12 @@ public class PlaylistPanel extends JPanel
 		this.add(playlistAuthor);
 		
 		// creating select song button
-		selectSongButton = new JButton("Select Song");
-		selectSongButton.setSize(selectSongButton.getPreferredSize());
-		selectSongButton.setLocation(270, 55);
-		selectSongButton.addActionListener(listener);
-		selectSongButton.setName("selectSong");
-		this.add(selectSongButton);
+//		selectSongButton = new JButton("Select Song");
+//		selectSongButton.setSize(selectSongButton.getPreferredSize());
+//		selectSongButton.setLocation(270, 55);
+//		selectSongButton.addActionListener(listener);
+//		selectSongButton.setName("selectSong");
+//		this.add(selectSongButton);
 	
 		// creating delete song button
 		deleteSongButton = new JButton("Delete Song");
