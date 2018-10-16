@@ -108,8 +108,6 @@ public class Homepage
 	static byte[] byteSong;
 	static InputStream myInputStream;
 	Dimension shift;
-	int tester = 0;
-	LineListener k;
 	
 	/**
 	 * Test driver for this class.
@@ -629,8 +627,6 @@ public class Homepage
 								//ClipSyn is used to make sure that only one clip linelistener is running at a time
 								if(i%10==0 && clipSyn) {
 										clipSyn=false;
-										tester++;
-										System.out.println("TESTER++: "+tester);
 								try {
 									
 									 // use line listener to take care of synchronous call
@@ -638,9 +634,9 @@ public class Homepage
 										
 								        public void update(LineEvent event) {
 								        	//event.getLine().close();
-								        	System.out.println("outhere");
+								        	//System.out.println("outhere");
 								            if (event.getType() == LineEvent.Type.STOP) {
-								            	System.out.println("INHERE");
+								            	//System.out.println("INHERE");
 								            	clipFrame = current.getFramePosition();
 								            	current.stop();
 								            	myInputStream = new ByteArrayInputStream((Arrays.copyOfRange(byteSong, 0 ,packet*64000)));
@@ -655,8 +651,7 @@ public class Homepage
 								        			e.printStackTrace();
 								        		}
 								            	clipSyn = true;
-								            	tester--;
-								            	System.out.println("Tester--" + tester);
+								          
 								            }
 								        	
 								        }
