@@ -261,6 +261,13 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
+		int row = this.results.getSelectedRow();
+		
+		songTitle = results.getModel().getValueAt(row, 0).toString();
+		artist = results.getModel().getValueAt(row, 1).toString();
+		album = results.getModel().getValueAt(row, 2).toString();
+
+		System.out.println("SearchMenuPanel "+ this.getName() + " -- '" + songTitle + "_" + artist + "_" + album + "' clicked");
 
 	}
 

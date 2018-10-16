@@ -115,12 +115,42 @@ public class PlaylistActionListener implements ActionListener, MouseListener {
 	}
 
 	/**
+	 * A private method that creates a table model of a selected song. Uses the search() method from SearchMenuPanel.
+	 * @param list: the selected song, taken from a mouse event
+	 * @return a DefaultTAbleModel, containing data pertaining to the selected song
+	 */
+	private DefaultTableModel createModel( JList<String> list) {
+		DefaultTableModel model = new DefaultTableModel(null, new String[]{"Song Title", "Artist", "Album"});
+		String[] transferSong = SearchMenuPanel.search(list.getSelectedValue().toString());
+		model.setRowCount(0);
+		for (int i = 0; i < transferSong.length; i++)
+			model.addRow(transferSong[i].split("_"));
+		
+		return model;
+	}
+	
+	/**
 	 * An overridden MouseEvent method that detects what song has been clicked on.
 	 * @param e: a MouseEvent
 	 */
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
+		@SuppressWarnings("unchecked")
+		JList<String> list = (JList<String>)e.getSource();
+		Rectangle r = list.getCellBounds(0, list.getLastVisibleIndex());
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			if (r != null && r.contains(e.getPoint())) {
+				DefaultTableModel model = this.createModel(list);
+				
+				// get selected song variables
+				songTitle = model.getValueAt(0, 0).toString();
+				artist = model.getValueAt(0, 1).toString();
+				album = model.getValueAt(0, 2).toString();
+				
+				System.out.println("PlaylistPanel " + panel.getName() +" -- '" + songTitle + "_" + artist + "_" + album + "' selected");
+			}
+		}
 	}
 
 	@Override
@@ -144,14 +174,7 @@ public class PlaylistActionListener implements ActionListener, MouseListener {
 		
 		if (e.getButton() == MouseEvent.BUTTON1) {
 			if (e.getClickCount() == 2 && r != null && r.contains(e.getPoint())) {// search for the song title in the project folder
-				String[] transferSong = SearchMenuPanel.search(list.getSelectedValue().toString());
-
-				// get the list of .wav files and separate by song, artist, and album
-				String[] column = { "Song Title", "Artist", "Album" };
-				DefaultTableModel model = new DefaultTableModel(null, column);
-				model.setRowCount(0);
-				for (int i = 0; i < transferSong.length; i++)
-					model.addRow(transferSong[i].split("_"));
+				DefaultTableModel model = this.createModel(list);
 				
 				// get selected song variables
 				songTitle = model.getValueAt(0, 0).toString();
@@ -164,7 +187,7 @@ public class PlaylistActionListener implements ActionListener, MouseListener {
 				albumLabel.setText(album);	albumLabel.setVisible(true);
 
 				song = songTitle + "_" + artist + "_" + album;
-				System.out.println("PlaylistPanel " + panel.getName() +": '" + song + "' clicked");
+				System.out.println("PlaylistPanel " + panel.getName() +" -- '" + song + "' selected");
 			}
 		}
 	}
