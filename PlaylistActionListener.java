@@ -31,7 +31,7 @@ public class PlaylistActionListener implements ActionListener, MouseListener {
 	
 	/**
 	 * Constructors that adds functionality to the playlist panel
-	 * @param p
+	 * @param p - playlist panel
 	 */
 	public PlaylistActionListener(PlaylistPanel p) { 
 		// initializing variables

@@ -25,10 +25,11 @@ public class Method
 	
 	/**
 	 * Get user's name
-	 * @param username user making request
+	 * @param username - user making request
+	 * @param password - password user used
 	 * @return user's name 
-	 * @throws UnsupportedEncodingException 
-	 * @throws JSONException 
+	 * @throws JSONException - catches errors concerning JSON files 
+	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
 	public byte[] checkLogin(String username,String password) throws JSONException, UnsupportedEncodingException 
 	{
@@ -52,10 +53,10 @@ public class Method
 	
 	/**
 	 * This method changes the loggedIn variable of the account JSON once user logs out
-	 * @param username
-	 * @return
-	 * @throws UnsupportedEncodingException 
-	 * @throws JSONException 
+	 * @param username - user making request
+	 * @return byte with boolean
+	 * @throws JSONException - catches errors concerning JSON files
+	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
 	public byte[] logIn(String username) throws JSONException, UnsupportedEncodingException
 	{
@@ -94,10 +95,10 @@ public class Method
 	
 	/**
 	 * This method changes the loggedIn variable of the account JSON once user logs out
-	 * @param username
-	 * @return
-	 * @throws UnsupportedEncodingException 
-	 * @throws JSONException 
+	 * @param username - user making request
+	 * @return byte with boolean
+	 * @throws JSONException - catches errors concerning JSON files
+	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
 	public byte[] loggedOut(String username) throws JSONException, UnsupportedEncodingException
 	{
@@ -130,10 +131,10 @@ public class Method
 	
 	/**
 	 * Get user's name
-	 * @param username user making request
+	 * @param username - user making request
 	 * @return user's name 
-	 * @throws UnsupportedEncodingException 
-	 * @throws JSONException 
+	 * @throws JSONException - catches errors concerning JSON files
+	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
 	public byte[] getName(String username) throws JSONException, UnsupportedEncodingException 
 	{
@@ -151,6 +152,13 @@ public class Method
 			return JSONReply("getName",arg,name);
 	}
 	
+	/**
+	 * 
+	 * @param username - user making request
+	 * @return list of songs
+	 * @throws JSONException - catches errors concerning JSON files
+	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
+	 */
 	public byte[] getSonglist(String username) throws JSONException, UnsupportedEncodingException 
 	{
 		String [] arg = {username};
@@ -172,10 +180,10 @@ public class Method
 	
 	/**
 	 * Get playlist
-	 * @param username user making request
+	 * @param username - user making request
 	 * @return a JSONArray of playlist
-	 * @throws UnsupportedEncodingException 
-	 * @throws JSONException 
+	 * @throws JSONException - catches errors concerning JSON files
+	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
 	public byte[] getPlaylists(String username) throws JSONException, UnsupportedEncodingException 
 	{
@@ -198,10 +206,11 @@ public class Method
 	
 	/**
 	 * Add playlist to JSON FiLE
-	 * @param username user making request
-	 * @param playlist playlist to be added
-	 * @throws UnsupportedEncodingException 
-	 * @throws JSONException 
+	 * @param username - user making request
+	 * @param playlist - playlist to be added
+	 * @return byte with boolean
+	 * @throws JSONException - catches errors concerning JSON files
+	 * @throws UnsupportedEncodingException - catches errors concerning encoding  
 	 */
 	 public byte[] addPlaylist(String username, String playlist) throws JSONException, UnsupportedEncodingException 
 	 {
@@ -230,6 +239,13 @@ public class Method
 		return JSONReply("addPlaylist",arg,true);
 	}
 	 
+	 /**Remove playlist
+	 * @param username - user making request
+	  * @param playlist - playlist user has chosen to remove
+	  * @return byte with boolean
+	 * @throws JSONException - catches errors concerning JSON files
+	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
+	  */
 	public byte[] removePlaylist(String username, String playlist) throws JSONException, UnsupportedEncodingException 
 	{
 		String [] arg = {username,playlist};
@@ -256,12 +272,12 @@ public class Method
 	
  	/**
 	 * Remove a song from a playlist
-	 * @param username user making request
-	 * @param playlist playlist to add the song
-	 * @param song song to be added to playlist
+	 * @param username - user making request
+	 * @param playlist - playlist to add the song
+	 * @param song - song to be added to playlist
 	 * @return true upon success
-	 * @throws UnsupportedEncodingException 
-	 * @throws JSONException 
+	 * @throws JSONException - catches errors concerning JSON files
+	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
 	public byte[] removeSong(String username, String playlist, String song) throws JSONException, UnsupportedEncodingException 
 	{
@@ -291,12 +307,12 @@ public class Method
 		
 	/**
 	 * Add a song to a playlist
-	 * @param username user making request
-	 * @param playlist playlist song is in
-	 * @param song song to add
+	 * @param username - user making request
+	 * @param playlist - playlist song is in
+	 * @param song - song to add
 	 * @return true upon success
-	 * @throws UnsupportedEncodingException 
-	 * @throws JSONException 
+	 * @throws JSONException - catches errors concerning JSON files
+	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
 	public byte[] addSong(String username, String playlist, String song) throws JSONException, UnsupportedEncodingException 
 	{
@@ -329,11 +345,11 @@ public class Method
 		
 	/**
 	 * Get songs from a playlist
-	 * @param username user making request
-	 * @param playlist to get song from
+	 * @param username - user making request
+	 * @param playlist - playlist to get song from
 	 * @return return JSONArray of songs
-	 * @throws UnsupportedEncodingException 
-	 * @throws JSONException 
+	 * @throws JSONException - catches errors concerning JSON files
+	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 * */
 	public byte[] getSongs(String username, String playlist) throws JSONException, UnsupportedEncodingException 
 	{
@@ -358,8 +374,8 @@ public class Method
 	 * Return search results
 	 * @param search - string the user wanted to search
 	 * @return search results
-	 * @throws JSONException
-	 * @throws UnsupportedEncodingException
+	 * @throws JSONException - catches errors concerning JSON files
+	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
 	public byte[] getSearch(String search) throws JSONException, UnsupportedEncodingException 
 	{
@@ -369,10 +385,11 @@ public class Method
 	
 	/**
 	 * Get size of song in byte
-	 * @param song 
-	 * @return
-	 * @throws UnsupportedEncodingException 
-	 * @throws JSONException 
+	 * @param song - song chosen by user
+	 * @param count - the byte value at which the song is at
+	 * @return parts of the song in byte form
+	 * @throws JSONException - catches errors concerning JSON files
+	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
 	public byte[] playSong(String song, String count) throws JSONException, UnsupportedEncodingException 
 	{
@@ -418,12 +435,12 @@ public class Method
 	
 	/**
 	 * This method creates the reply for the Server to send to the Client.
-	 * @param method
-	 * @param args
-	 * @param reply
+	 * @param method - method wanted to use
+	 * @param args - arguments for method
+	 * @param reply - reply result
 	 * @return JSON message
-	 * @throws JSONException
-	 * @throws UnsupportedEncodingException 
+	 * @throws JSONException - catches errors concerning JSON files
+	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
 	static byte[] JSONReply(String method, Object[] args, Object reply) throws JSONException, UnsupportedEncodingException
 	{
