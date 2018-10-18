@@ -148,7 +148,7 @@ public class PlaylistActionListener implements ActionListener, MouseListener {
 				artist = model.getValueAt(0, 1).toString();
 				album = model.getValueAt(0, 2).toString();
 				
-				System.out.println("PlaylistPanel " + panel.getName() +" -- '" + songTitle + "_" + artist + "_" + album + "' selected");
+				System.out.println("PlaylistPanel " + panel.getName() +" -- '" + songTitle + "_" + artist + "_" + album + "' clicked");
 			}
 		}
 	}
