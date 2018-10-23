@@ -622,7 +622,7 @@ public class Homepage
 								file = new File(title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav");
 							}
 							currentSong = title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav";
-							AudioInputStream player = AudioSystem.getAudioInputStream(file);
+//							AudioInputStream player = AudioSystem.getAudioInputStream(file);
 							
 							String [] arguments = {title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav","-1"};
 							JSONObject obj = requestReply.UDPRequestReply("playSong", arguments, aSocket, serverPort);
@@ -738,7 +738,9 @@ public class Homepage
 							current.setFramePosition(pos);
 							current.start();*/
 						
-						} catch ( IOException | UnsupportedAudioFileException e1) {
+						} catch ( IOException
+//								| UnsupportedAudioFileException
+								e1) {
 							e1.printStackTrace();
 						}
 						playPause_.setText("\u2758" + "\u2758");
