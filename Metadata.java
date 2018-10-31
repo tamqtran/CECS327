@@ -58,5 +58,16 @@ public class Metadata {
 		}
 		return F;
 	}
+	
+	// searchSongs(String filter)
+	// read metadata
+	// let f be the inverted index of the songs
+	// search in f the chunk that contains filter
+	// let c be the chunk that contains filter
+	//** Chunk c = chunk.getFilename().contains(filter) ?
+	// Data = peer.get(c.guid)
+	// for each row in Data
+	//  if filter is in row:
+	//   include row in reply
 }
 
