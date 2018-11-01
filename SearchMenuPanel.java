@@ -27,12 +27,11 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 				   titleLabel, artistLabel, albumLabel;
 
 	private final String[] searchTypes = {"By Title", "by Artist(s)", "by Album"};
-	private JComboBox searchFilter;
-	
-	@SuppressWarnings("rawtypes")
-	private JComboBox playList;
+	private JComboBox<String> searchFilter;
+	private JComboBox<String> playList;
 
-	private String username, songName, songTitle, artist, album, searchType = "title"; //by default, the search filter is 'by title'
+	private String username, songName, songTitle, artist, album, 
+					searchType = "By Title"; //by default, the search filter is 'by title'
 
 	/**
 	 * Constructor for SearchMenuPanel
@@ -69,9 +68,10 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				searchType = searchFilter.getSelectedItem().toString(); //sets searchType to whichever option is selected.
+				System.out.println(searchType);
 			}
 		});
-		
+		System.out.println(searchType);
 		
 //		// Testing. Dummy values to store in JTable
 //		String data[][] = { {}, {}, {} };
