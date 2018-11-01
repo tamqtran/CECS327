@@ -1,6 +1,11 @@
 //package Server;
 import java.net.*;
+import java.util.Arrays;
 import java.util.UUID;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,8 +16,48 @@ public class UDPServer
 {
 	static Method json;
 	
-	public static void main(String args[]) throws SocketException
+	public static void main(String args[]) throws IOException, ClassNotFoundException
 	{
+		/*final ServerSocket serverSocket = new ServerSocket(6778);
+		Socket clientSocket = null;
+		byte[] rep = null;
+		try {
+			//request
+			clientSocket  = new Socket("localhost", 6777);
+			ObjectOutputStream request = new ObjectOutputStream(clientSocket.getOutputStream());
+			String[] args1 = {"So Serious_Electric Light Orchestra_Balance Of Power.wav"};
+			request.writeObject(JSONRequestObject("getSong",args1).toString());
+			System.out.println(JSONRequestObject("getSong",args1).toString());
+			
+			//reply
+			Socket socket = serverSocket.accept();
+			DataInputStream reply = new DataInputStream(socket.getInputStream());
+			rep = new byte[reply.readInt()];
+			reply.readFully(rep, 0, rep.length);;
+			System.out.println("Reply: "+rep.toString());
+			
+			request.close();
+			clientSocket.close();
+			socket.close();
+			reply.close();
+			serverSocket.close();
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		Clip current = null;
+		ByteArrayInputStream myInputStream = new ByteArrayInputStream(rep);
+    	try {
+   
+			AudioInputStream audioIn = AudioSystem.getAudioInputStream(myInputStream);
+			current = AudioSystem.getClip();
+			current.open(audioIn);
+			myInputStream.close();
+			//current.start();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}*/
+		
 		json = new Method();
 	
 	//Removable Testing
@@ -164,5 +209,31 @@ public class UDPServer
 	                System.out.println(e);
 	        }
 	        return jsonReply;
+	}
+	
+	/**
+	 * This method formats the request to send to the Server into a JSON Object
+	 * @param method call method
+	 * @param args argument of the method
+	 * @return return JSON object
+	 * @throws JSONException
+	 */
+	static JSONObject JSONRequestObject(String method, Object[] args) throws JSONException {
+	       
+	        JSONArray jsonArgs = new JSONArray(); //Arguments
+	        for (int i=0; i<args.length; i++) {
+	        	jsonArgs.put(args[i]);
+	        }
+	
+	        
+	        JSONObject jsonRequest = new JSONObject(); //Json Object
+	        try {
+	                jsonRequest.put("id", UUID.randomUUID().hashCode());
+	                jsonRequest.put("method", method);
+	                jsonRequest.put("arguments", jsonArgs);
+	        } catch (JSONException e) {
+	                System.out.println(e);
+	        }
+	        return jsonRequest;
 	}
 }
