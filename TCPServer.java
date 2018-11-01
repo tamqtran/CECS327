@@ -51,39 +51,39 @@ public class TCPServer {
             
             
             //***** TEST TEST ****//
-            File file = new File("Hello Goodbye_The Beatles_Magical Mystery Tour.wav");
-    		int size = (int) file.length();
-    		byte[] bytes = new byte[size];
-    		try 
-    		{
-    			BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
-    			buf.read(bytes, 0, bytes.length);
-    			buf.close();
-    		} 
-    		catch (FileNotFoundException e) 
-    		{
-    			e.printStackTrace();
-    		} 
-    		catch (IOException e) 
-    		{
-    			e.printStackTrace();
-    		}
-    		System.out.println("Actual Song Byte: "+bytes);
-            put(peers[0], nr, bytes); // put song into peer 0 master
-            Data bsong = get(peers[2], nr); // get song using peer 1
-            System.out.println("Got Song Byte: "+bsong);
-            Clip current = null;
-    		ByteArrayInputStream myInputStream = new ByteArrayInputStream(bsong.toBytes());
-        	try {
-       
-    			AudioInputStream audioIn = AudioSystem.getAudioInputStream(myInputStream);
-    			current = AudioSystem.getClip();
-    			current.open(audioIn);
-    			myInputStream.close();
-    			current.start();
-    		}catch(Exception e) {
-    			e.printStackTrace();
-    		}
+//            File file = new File("Hello Goodbye_The Beatles_Magical Mystery Tour.wav");
+//    		int size = (int) file.length();
+//    		byte[] bytes = new byte[size];
+//    		try 
+//    		{
+//    			BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
+//    			buf.read(bytes, 0, bytes.length);
+//    			buf.close();
+//    		} 
+//    		catch (FileNotFoundException e) 
+//    		{
+//    			e.printStackTrace();
+//    		} 
+//    		catch (IOException e) 
+//    		{
+//    			e.printStackTrace();
+//    		}
+//    		System.out.println("Actual Song Byte: "+bytes);
+//            put(peers[0], nr, bytes); // put song into peer 0 master
+//            Data bsong = get(peers[2], nr); // get song using peer 1
+//            System.out.println("Got Song Byte: "+bsong);
+//            Clip current = null;
+//    		ByteArrayInputStream myInputStream = new ByteArrayInputStream(bsong.toBytes());
+//        	try {
+//       
+//    			AudioInputStream audioIn = AudioSystem.getAudioInputStream(myInputStream);
+//    			current = AudioSystem.getClip();
+//    			current.open(audioIn);
+//    			myInputStream.close();
+//    			current.start();
+//    		}catch(Exception e) {
+//    			e.printStackTrace();
+//    		}
         	/*****TEST**/
             
             System.out.println(RND);
