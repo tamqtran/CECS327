@@ -1,4 +1,5 @@
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,6 +16,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Random;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,6 +49,42 @@ public class TCPServer {
             master = peers[0];
             Number160 nr = new Number160(RND);
             
+            
+            //***** TEST TEST ****//
+            File file = new File("Hello Goodbye_The Beatles_Magical Mystery Tour.wav");
+    		int size = (int) file.length();
+    		byte[] bytes = new byte[size];
+    		try 
+    		{
+    			BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
+    			buf.read(bytes, 0, bytes.length);
+    			buf.close();
+    		} 
+    		catch (FileNotFoundException e) 
+    		{
+    			e.printStackTrace();
+    		} 
+    		catch (IOException e) 
+    		{
+    			e.printStackTrace();
+    		}
+    		System.out.println("Actual Song Byte: "+bytes);
+            put(peers[0], nr, bytes); // put song into peer 0 master
+            Data bsong = get(peers[2], nr); // get song using peer 1
+            System.out.println("Got Song Byte: "+bsong);
+            Clip current = null;
+    		ByteArrayInputStream myInputStream = new ByteArrayInputStream(bsong.toBytes());
+        	try {
+       
+    			AudioInputStream audioIn = AudioSystem.getAudioInputStream(myInputStream);
+    			current = AudioSystem.getClip();
+    			current.open(audioIn);
+    			myInputStream.close();
+    			current.start();
+    		}catch(Exception e) {
+    			e.printStackTrace();
+    		}
+        	/*****TEST**/
             
             System.out.println(RND);
             System.out.println(nr);
@@ -105,7 +146,8 @@ public class TCPServer {
 						//Method call
 						try 
 						{						
-							result = json.getClass().getMethod(method,argTypes).invoke(json, arguments);
+							//result = json.getClass().getMethod(method,argTypes).invoke(json, arguments);
+							result = getSong(arguments[0]);
 							System.out.println(result.toString());
 						} 
 						catch (Exception e) 
@@ -195,19 +237,47 @@ public class TCPServer {
 	    	}
 	    }
     
-    private static void put(final PeerDHT peer, final Number160 guid, Data data) 
+    private static void put(final PeerDHT peer, final Number160 guid, byte[] data) 
             throws IOException, ClassNotFoundException {
-        FuturePut futurePut = peer.put(guid).data(data).start();
+        FuturePut futurePut = peer.put(guid).data(new Data(data)).start();
         futurePut.awaitUninterruptibly();
         System.out.println("peer " + peer.peerID() + " stored [key: " + guid + ", value: "+ data);
     }
     
-    private static void get(final PeerDHT peer, final Number160 guid) 
+    private static Data get(final PeerDHT peer, final Number160 guid) 
             throws IOException, ClassNotFoundException {
         FutureGet futureGet = peer.get(guid).start();
         futureGet.awaitUninterruptibly();
-        System.out.println("peer " + peer.peerID() + " got: \"" + futureGet.data().object() + "\" for the key " + guid);
+        System.out.println("peer " + peer.peerID() + " got: \"" + futureGet.data() + "\" for the key " + guid);
+        return futureGet.data();
     }
+    
+    //***  Method for Each request ***/
+    public static byte[] getSong(String song) throws JSONException, UnsupportedEncodingException 
+	{
+		
+		File file = new File(song);
+		int size = (int) file.length();
+		byte[] bytes = new byte[size];
+		try 
+		{
+			BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
+			buf.read(bytes, 0, bytes.length);
+			buf.close();
+		} 
+		catch (FileNotFoundException e) 
+		{
+			e.printStackTrace();
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+			
+			return bytes;
+		
+	}
+	
     
 }
 
