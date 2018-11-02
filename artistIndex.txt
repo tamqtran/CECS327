@@ -1,0 +1,6 @@
+Artist;SongTitle;Album;GUID
+Electric Light Orchestra;So Serious;Balance of Power;3
+Jilian Aversa;Shadows;Origins;4
+Pink Floyd;Money;The Dark Side of the Moon;2
+The Beatles;Hello Goobye;Magical Mystery Tour;1
+The Beatles;Yellow Submarine;Yellow Submarine;5
