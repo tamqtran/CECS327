@@ -26,13 +26,16 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 	private JLabel playlistLabel, responseLabel, errorLabel,
 				   titleLabel, artistLabel, albumLabel;
 
-	private final String[] searchTypes = {"By Title", "by Artist(s)", "by Album"};
 	private JComboBox<String> searchFilter;
 	private JComboBox<String> playList;
 
 	private String username, songName, songTitle, artist, album, 
 					searchType = "By Title"; //by default, the search filter is 'by title'
-
+	
+	private DefaultTableModel model;
+	
+	private final String[] searchTypes = {"By Title", "by Artist(s)", "by Album"}, columns = { "Song Title", "Artist", "Album" };
+	
 	/**
 	 * Constructor for SearchMenuPanel
 	 * @param username - username of the user
@@ -42,7 +45,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public SearchMenuPanel(String username, String[] search, String userSearch) {
 		this.username = username;
-
+//		System.out.println(username + " has searched: " + userSearch);
 		// Custom Layout
 		this.setLayout(null);
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
@@ -68,32 +71,16 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				searchType = searchFilter.getSelectedItem().toString(); //sets searchType to whichever option is selected.
-				System.out.println(searchType);
+//				System.out.println(searchType);
 			}
 		});
-		System.out.println(searchType);
+//		System.out.println(searchType);
 		
 //		// Testing. Dummy values to store in JTable
 //		String data[][] = { {}, {}, {} };
-		String[] columns = { "Song Title", "Artist", "Album" };
-		DefaultTableModel model = null;
-		if (search != null) {
-			model = new DefaultTableModel(null, columns)
-			 {
-			    public boolean isCellEditable(int row, int column)
-			    {
-			      return false;//This causes all cells to be not editable
-			    }
-			  };
-			for (int i = 0; i < search.length; i++) {
-				   model.addRow(search[i].split("_"));
-			}
-		} else {
-			errorLabel = new JLabel("No results found for '" + userSearch + "'");
-			errorLabel.setSize(errorLabel.getPreferredSize());
-			errorLabel.setLocation(130, 415);
-			this.add(errorLabel);
-		};
+		
+		model = null;
+		updateSearch(search, userSearch);
 		
 		// Creates a table to display the search results
 		results = new JTable(model);
@@ -177,7 +164,33 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		});
 		this.add(addButton);
 	}
-
+	
+	private void updateSearch(String [] search, String userSearch) {
+		if (search != null) {
+			model = new DefaultTableModel(null, columns)
+			 {
+			    public boolean isCellEditable(int row, int column)
+			    {
+			      return false; //This causes all cells to be not editable
+			    }
+			  };
+			for (int i = 0; i < search.length; i++) {
+				  model.addRow(search[i].split("_"));
+			}
+		} else {
+			errorLabel = new JLabel("No results found for '" + userSearch + "'");
+			errorLabel.setSize(errorLabel.getPreferredSize());
+			errorLabel.setLocation(130, 415);
+			this.add(errorLabel);
+		};
+	}
+	
+	public void changeSearch(String [] search, String userSearch) {
+		updateSearch(search, userSearch);
+		results.setModel(model);
+		results.updateUI();
+	}
+	
 	/**
 	 * Search method to search for the user's desired song and display relevant results
 	 * @param text: what the user wants to search for
@@ -275,13 +288,13 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-		int row = this.results.getSelectedRow();
-		
-		songTitle = results.getModel().getValueAt(row, 0).toString();
-		artist = results.getModel().getValueAt(row, 1).toString();
-		album = results.getModel().getValueAt(row, 2).toString();
-
-		System.out.println("SearchMenuPanel "+ this.getName() + " -- '" + songTitle + "_" + artist + "_" + album + "' clicked");
+//		int row = this.results.getSelectedRow();
+//		
+//		songTitle = results.getModel().getValueAt(row, 0).toString();
+//		artist = results.getModel().getValueAt(row, 1).toString();
+//		album = results.getModel().getValueAt(row, 2).toString();
+//
+//		System.out.println("SearchMenuPanel "+ this.getName() + " -- '" + songTitle + "_" + artist + "_" + album + "' clicked");
 
 	}
 

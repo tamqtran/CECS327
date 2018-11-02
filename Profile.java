@@ -130,7 +130,7 @@ public class Profile {
 		btnSearchMenuButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-		        new SearchMenuFrame(username).setVisible(true); 
+//		        new SearchMenuFrame(username).setVisible(true); 
 			}
 		});
 		
