@@ -26,10 +26,13 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 	private JLabel playlistLabel, responseLabel, errorLabel,
 				   titleLabel, artistLabel, albumLabel;
 
+	private final String[] searchTypes = {"By Title", "by Artist(s)", "by Album"};
+	private JComboBox searchFilter;
+	
 	@SuppressWarnings("rawtypes")
 	private JComboBox playList;
 
-	private String username, songName, songTitle, artist, album;
+	private String username, songName, songTitle, artist, album, searchType = "title"; //by default, the search filter is 'by title'
 
 	/**
 	 * Constructor for SearchMenuPanel
@@ -48,17 +51,28 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		//Response Label. Displays whether action is successful or not
 		responseLabel = new JLabel("");
 		responseLabel.setSize(new Dimension(320, 50));
-		responseLabel.setLocation(130, 295);
+		responseLabel.setLocation(130, 355);
 		responseLabel.setName("response");
 		this.add(responseLabel);
 
-//		// Play Button. Redirects user to PlaySong frame
-//		playButton = new JButton("Play Song");
-//		playButton.setSize(playButton.getPreferredSize());
-//		playButton.setLocation(9, 310);
-//		playButton.addActionListener(this);
-//		this.add(playButton);
-
+		// the search filter is here
+		searchFilter = new JComboBox(searchTypes);
+		searchFilter.setName("searchFilter");
+		searchFilter.setEditable(false);
+		searchFilter.setSize(new Dimension(110, 30));
+		searchFilter.setSelectedIndex(0);
+		searchFilter.setLocation(10,10);
+		this.add(searchFilter);
+		
+		searchFilter.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				searchType = searchFilter.getSelectedItem().toString(); //sets searchType to whichever option is selected.
+			}
+		});
+		
+		
 //		// Testing. Dummy values to store in JTable
 //		String data[][] = { {}, {}, {} };
 		String[] columns = { "Song Title", "Artist", "Album" };
@@ -77,7 +91,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		} else {
 			errorLabel = new JLabel("No results found for '" + userSearch + "'");
 			errorLabel.setSize(errorLabel.getPreferredSize());
-			errorLabel.setLocation(130, 315);
+			errorLabel.setLocation(130, 415);
 			this.add(errorLabel);
 		};
 		
@@ -86,7 +100,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		results.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		resultsJPS = new JScrollPane(results);
 		resultsJPS.setSize(new Dimension(400, 250));
-		resultsJPS.setLocation(10, 5);
+		resultsJPS.setLocation(10, 50);
 		resultsJPS.setName("resultsJPS");
 		results.addMouseListener(this);
 		
@@ -97,14 +111,14 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		// pulls playlist from json file
 		playList = new JComboBox(grabPlaylists());
 		playList.setSize(new Dimension(110, 30));
-		playList.setLocation(280, 265);
+		playList.setLocation(280, 315);
 		playList.setName("playlist_dd");
 		this.add(playList);
 
 		// Another display label
 		playlistLabel = new JLabel("<html>Select a playlist to<br/> add a chosen song to:</html>");
 		playlistLabel.setSize(playlistLabel.getPreferredSize());
-		playlistLabel.setLocation(140, 265);
+		playlistLabel.setLocation(140, 315);
 		playlistLabel.setName("playlistLabel");
 		this.add(playlistLabel);
 
@@ -114,7 +128,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		addButton = new JButton("Add Song");
 		addButton.setSize(addButton.getPreferredSize());
 		addButton.setName("addButton");
-		addButton.setLocation(10, 270);
+		addButton.setLocation(10, 315);
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//Checks if user selected a song

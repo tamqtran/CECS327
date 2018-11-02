@@ -21,6 +21,8 @@ import org.json.JSONException;
 
 public class Method 
 {
+	byte[] bytes;
+	int size = 0;
 	public Method() {}
 	
 	/**
@@ -389,20 +391,43 @@ public class Method
 	 * @param count - the byte value at which the song is at
 	 * @return parts of the song in byte form
 	 * @throws JSONException - catches errors concerning JSON files
-	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
+	 * @throws IOException 
 	 */
-	public byte[] playSong(String song, String count) throws JSONException, UnsupportedEncodingException 
+	public byte[] playSong(String song, String count) throws JSONException, IOException 
 	{
 		String [] arg = {song, count};
-		File file = new File(song);
-		int size = (int) file.length();
+		//File file = new File(song);
 		if(count.equals("-1")) 
 		{
-			return JSONReply("playSong",arg,size);
-		}
-		else 
-		{
-			byte[] bytes = new byte[size];
+			final ServerSocket serverSocket = new ServerSocket(6778);
+			Socket clientSocket = null;
+			try {
+				//request
+				clientSocket  = new Socket("localhost", 6777);
+				ObjectOutputStream request = new ObjectOutputStream(clientSocket.getOutputStream());
+				String[] args1 = {song};
+				request.writeObject(JSONRequestObject("getSong",args1).toString());
+				System.out.println(JSONRequestObject("getSong",args1).toString());
+				
+				//reply 3 seperations metadata.append
+				Socket socket = serverSocket.accept();
+				DataInputStream reply = new DataInputStream(socket.getInputStream());
+				size = reply.readInt();
+				bytes = new byte[size];
+				reply.readFully(bytes, 0, bytes.length);;
+				System.out.println("Reply: "+bytes.toString());
+				
+				request.close();
+				clientSocket.close();
+				socket.close();
+				reply.close();
+				serverSocket.close();
+			} catch (IOException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+			
+			/*bytes = new byte[size];
 			try 
 			{
 				BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
@@ -416,7 +441,12 @@ public class Method
 			catch (IOException e) 
 			{
 				e.printStackTrace();
-			}
+			}*/
+			return JSONReply("playSong",arg,size);
+		}
+		else 
+		{
+			
 			byte[] bytePacket = new byte[64000];
 			
 			if(size - Integer.parseInt(count) > 64000) 
@@ -432,6 +462,40 @@ public class Method
 			return bytePacket;
 		}
 	}
+	
+	/**
+	 * Get size of song in byte
+	 * @param song - song chosen by user
+	 * @param count - the byte value at which the song is at
+	 * @return parts of the song in byte form
+	 * @throws JSONException - catches errors concerning JSON files
+	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
+	 */
+	public byte[] getSong(String song) throws JSONException, UnsupportedEncodingException 
+	{
+		
+		File file = new File(song);
+		int size = (int) file.length();
+		byte[] bytes = new byte[size];
+		try 
+		{
+			BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
+			buf.read(bytes, 0, bytes.length);
+			buf.close();
+		} 
+		catch (FileNotFoundException e) 
+		{
+			e.printStackTrace();
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+			
+			return bytes;
+		
+	}
+	
 	
 	/**
 	 * This method creates the reply for the Server to send to the Client.
@@ -465,5 +529,31 @@ public class Method
 	                System.out.println(e);
 	        }
 	        return jsonReply.toString().getBytes("utf-8");
+	}
+	
+	/**
+	 * This method formats the request to send to the Server into a JSON Object
+	 * @param method call method
+	 * @param args argument of the method
+	 * @return return JSON object
+	 * @throws JSONException
+	 */
+	static JSONObject JSONRequestObject(String method, Object[] args) throws JSONException {
+	       
+	        JSONArray jsonArgs = new JSONArray(); //Arguments
+	        for (int i=0; i<args.length; i++) {
+	        	jsonArgs.put(args[i]);
+	        }
+	
+	        
+	        JSONObject jsonRequest = new JSONObject(); //Json Object
+	        try {
+	                jsonRequest.put("id", UUID.randomUUID().hashCode());
+	                jsonRequest.put("method", method);
+	                jsonRequest.put("arguments", jsonArgs);
+	        } catch (JSONException e) {
+	                System.out.println(e);
+	        }
+	        return jsonRequest;
 	}
 }

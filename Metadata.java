@@ -10,30 +10,30 @@ class Chunk {
 	//ls, touch, ))
 }
 
-class File {
-	String filename;
-	List<Chunk> chunks;
-	
-	public byte[] getChunk(int i) {
-		Chunk c = chunks.get(i);
-		return c.content;
-	}
-	
-	public File(String fn) {
-		filename = fn;
-	}
-	
-	public String getFilename() {return filename;}
-	
-	public void append(byte[] content) {
-		int guid = getHash(content); //change this to whatever we need
-		Chunk c = new Chunk(guid);
-		chunks.add(c);
-		peer[0].put(guid, content);
-		
-		metadata.append("inverted_index", content);
-	}
-}
+//class File {
+//	String filename;
+//	List<Chunk> chunks;
+//	
+//	public byte[] getChunk(int i) {
+//		Chunk c = chunks.get(i);
+//		return c.content;
+//	}
+//	
+//	public File(String fn) {
+//		filename = fn;
+//	}
+//	
+//	public String getFilename() {return filename;}
+//	
+//	public void append(byte[] content) {
+//		int guid = getHash(content); //change this to whatever we need
+//		Chunk c = new Chunk(guid);
+//		chunks.add(c);
+//		peer[0].put(guid, content);
+//		
+//		metadata.append("inverted_index", content);
+//	}
+//}
 
 public class Metadata {
 	List<File> fileList;
