@@ -474,7 +474,7 @@ public class Method
 	public byte[] getSong(String song) throws JSONException, UnsupportedEncodingException 
 	{
 		
-		File file = new File(song);
+		java.io.File file = new java.io.File(song);
 		int size = (int) file.length();
 		byte[] bytes = new byte[size];
 		try 

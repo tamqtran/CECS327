@@ -189,7 +189,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 
 		// System command to grab current working directory
 		String currentFolderPath = System.getProperty("user.dir"); // C:\Users\Austin\Eclipse_OxyMain\MusicStreaming 
-		File currentFolder = new File(currentFolderPath);
+		java.io.File currentFolder = new java.io.File(currentFolderPath);
 
 		// list() vs listFiles()
 		// List- string array
