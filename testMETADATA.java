@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class testMETADATA {
 
 	public static void main(String[] args) throws IOException {
+//		System.out.println(Paths.get("METADATA.txt"));
 		Scanner sc = new Scanner(Paths.get("METADATA.txt"));
 		Metadata meta= new Metadata();
 		while (sc.hasNextLine()) {
@@ -12,7 +13,9 @@ public class testMETADATA {
 		}
 
 		for(int i = 0; i < meta.fileList.size(); i++){
-			System.out.println(meta.fileList.get(i).fileName);
+			File f = meta.getFile(i);
+			
+			System.out.println(f.getFileName());				
 		}
 	}
 }

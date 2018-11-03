@@ -28,7 +28,7 @@ import java.util.List;
 
 public class Metadata {
 	
-	public List<File> fileList;
+	protected List<File> fileList;
 	
 	// constructor for metadata
 	public Metadata() {
@@ -42,13 +42,13 @@ public class Metadata {
 		// get correct file
 		File f = new File(null);		
 		for (File f_ : fileList) {
-			if (f_.fileName.equals(filename)) {
+			if (f_.getFileName().equals(filename)) {
 				f = f_;	break;
 			} // will continue otherwise
 		}
 		
 		// no fileName found, make a new one
-		if (f.fileName == null) {
+		if (f.getFileName() == null) {
 			System.out.println(filename + " is new; creating new file...");
 			f = new File(filename);
 			fileList.add(f); // add file to fileList
@@ -61,7 +61,7 @@ public class Metadata {
 	public void delete(String filename) {
 		
 		for (File f_ : fileList) {
-			if (f_.fileName.equals(filename)) {
+			if (f_.getFileName().equals(filename)) {
 				fileList.remove(f_);
 				System.out.println(filename + " found and removed.");
 				break;
@@ -77,23 +77,25 @@ public class Metadata {
 		File f = new File(null);
 		
 		for (File f_ : fileList) { 
-			if (f_.fileName.equals(filename)) {
+			if (f_.getFileName().equals(filename)) {
 				f = f_;	break;
 			}
 		}
 		
-		if (f.fileName != null)
+		if (f.getFileName() != null)
 			return f.getChunk(i).getContent();
 		else {
 			System.out.println(filename + " not found.");
-			return null;
+			return null; // no bytes
 		}
 	}
 	
 	// returns the list of files in DFS
-	public List<File> Ls(){
-		return fileList;
-	}
+	public List<File> Ls(){	return fileList; }
+	
+	public File getFile(int i) {return fileList.get(i);}
+	
+	
 	/*
 	// match file 
 	private File matchFile(String filename) {
