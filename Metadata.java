@@ -1,14 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-class Chunk {
-	int guid;
-	String first, last;
-	byte[] content; // ????
-	public Chunk(int guid) {this.guid = guid;}
-	
-	//ls, touch, ))
-}
+
 
 //class File {
 //	String filename;
@@ -36,10 +29,15 @@ class Chunk {
 //}
 
 public class Metadata {
-	List<File> fileList;
 	
-	public Metadata() {}
+	public List<File> fileList;
 	
+	// constructor for metadata
+	public Metadata() {
+		fileList = new ArrayList<>();
+	}
+	
+	// append an inverted index file by add content at the end of filename. if filename does not exists, it creates it and adds the content
 	public void append(String filename, byte[] content) {
 		File f;
 		f = matchFile(filename);
@@ -49,7 +47,24 @@ public class Metadata {
 		
 		f.append(content);
 	}
+
+	// delete the filefrom the DFS
+	public void delete(String filename) {
+		
+	}
 	
+
+	// read the i-chunk of filename and returns an array of btyes
+	public void read(String filename, int i) {
+		
+	}
+	
+	// returns the list of files in DFS
+	public List<File> Is(){
+		return fileList;
+	}
+	
+	// match file 
 	private File matchFile(String filename) {
 		File F = null;
 		for (File f : fileList) {
@@ -58,6 +73,7 @@ public class Metadata {
 		}
 		return F;
 	}
+	
 	
 	// searchSongs(String filter)
 	// read metadata
@@ -70,4 +86,3 @@ public class Metadata {
 	//  if filter is in row:
 	//   include row in reply
 }
-

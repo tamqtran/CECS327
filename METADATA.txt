@@ -1,4 +1,3 @@
-METADATA
 songIndex.txt
 artistIndex.txt
 albumIndex.txt
