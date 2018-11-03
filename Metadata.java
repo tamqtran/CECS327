@@ -37,13 +37,20 @@ public class Metadata {
 		fileList = new ArrayList<>();
 	}
 	
+	// maybe byte[] content instead
 	// append an inverted index file by add content at the end of filename. if filename does not exists, it creates it and adds the content
-	public void append(String filename, byte[] content) {
-		File f;
-		f = matchFile(filename);
-
-		if (f == null)
-			f = new File(filename);
+	public void append(String fileName, String content) {
+		
+		// get correct file
+		File f = new File(null);
+		for(int i = 0; i < fileList.size(); i++) {
+			if(fileList.get(i).fileName.equals(fileName))
+				f = fileList.get(i);
+		}
+		
+		// no fileName found, make a new one
+		if (f.fileName == null)
+			f = new File(fileName);
 		
 		f.append(content);
 	}
@@ -63,7 +70,7 @@ public class Metadata {
 	public List<File> Is(){
 		return fileList;
 	}
-	
+	/*
 	// match file 
 	private File matchFile(String filename) {
 		File F = null;
@@ -73,7 +80,7 @@ public class Metadata {
 		}
 		return F;
 	}
-	
+	*/
 	
 	// searchSongs(String filter)
 	// read metadata
