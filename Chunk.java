@@ -1,11 +1,13 @@
 public class Chunk {
-	int guid;
-	String firstLetter, lastLetter;
+	protected int guid;
+	private String firstLetter, lastLetter;
+	protected byte[] content;
 	
-	public Chunk(int guid, String firstLetter, String lastLetter) {		
+	public Chunk(int guid, String firstLetter, String lastLetter, byte[] content) {		
 		this.guid = guid;
 		this.firstLetter = firstLetter;
 		this.lastLetter = lastLetter;
+		this.content = content;
 	}
 	/*class Chunk {
 		int guid;
@@ -15,4 +17,6 @@ public class Chunk {
 		
 		//ls, touch, ))
 	}*/
+	
+	public byte[] getContent() {return content;}
 }

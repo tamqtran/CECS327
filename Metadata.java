@@ -1,8 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 //class File {
 //	String filename;
 //	List<Chunk> chunks;
@@ -34,18 +32,19 @@ public class Metadata {
 	
 	// constructor for metadata
 	public Metadata() {
-		fileList = new ArrayList<>();
+		fileList = new ArrayList<File>();
 	}
 	
-	// maybe byte[] content instead
+	// maybe byte[] instead of string for content
 	// append an inverted index file by add content at the end of filename. if filename does not exists, it creates it and adds the content
 	public void append(String fileName, String content) {
 		
 		// get correct file
-		File f = new File(null);
-		for(int i = 0; i < fileList.size(); i++) {
-			if(fileList.get(i).fileName.equals(fileName))
-				f = fileList.get(i);
+		File f = new File(null);		
+		for (File f_ : fileList) {
+			if (f_.fileName.equals(fileName)) {
+				f = f_;	break;
+			} // will continue otherwise
 		}
 		
 		// no fileName found, make a new one
@@ -58,16 +57,36 @@ public class Metadata {
 	// delete the filefrom the DFS
 	public void delete(String filename) {
 		
+		for (File f_ : fileList) {
+			if (f_.fileName.equals(filename)) {
+				fileList.remove(f_);
+				System.out.println(filename + " was found in fileList and removed.");
+				break;
+			} // for loop will continue otherwise
+		}
+		
+		// nothing happens if the break condition never happens
 	}
 	
 
-	// read the i-chunk of filename and returns an array of btyes
-	public void read(String filename, int i) {
+	// read the i-chunk of filename and returns an array of bytes
+	public byte[] read(String filename, int i) {
+		File f = new File(null);
 		
+		for (File f_ : fileList) { 
+			if (f_.fileName.equals(filename)) {
+				f = f_;	break;
+			}
+		}
+		
+		if (f.fileName != null)
+			return f.getChunk(i).getContent();
+		else 
+			return null;
 	}
 	
 	// returns the list of files in DFS
-	public List<File> Is(){
+	public List<File> Ls(){
 		return fileList;
 	}
 	/*
