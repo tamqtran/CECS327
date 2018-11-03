@@ -37,19 +37,22 @@ public class Metadata {
 	
 	// maybe byte[] instead of string for content
 	// append an inverted index file by add content at the end of filename. if filename does not exists, it creates it and adds the content
-	public void append(String fileName, String content) {
+	public void append(String filename, String content) {
 		
 		// get correct file
 		File f = new File(null);		
 		for (File f_ : fileList) {
-			if (f_.fileName.equals(fileName)) {
+			if (f_.fileName.equals(filename)) {
 				f = f_;	break;
 			} // will continue otherwise
 		}
 		
 		// no fileName found, make a new one
-		if (f.fileName == null)
-			f = new File(fileName);
+		if (f.fileName == null) {
+			System.out.println(filename + " is new; creating new file...");
+			f = new File(filename);
+			fileList.add(f); // add file to fileList
+		}
 		
 		f.append(content);
 	}
@@ -60,7 +63,7 @@ public class Metadata {
 		for (File f_ : fileList) {
 			if (f_.fileName.equals(filename)) {
 				fileList.remove(f_);
-				System.out.println(filename + " was found in fileList and removed.");
+				System.out.println(filename + " found and removed.");
 				break;
 			} // for loop will continue otherwise
 		}
@@ -81,8 +84,10 @@ public class Metadata {
 		
 		if (f.fileName != null)
 			return f.getChunk(i).getContent();
-		else 
+		else {
+			System.out.println(filename + " not found.");
 			return null;
+		}
 	}
 	
 	// returns the list of files in DFS
