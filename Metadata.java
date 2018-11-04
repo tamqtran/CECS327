@@ -1,6 +1,10 @@
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Scanner;
+import org.json.JSONArray;
+import org.json.JSONObject;
 //class File {
 //	String filename;
 //	List<Chunk> chunks;
@@ -31,17 +35,22 @@ public class Metadata {
 	protected List<File> fileList;
 	
 	// constructor for metadata
-	public Metadata() {
+	public Metadata() throws IOException {
 		fileList = new ArrayList<File>();
+		
+		Scanner sc = new Scanner(Paths.get("METADATA.txt"));
+		while (sc.hasNextLine()) {
+		     fileList.add(new File(sc.nextLine()));
+		}
 	}
 	
 	// maybe byte[] instead of string for content
 	// append an inverted index file by add content at the end of filename. 
 	// if filename does not exists, it creates it and adds the content
-	public void append(String filename, byte[] content) {
+	public void append(String filename, String[] content) {
 		
 		// get correct file
-		File f = new File(null);		
+		File f = null;		
 		for (File f_ : fileList) {
 			if (f_.getFileName().equals(filename)) {
 				f = f_;	break;
@@ -49,7 +58,7 @@ public class Metadata {
 		}
 		
 		// no fileName found, make a new one
-		if (f.getFileName() == null) {
+		if (f == null) {
 			System.out.println(filename + " is new; creating new file...");
 			f = new File(filename);
 			fileList.add(f); // add file to fileList

@@ -1,10 +1,14 @@
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 public class Chunk {
 	protected int guid;
 	private String firstLetter, lastLetter;
 	protected byte[] content = null;
 	
-	public Chunk(int guid, String firstLetter, String lastLetter) {		
-		this.guid = guid;
+	@SuppressWarnings("null")
+	public Chunk(String firstLetter, String lastLetter) {		
+		//this.guid = (Integer) null;
 		this.firstLetter = firstLetter;
 		this.lastLetter = lastLetter;
 	}

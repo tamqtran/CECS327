@@ -122,15 +122,31 @@ public class refreshJSON
 		songIndex.put("size", "MB");				// probably change
 		
 		JSONArray chunks = new JSONArray();
-		JSONObject chunk1 = new JSONObject();
-		chunk1.put("guid", "chunk1");
-		JSONObject chunk2 = new JSONObject();
-		chunk2.put("guid", "chunk2");
-		JSONObject chunk3 = new JSONObject();
-		chunk3.put("guid", "chunk3");
-		chunks.put(chunk1);				//  letter a to i
-		chunks.put(chunk2);				//  letter j to q 
-		chunks.put(chunk3);				//  letter r to z
+		
+		JSONObject chunkA_I = new JSONObject();
+		
+		JSONArray chunkArrayA_I = new JSONArray();
+		JSONObject temp = new JSONObject();
+		temp.put("guid", "0");
+		temp.put("songFile", "something.wav");
+		chunkArrayA_I.put(temp);
+		
+		chunkA_I.put("chunkA_I", chunkArrayA_I);
+		
+		
+		JSONObject chunkJ_Q = new JSONObject();
+		JSONArray chunkArrayJ_Q = new JSONArray();
+		chunkArrayJ_Q.put(temp);
+		chunkJ_Q.put("chunkJ_Q", chunkArrayJ_Q);
+		
+		JSONObject chunkR_Z = new JSONObject();
+		JSONArray chunkArrayR_Z = new JSONArray();
+		chunkArrayR_Z.put(temp);
+		chunkR_Z.put("chunkR_Z", chunkArrayR_Z);
+		
+		chunks.put(chunkA_I);				//  letter a to i
+		chunks.put(chunkJ_Q);				//  letter j to q 
+		chunks.put(chunkR_Z);				//  letter r to z
 		
 		songIndex.put("chunks", chunks);
 		try 											// Write into json file
