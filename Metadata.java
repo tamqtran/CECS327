@@ -36,8 +36,9 @@ public class Metadata {
 	}
 	
 	// maybe byte[] instead of string for content
-	// append an inverted index file by add content at the end of filename. if filename does not exists, it creates it and adds the content
-	public void append(String filename, String content) {
+	// append an inverted index file by add content at the end of filename. 
+	// if filename does not exists, it creates it and adds the content
+	public void append(String filename, byte[] content) {
 		
 		// get correct file
 		File f = new File(null);		
@@ -74,25 +75,21 @@ public class Metadata {
 
 	// read the i-chunk of filename and returns an array of bytes
 	public byte[] read(String filename, int i) {
-		File f = new File(null);
-		
+
 		for (File f_ : fileList) { 
 			if (f_.getFileName().equals(filename)) {
-				f = f_;	break;
+				return f_.getChunk(i).getContent();
 			}
 		}
 		
-		if (f.getFileName() != null)
-			return f.getChunk(i).getContent();
-		else {
-			System.out.println(filename + " not found.");
-			return null; // no bytes
-		}
+		System.out.println(filename + " not found.");
+		return null; // no bytes; will only get here if no such file was found
 	}
 	
 	// returns the list of files in DFS
 	public List<File> Ls(){	return fileList; }
 	
+	// get a particular File from fileList
 	public File getFile(int i) {return fileList.get(i);}
 	
 	

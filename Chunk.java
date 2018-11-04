@@ -21,6 +21,7 @@ public class Chunk {
 		this.content = content;
 	}
 	
+	// getter methods
 	public int getGUID() {return guid;}
 	public String getFirstLetter() {return firstLetter;}
 	public String getLastLetter() {return lastLetter;}
