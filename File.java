@@ -87,18 +87,19 @@ public class File {
 			JSONArray chunkList = null;
 			
 			// add changes to json files
-			if(Character.toUpperCase(content[i].charAt(0)) >= 'A' && Character.toUpperCase(content[i].charAt(0)) <= 'I') {
+			Character c = Character.toUpperCase(content[i].charAt(0));
+			if(c >= 'A' && c <= 'I') {
 				// put {"guid":"0","songFile":"something.wav"} into the JSONArray of the specified chunk
 				// chunkA_I
 				specifiedChunk = (JSONObject) chunks.get(0);
 				chunkList = (JSONArray) specifiedChunk.get("chunkA_I");
 			}
-			else if(Character.toUpperCase(content[i].charAt(0)) >= 'J' && Character.toUpperCase(content[i].charAt(0)) <= 'Q') {
+			else if(c >= 'J' && c <= 'Q') {
 				// chunkJ_Q
 				specifiedChunk = (JSONObject) chunks.get(1);
 				chunkList = (JSONArray) specifiedChunk.get("chunkJ_Q");
 			}
-			else if(Character.toUpperCase(content[i].charAt(0)) >= 'R' && Character.toUpperCase(content[i].charAt(0)) <= 'Z') {
+			else if(c >= 'R' && c <= 'Z') {
 				// chunkR_Z
 				specifiedChunk = (JSONObject) chunks.get(2);
 				chunkList = (JSONArray) specifiedChunk.get("chunkR_Z");
