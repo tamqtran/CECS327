@@ -1,7 +1,11 @@
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 public class File {
 	private String fileName;
 	private String jsonFile;
@@ -45,36 +49,75 @@ public class File {
 		}
 		int guid = temp.hashCode();
 		
-		// add to all files
+		// all index files names without extension
 		String[] nameOfFiles = {"songIndex","artistIndex","albumIndex"};
 		
 		JSONObject song = new JSONObject();
 		song.put("guid", guid);
-		song.put("songFile", content[0]+"_"+content[1]+"_"+content[2]);
+		song.put("songFile", content[0]+"_"+content[1]+"_"+content[2]+ ".wav");
 		
+		// do for each index files
 		for(String S: nameOfFiles) {
 			// add changes to txt files
 			
+			// get index
+			int i = 0;
+			if(S.compareTo("songIndex") == 0)
+				i = 0;
+			else if(S.compareTo("artistIndex") == 0)
+				i = 1;
+			else if(S.compareTo("albumIndex") == 0)
+				i = 2;
+			
+			// get correct index json file
+			JSONObject obj = null;
+			try (InputStream input = new FileInputStream(S +".json")) 
+			{
+				obj = new JSONObject(new JSONTokener(input));
+			}
+			catch (Exception e) 
+			{
+				e.printStackTrace();
+			}
+			
+			// get array of chunks
+			JSONArray chunks = 	(JSONArray) obj.get("chunks");
+			
+			JSONObject specifiedChunk = null;
+			JSONArray chunkList = null;
+			
 			// add changes to json files
-			if(Character.toUpperCase(content[0].charAt(0)) >= 'A' && Character.toUpperCase(content[0].charAt(0)) <= 'I') {
+			if(Character.toUpperCase(content[i].charAt(0)) >= 'A' && Character.toUpperCase(content[i].charAt(0)) <= 'I') {
 				// put {"guid":"0","songFile":"something.wav"} into the JSONArray of the specified chunk
+				// chunkA_I
+				specifiedChunk = (JSONObject) chunks.get(0);
+				chunkList = (JSONArray) specifiedChunk.get("chunkA_I");
 			}
-			else if(Character.toUpperCase(content[0].charAt(0)) >= 'J' && Character.toUpperCase(content[0].charAt(0)) <= 'Q') {
-				
+			else if(Character.toUpperCase(content[i].charAt(0)) >= 'J' && Character.toUpperCase(content[i].charAt(0)) <= 'Q') {
+				// chunkJ_Q
+				specifiedChunk = (JSONObject) chunks.get(1);
+				chunkList = (JSONArray) specifiedChunk.get("chunkJ_Q");
 			}
-			else if(Character.toUpperCase(content[0].charAt(0)) >= 'R' && Character.toUpperCase(content[0].charAt(0)) <= 'Z') {
-				
+			else if(Character.toUpperCase(content[i].charAt(0)) >= 'R' && Character.toUpperCase(content[i].charAt(0)) <= 'Z') {
+				// chunkR_Z
+				specifiedChunk = (JSONObject) chunks.get(2);
+				chunkList = (JSONArray) specifiedChunk.get("chunkR_Z");
 			}
-		}
-		if(fileName.substring(0, fileName.length()-4).compareTo("songIndex") == 0) {
 			
-		}
-		else if(fileName.substring(0, fileName.length()-4).compareTo("artistIndex") == 0) {
-			// if last letter of artist name goes between two letters to specify which chunk
+			// add song to json file
+			chunkList.put(song);
 			
-		}
-		else if(fileName.substring(0, fileName.length()-4).compareTo("albumIndex") == 0) {
-			
+			// overwrite JSON file
+			try 											// Write into json file
+				{
+					FileWriter fileWriter = new FileWriter(S + ".json");
+					fileWriter.write(obj.toString());
+					fileWriter.flush();
+					fileWriter.close();
+				}catch (Exception e) 							// catch exception
+				{
+					e.printStackTrace();
+				}
 		}
 	}
 	

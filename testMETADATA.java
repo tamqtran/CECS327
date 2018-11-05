@@ -1,10 +1,18 @@
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.Scanner;
 import org.json.simple.parser.JSONParser;
+
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 public class testMETADATA {
 
@@ -31,12 +39,25 @@ public class testMETADATA {
 		
 		System.out.println(json);
 		*/
-		String[] content = {"Yellow Submarine", "The Beatles", "Yellow Submarine"};
+		//content is {song, artist, album}
+		String[] content = {"Hello Goodbye", "The Beatles", "Magical Mystery Tour"};
+		meta.append("songIndex.txt", content);
 		
-		Object obj = parser.parse(new FileReader(Paths.get("artistIndex.json")));
-
-        JSONObject jsonObject =  (JSONObject) obj;
-
-        String name = (String) jsonObject.get("name");
+		String[] content2 = {"Money", "Pink Floyd", "The Dark Side of the Moon"};
+		meta.append("songIndex.txt", content2);
+		
+		String[] content3 = {"Shadow", "Jilian Aversa", "Origins"};
+		meta.append("songIndex.txt", content3);
+		
+		String[] content4 = {"So Serious", "Electric Light Orchestra", "Balance Of Power"};
+		meta.append("songIndex.txt", content4);
+		
+		String[] content5= {"Yellow Submarine", "The Beatles", "Yellow Submarine"};
+		meta.append("songIndex.txt", content5);
+		
+		
+	     
+	      
+        //String name = (String) jsonObject.get("name");
 	}
 }

@@ -126,22 +126,23 @@ public class refreshJSON
 		JSONObject chunkA_I = new JSONObject();
 		
 		JSONArray chunkArrayA_I = new JSONArray();
+		/*
 		JSONObject temp = new JSONObject();
 		temp.put("guid", "0");
 		temp.put("songFile", "something.wav");
 		chunkArrayA_I.put(temp);
-		
+		*/
 		chunkA_I.put("chunkA_I", chunkArrayA_I);
 		
 		
 		JSONObject chunkJ_Q = new JSONObject();
 		JSONArray chunkArrayJ_Q = new JSONArray();
-		chunkArrayJ_Q.put(temp);
+		//chunkArrayJ_Q.put(temp);
 		chunkJ_Q.put("chunkJ_Q", chunkArrayJ_Q);
 		
 		JSONObject chunkR_Z = new JSONObject();
 		JSONArray chunkArrayR_Z = new JSONArray();
-		chunkArrayR_Z.put(temp);
+		//chunkArrayR_Z.put(temp);
 		chunkR_Z.put("chunkR_Z", chunkArrayR_Z);
 		
 		chunks.put(chunkA_I);				//  letter a to i
