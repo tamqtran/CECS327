@@ -226,7 +226,6 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		printArray(lineData);	//System call
 		
 		changeSearch(lineData, u_search);
-		}
 	}
 	
 	/**
