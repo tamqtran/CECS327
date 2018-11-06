@@ -354,8 +354,8 @@ public class Homepage
 			@Override
 			public void focusLost(FocusEvent e) {
 				// TODO Auto-generated method stub
-				CardLayout cards = (CardLayout)(CorePanel.getLayout());
-				cards.show(CorePanel, SHIFT_PANEL);
+//				CardLayout cards = (CardLayout)(CorePanel.getLayout());
+//				cards.show(CorePanel, SHIFT_PANEL);
 				System.out.println("searchField focus LOST");
 			}
 		});
@@ -427,6 +427,7 @@ public class Homepage
 		_HistoryPanel.add(nextHistory_);
 		
 		home_ = new JButton("\u2302");
+		home_.setMinimumSize(new Dimension(10, 10));
 		home_.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -485,7 +486,7 @@ public class Homepage
 		
 		createNewHomePanel(HomePanel, titleLabel, "Base Home");		// loads HomePanel into ShiftingPanel
 		
-		String[] temp = {""};
+		String[] temp = {};
 		SearchPanel = new SearchMenuPanel(userName, temp , "");
 		SearchPanel.setName("Search");
 		

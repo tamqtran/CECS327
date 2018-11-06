@@ -26,15 +26,18 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 	private JLabel playlistLabel, responseLabel, errorLabel,
 				   titleLabel, artistLabel, albumLabel;
 
-	private JComboBox<String> searchFilter;
 	private JComboBox<String> playList;
 
 	private String username, songName, songTitle, artist, album, 
-					searchType = "By Title"; //by default, the search filter is 'by title'
+					filter = "Title", u_search; //by default, the search filter is 'by title'
+	
+	private int searchIndex = 0;
 	
 	private DefaultTableModel model;
 	
-	private final String[] searchTypes = {"By Title", "by Artist(s)", "by Album"}, columns = { "Song Title", "Artist", "Album" };
+	private final String[] columns = { "Title", "Artist(s)", "Album" };
+	
+	private boolean flipOrder = false;
 	
 	/**
 	 * Constructor for SearchMenuPanel
@@ -57,34 +60,30 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		responseLabel.setName("response");
 		this.add(responseLabel);
 
-		// the search filter is here
-		searchFilter = new JComboBox(searchTypes);
-		searchFilter.setName("searchFilter");
-		searchFilter.setEditable(false);
-		searchFilter.setSize(new Dimension(110, 30));
-		searchFilter.setSelectedIndex(0);
-		searchFilter.setLocation(10,10);
-		this.add(searchFilter);
 		
-		searchFilter.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-				searchType = searchFilter.getSelectedItem().toString(); //sets searchType to whichever option is selected.
-//				System.out.println(searchType);
-			}
-		});
-//		System.out.println(searchType);
 		
 //		// Testing. Dummy values to store in JTable
 //		String data[][] = { {}, {}, {} };
 		
 		model = null;
 		updateSearch(search, userSearch);
-		
+		System.out.println("Initial - filter by " + filter);
 		// Creates a table to display the search results
 		results = new JTable(model);
 		results.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		results.getTableHeader().setReorderingAllowed(false);
+		results.getTableHeader().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int col = results.columnAtPoint(e.getPoint());
+				filter = results.getColumnName(col);
+				System.out.println("Filter by " + filter);
+				flipOrder = (searchIndex != col) ? false : true;
+				searchIndex = col;
+				tableChangedFilter();
+			}
+		});
+		
 		resultsJPS = new JScrollPane(results);
 		resultsJPS.setSize(new Dimension(400, 250));
 		resultsJPS.setLocation(10, 50);
@@ -96,7 +95,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 
 		// A dropdown menu for the user to select which playlist to add song to
 		// pulls playlist from json file
-		playList = new JComboBox(grabPlaylists());
+		playList = new JComboBox<String>(grabPlaylists());
 		playList.setSize(new Dimension(110, 30));
 		playList.setLocation(280, 315);
 		playList.setName("playlist_dd");
@@ -165,15 +164,22 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		this.add(addButton);
 	}
 	
+	/**
+	 * Update the search based on the search.
+	 * @param search
+	 * @param userSearch
+	 */
 	private void updateSearch(String [] search, String userSearch) {
+		u_search = userSearch;
 		if (search != null) {
-			model = new DefaultTableModel(null, columns)
-			 {
-			    public boolean isCellEditable(int row, int column)
-			    {
-			      return false; //This causes all cells to be not editable
-			    }
-			  };
+			model = new DefaultTableModel(null, columns) {
+				public boolean isCellEditable(int row, int column) {
+					return false; //This causes all cells to be not editable
+				}
+			};
+			
+			search = sortSearch(search);	// sort the search
+			
 			for (int i = 0; i < search.length; i++) {
 				  model.addRow(search[i].split("_"));
 			}
@@ -182,13 +188,103 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 			errorLabel.setSize(errorLabel.getPreferredSize());
 			errorLabel.setLocation(130, 415);
 			this.add(errorLabel);
-		};
+		}
 	}
 	
+	/**
+	 * Changes results based on the search array input
+	 * @param search - an array of song strings related to userSearch
+	 * @param userSearch - the user input
+	 */
 	public void changeSearch(String [] search, String userSearch) {
 		updateSearch(search, userSearch);
 		results.setModel(model);
 		results.updateUI();
+	}
+	
+	private String[] sortSearch(String [] search) {
+		// sort by current filter
+		String[] sorted = quickSort(search, 0, search.length-1);
+		// pass back sorted array
+		return sorted;
+	}
+	
+	public void tableChangedFilter() {					
+		String[] lineData = new String[results.getRowCount()]; //lineData is an array of null strings
+
+		for (int r = 0; r < results.getRowCount(); r++) {
+			lineData[r] = results.getValueAt(r, 0).toString() + "_"; //lineData[r] gets replaced from null
+			for (int c = 1; c < results.getColumnCount(); c++) {
+				lineData[r] += results.getValueAt(r, c).toString();
+				if (c < results.getColumnCount()-1) {
+					lineData[r] += "_";
+				}
+//				System.out.println("Pulling: " + lineData[r]);
+			}
+		}
+
+		printArray(lineData);	//System call
+		
+		changeSearch(lineData, u_search);
+		}
+	}
+	
+	/**
+	 * Driver method for quicksort. Sorts an array.
+	 * @param array - the array to be sorted
+	 * @param low - the lowest point of the switch zone (usually index 0)
+	 * @param high - the highest point of the switch zone (usually the last element of the array)
+	 * @return the sorted array
+	 */
+	private String[] quickSort(String[] array, int low, int high) {
+		String[] sorted = array;
+		if (low < high) {
+			int p = qs_Partition(sorted, low, high);
+			quickSort(sorted, low, p-1);
+			quickSort(sorted, p+1, high);
+		}
+		return sorted;
+	}
+	
+	/**
+	 * System-prints the elements in an array.
+	 * @param array - a String array
+	 */
+	private void printArray(String [] array) {
+		for (String s : array) {
+			System.out.println("Printing: " + s);
+		}
+	}
+	
+	/**
+	 * Submethod of quick sort. Determines the pivot; switches every element around it based on the comparison
+	 * @param array - the array to be sorted
+	 * @param low - the low point of the switch zone
+	 * @param high - the high point of the switch zone
+	 * @return - the next pivot
+	 */
+	private int qs_Partition(String[] array, int low, int high) {
+		String pivotElement = array[high].split("_")[searchIndex];
+		int i = (low - 1);
+		for (int j = low; j < high; j++) {
+			int compare = array[j].split("_")[searchIndex].compareTo(pivotElement);
+			if (flipOrder ? compare <= 0 : compare >= 0) {
+				i++; qs_Swap(array, i, j);
+			}
+		}
+		qs_Swap(array, i+1, high);
+		return i+1;
+	}
+	/**
+	 * Submethod for quicksort. Swaps two elements in an array.
+	 * @param array - the array to be sorted
+	 * @param a - the index of the first element
+	 * @param b - the index of the second element
+	 */
+	private void qs_Swap(String[] array, int a, int b) {
+		String temp = array[a];
+		array[a] = array[b];
+		array[b] = temp;
 	}
 	
 	/**
