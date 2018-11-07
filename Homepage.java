@@ -64,16 +64,15 @@ import org.json.JSONTokener;
  */
 public class Homepage 
 {
-	private final String specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]", SHIFT_PANEL = "Shifting", SEARCH_PANEL = "Search";
+	private final String 		specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]", SHIFT_PANEL = "Shifting", SEARCH_PANEL = "Search";
 	
-	private volatile static Clip 				current;
-	private int					pos;//current frame position for song
+	private volatile static Clip current;
 	private int					songIndex;
-	private ArrayList<String> songList = new ArrayList<String>();
+	private ArrayList<String> 	songList = new ArrayList<String>();
 	
-	private String 				userName, playlist, songName;
+	private String 				userName, playlist;
 	private JFrame 				frame;
-//	protected JTextField 		searchField;
+
 	private JPanel 				HIGH_panel, 
 								Playlist_Panel, 
 								 PlaylistTitle, PlaylistOptions,
@@ -84,23 +83,23 @@ public class Homepage
 				   				 Description_Panel, 
 				   				 Song_Panel, 
 				   				  _SongBar, _SongButtons;
-	private JButton 			createPlaylist_, removePlaylist_, home_, //home button
-								searchQuery_, logout_, previousHistory_, nextHistory_, // history buttons
+	private JButton 			createPlaylist_, removePlaylist_, home_,
+								searchQuery_, logout_, previousHistory_, nextHistory_,
 								previousSong_, playPause_, nextSong_
 								//, addSong_, removeSong_					// add these to _SongButtons
 								;	// addSong_ adds to a chosen playlist (or a new one), removeSong_ removes the song from that playlist ONLY
 	private JLabel 				playlist_, username_, 
 								title_, artist_, album_,
-								currentTime_, songTime_,
+								currentTime_, songTime_, // song timers
 								titleLabel;
 	private DefaultListModel<String> 	dm;
 	private JList<?>			playlist_List;
 	private JScrollPane			UserSavedPanel;
 	private ShiftingPanel       ShiftingPanel; 		// ShiftingPanel is the big one
 	private SearchMenuPanel		SearchPanel; 
-	private JSlider				timedSlider;
+	private JSlider				timedSlider;			// song manipulator
 	
-	protected JComboBox 		searchField;
+	protected JComboBox<String>	searchField;
 	
 	private CreatePlaylistDialog playlistCreation;
 	
@@ -171,7 +170,7 @@ public class Homepage
 				
 				ShiftingPanel.setSize((int)(f.getSize().getWidth() - shift.getWidth()), 
 										(int)(f.getSize().getHeight()- shift.getHeight()));
-				ShiftingPanel.updateUI(); // update the UI of ShiftingPanel after changing the size
+				ShiftingPanel.updateUI(); 							// update the UI of ShiftingPanel after changing the size
 			}
 		});
 		
@@ -299,13 +298,13 @@ public class Homepage
 		});
 		
 		PlaylistOptions.add(Box.createRigidArea(new Dimension(6,5))); 	// set the layout with rigid areas
-		PlaylistOptions.add(createPlaylist_);							// and jbuttons for PlaylistOptions
+		PlaylistOptions.add(createPlaylist_);							// and JButtons for PlaylistOptions
 		PlaylistOptions.add(Box.createRigidArea(new Dimension(5,5)));
 		PlaylistOptions.add(removePlaylist_);
 		PlaylistOptions.add(Box.createRigidArea(new Dimension(6,5)));
 		
-		Playlist_Panel.add(Box.createVerticalStrut(5)); 	// set the layout with rigid areas
-		Playlist_Panel.add(PlaylistTitle);								// and jpanels to Playlist_Panel
+		Playlist_Panel.add(Box.createVerticalStrut(5)); 				// set the layout with rigid areas
+		Playlist_Panel.add(PlaylistTitle);								// and JPanels to Playlist_Panel
 		Playlist_Panel.add(Box.createVerticalStrut(5));
 		Playlist_Panel.add(UserSavedPanel);
 		Playlist_Panel.add(Box.createVerticalStrut(5));
@@ -325,85 +324,46 @@ public class Homepage
 		
 		_SearchPanel = new JPanel(); 									// initialize _SearchPanel and set layout
 		_SearchPanel.setLayout(new FlowLayout());
-		
-//		searchField = new JTextField(); 								// initialize searchField and searchQuery_
-//		searchField.setText("Search for...	");
-//		searchField.setColumns(15);
-//		searchField.addMouseListener(new MouseAdapter() {				// Clear Textfield when you click on it
-//			public void mouseClicked(MouseEvent e) {//
-//				searchField.setText("");
-//
-//				// Clears the Jtable
-//				//DefaultTableModel model = (DefaultTableModel) results.getModel();
-//				//model.setRowCount(0);
-//			}
-//		});
-		
-		searchField = new JComboBox();
-		searchField.setEditable(true);
-		searchField.setName("Search for...");
+				
+		searchField = new JComboBox();									// create searchField
+		searchField.setEditable(true);									// allow for an editable text field
+		searchField.setName("Search for...");							// set the name
 		JTextField editorComponent = (JTextField) searchField.getEditor().getEditorComponent();
-		editorComponent.addFocusListener(new FocusListener() {			
+		editorComponent.addFocusListener(new FocusListener() {			// set a focus listener to the text field itself
 			@Override
 			public void focusGained(FocusEvent e) {
 				// TODO Auto-generated method stub
-				CardLayout cards = (CardLayout)(CorePanel.getLayout());
-				cards.show(CorePanel, SEARCH_PANEL);
-				System.out.println("searchField focus GAINED");
+				CardLayout cards = (CardLayout)(CorePanel.getLayout());	
+				cards.show(CorePanel, SEARCH_PANEL);					// swap cards from ShiftingPanel to SearchMenuPanel
+				System.out.println("searchField focus GAINED");			// system call
 			}
 			@Override
 			public void focusLost(FocusEvent e) {
 				// TODO Auto-generated method stub
-//				CardLayout cards = (CardLayout)(CorePanel.getLayout());
-//				cards.show(CorePanel, SHIFT_PANEL);
-				System.out.println("searchField focus LOST");
+				System.out.println("searchField focus LOST");			// system call
+				searchQuery_.requestFocusInWindow();					// give focus back to searchQuery_ when focus is lost here
 			}
 		});
 		
-		searchQuery_ = new JButton("Search");
-		searchQuery_.addActionListener(new ActionListener() {
+		searchQuery_ = new JButton("Search");							// creates searchQuery_
+		searchQuery_.addActionListener(new ActionListener() {			// add action listener that searches for text in searchField
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String text = (String)searchField.getSelectedItem();
-//						searchField.getText();
-				
-				System.out.println(searchField.getSelectedIndex());
 				
 				if (text.equals(""));
 				else {searchField.insertItemAt(text, 0);}
 
 				System.out.println("Searching for: " + text);
-//				System.out.println("Current panel in ShiftingPanel is '" + ShiftingPanel.getCurrentPanelName() + "'");
-
 				if (!codeDenial(text)) // if special characters are used then this will go off
 				{
-					searchField.removeItem(text);
+					searchField.removeItem(text);	// error dialog
 					JOptionPane.showMessageDialog(frame, "You can't do that. Stop it!", 
 							"Inane warning - code injection rejection", JOptionPane.WARNING_MESSAGE);
-//					searchField.setText("");
+				} else {
+					playlist = "x";					
+					SearchPanel.changeSearch(getSearchResults(text), text);	// otherwise, it will change the table of SearchMenuPanel
 				}
-				// checks if the current panel is the same one as the one that just got clicked
-
-
-				else //if (!("Search for: " + text).equals(ShiftingPanel.getCurrentPanelName())) 
-				{
-//					SearchMenuPanel newPanel = new SearchMenuPanel(userName, getSearchResults(text), text);
-					playlist = "x";
-					// set name of the new SearchMenuPanel
-//					newPanel.setName("Search for: " + text); 
-					
-					// set labels to respond to changes in this searchMenuPanel
-//					newPanel.setLabel(title_);		
-//					newPanel.setLabel(artist_);		
-//					newPanel.setLabel(album_);
-//					ShiftingPanel.addComponent(newPanel);			// add the SearchMenuPanel to ShiftingPanel
-//					ShiftingPanel.updateUI();						// update UI of ShiftingPanel
-					
-					SearchPanel.changeSearch(getSearchResults(text), text);
-					
-				} //else 
-					//System.out.println("Current panel in ShiftingPanel remains '" + ShiftingPanel.getCurrentPanelName() + "'\n");
-				
 				searchField.setSelectedItem("");
 			}
 		});
@@ -426,8 +386,7 @@ public class Homepage
 		_HistoryPanel.add(previousHistory_);						// add the buttons to _HistoryPanel
 		_HistoryPanel.add(nextHistory_);
 		
-		home_ = new JButton("\u2302");
-		home_.setMinimumSize(new Dimension(10, 10));
+		home_ = new JButton("\u2302");								// home button - returns to home screen
 		home_.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -446,15 +405,15 @@ public class Homepage
 		_ProfilePanel.setLayout(new FlowLayout());
 		username_ = new JLabel("User: " + userName + "  ");			// initialize username_ and logout_
 		logout_ = new JButton("Logout");
-		logout_.addActionListener(new ActionListener() { 	// assign action listener to logout_
+		logout_.addActionListener(new ActionListener() { 			// assign action listener to logout_
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();									// disposes of current frame
 				
 				//send logout message to server
 				String [] arguments = {userName};
 				requestReply.UDPRequestReply("loggedOut",arguments, aSocket, serverPort);
-				System.out.println("Logging out..."); 				// system announcement
-		        new Login(aSocket, serverPort, frame).setVisible(true); 	// creates new Login() object
+				System.out.println("Logging out..."); 							// system announcement
+		        new Login(aSocket, serverPort, frame).setVisible(true); 		// creates new Login() object
 		        System.out.println("User '" + userName + "' has logged out.");	// system announcement
 			}	
 		});
@@ -473,7 +432,7 @@ public class Homepage
 		TopPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
 //		ShiftingPanel (the one that keeps changing)
-		ShiftingPanel = new ShiftingPanel(this);						// initialize ShiftingPanel and set border
+		ShiftingPanel = new ShiftingPanel(this);					// initialize ShiftingPanel and set border
 		ShiftingPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
 		ShiftingPanel.setMinimumSize(new Dimension(500,500));
 		ShiftingPanel.setName("Shift");
@@ -482,7 +441,7 @@ public class Homepage
 		ShiftingPanel.setHistorySwitch(nextHistory_);
 		
 		titleLabel = new JLabel("'MusicService' - " + userName, JLabel.CENTER);
-		titleLabel.setFont(new Font("Tahoma", Font.PLAIN, 40));					// initialize titleLabel and set font
+		titleLabel.setFont(new Font("Tahoma", Font.PLAIN, 40));		// initialize titleLabel and set font
 		
 		createNewHomePanel(HomePanel, titleLabel, "Base Home");		// loads HomePanel into ShiftingPanel
 		
@@ -490,14 +449,14 @@ public class Homepage
 		SearchPanel = new SearchMenuPanel(userName, temp , "");
 		SearchPanel.setName("Search");
 		
-		CorePanel = new JPanel();
-		CorePanel.setLayout(new CardLayout());
+		CorePanel = new JPanel();									// CorePanel initialized
+		CorePanel.setLayout(new CardLayout());						// set layout to CardLayout
 		
-		CorePanel.add(ShiftingPanel, SHIFT_PANEL);
+		CorePanel.add(ShiftingPanel, SHIFT_PANEL);					// add ShiftingPanel and SearchPanel to CorePanel
 		CorePanel.add(SearchPanel, SEARCH_PANEL);
 		CorePanel.setName("Core");
 		
-		Explore_Panel.add(TopPanel); 								// add TopPanel and ShiftingPanel to Explore_Panel
+		Explore_Panel.add(TopPanel); 								// add TopPanel and CorePanel to Explore_Panel
 		Explore_Panel.add(Box.createRigidArea(new Dimension(1,2)));
 		Explore_Panel.add(CorePanel);
 
@@ -610,7 +569,6 @@ public class Homepage
 						current.close();
 						playPause_.setText("\u25B6"); 
 						isSongPlaying = false;
-						
 					} 
 					else if ((current == null) || (current!=null && !current.isActive())) {
 						String song = title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav";
@@ -631,51 +589,6 @@ public class Homepage
 							} 
 						} else {
 							try {
-								File file = null;
-								if (!playlist.equals("x")) {
-									try (InputStream input = new FileInputStream(userName+".json")) {
-										songList.clear();
-										JSONObject obj = new JSONObject(new JSONTokener(input));			// turn into JSON object
-										JSONArray listOfSongs = obj.getJSONArray(playlist);				// grabs JSON array of songs by mapping the playlist name
-										for(int j = 0; j < listOfSongs.length(); j++) {					// adds all songs from array into JList
-											String temp = listOfSongs.getString(j);
-											String[] transferSong = SearchMenuPanel.search(temp),
-
-													// get the list of .wav files and separate by song, artist, and album
-													column = { "Song Title", "Artist", "Album" };
-											DefaultTableModel model = new DefaultTableModel(null, column);
-											model.setRowCount(0);
-											for (int i = 0; i < transferSong.length; i++)
-												model.addRow(transferSong[i].split("_"));
-
-											// get selected song variables
-											String songTitle = model.getValueAt(0, 0).toString(),
-													artist = model.getValueAt(0, 1).toString(),
-													album = model.getValueAt(0, 2).toString();
-
-											//change text on labels in homepage
-											songList.add(songTitle + "_" + artist + "_" + album);
-										}
-										songName = ShiftingPanel.getSong();
-										songIndex = songList.indexOf(songName);
-									} catch (FileNotFoundException e) {
-										e.printStackTrace();
-									} catch (IOException e) {
-										e.printStackTrace();
-									}
-									System.out.println(songName + " of index " + songIndex + " seen at Homepage from " + ShiftingPanel.getCurrentPanelName());
-									System.out.println("Obtained " + songList.get(songIndex) + ".wav from songList");
-									file = new File(songList.get(songIndex) + ".wav");
-									if(songIndex == songList.size()-1)	songIndex = 0;
-									else					songIndex++;
-								}
-								else {
-									System.out.println(title_.getText() + "_" + artist_.getText() + "_" + album_.getText() + ".wav seen in Homepage from " + ShiftingPanel.getCurrentPanelName());
-									file = new File(title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav");
-								}
-								currentSong = title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav";
-								AudioInputStream player = AudioSystem.getAudioInputStream(file);
-
 								String [] arguments = {title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav","-1"};
 								JSONObject obj = requestReply.UDPRequestReply("playSong", arguments, aSocket, serverPort);
 								int size = obj.getInt("result");
@@ -690,29 +603,19 @@ public class Homepage
 									{
 										for(int i = 0; i<=size/64000; i++) {
 											if(isSongPlaying) {
-												try 
-												{		
-													/**	if(i==20) {
-									myInputStream = new ByteArrayInputStream(Arrays.copyOfRange(byteSong, 0, 20*64000));
-									playMusic(myInputStream);
-								}*/
+												try {	
 													//ClipSyn still has problem if you play a song, stop it, then play it again
 													//ClipSyn is used to make sure that only one clip linelistener is running at a time
 
-													if(i>20 && i%10 == 0) {
-														if(clipSyn == true) {
+													if(i>20 && i%10 == 0)
+														if(clipSyn == true)
 															clipSyn = false;
-
-
-														}}
-
-													byte [] m;
-
+													
 													InetAddress aHost = InetAddress.getByName("localhost");
 
 													//Request
 													arguments[1] = String.valueOf(i*64000);
-													m = requestReply.JSONRequestObject("playSong",arguments).toString().getBytes("utf-8");
+													byte[] m = requestReply.JSONRequestObject("playSong",arguments).toString().getBytes("utf-8");
 													DatagramPacket request = new DatagramPacket(m, m.length, aHost, serverPort);
 													aSocket.send(request);
 
@@ -727,24 +630,20 @@ public class Homepage
 														//System.out.println(i);
 														System.arraycopy(reply.getData(), 0, byteSong, i*64000, 64000);
 													}
-													else
-													{
+													else {
 														System.arraycopy(reply.getData(), 0, byteSong, i*64000, size - i*64000);
 														//System.out.println("numb: "+i);
 													}
 
 												}
-												catch (SocketException e)
-												{
+												catch (SocketException e) {
 													System.out.println("Socket: " + e.getMessage());
 												}
-												catch (IOException e)
-												{
+												catch (IOException e) {
 													System.out.println("IO: " + e.getMessage());
 												}
 												packet++;
 											}
-
 										}
 									}}).start();
 								while (packet != 20);
@@ -752,10 +651,8 @@ public class Homepage
 								playMusic(myInputStream);
 								myInputStream.close();
 								try {
-
 									// use line listener to take care of synchronous call
 									current.addLineListener(new LineListener() {
-
 										public void update(LineEvent event) {
 											System.out.println("outhere");
 											if (event.getType() == LineEvent.Type.STOP && !pause) {
@@ -772,28 +669,21 @@ public class Homepage
 													current.setFramePosition(clipFrame);
 													if(isSongPlaying)
 														current.start();
-												}catch(Exception e) {
+												} catch(Exception e) {
 													e.printStackTrace();
 												}
 												clipSyn=true;
 											}
-
 										}
 									});
 
-								}catch(Exception e) {
+								} catch(Exception e) {
 									e.printStackTrace();
 								}
-
-								/*current = AudioSystem.getClip();
-								current.open(player);
-								current.setFramePosition(pos);
-								current.start();*/
 								playPause_.setText("\u2758" + "\u2758");
-							} catch ( IOException | UnsupportedAudioFileException e1) {
+							} catch ( IOException e1) {
 								e1.printStackTrace();
 							}
-							
 							//isSongPlaying = true;
 						}
 					}
