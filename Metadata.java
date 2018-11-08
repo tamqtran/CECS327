@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,7 @@ public class Metadata {
 		while (sc.hasNextLine()) {
 		     fileList.add(new File(sc.nextLine()));
 		}
+		sc.close();
 	}
 	
 	// maybe byte[] instead of string for content
@@ -67,6 +69,18 @@ public class Metadata {
 		f.append(content);
 	}
 
+	public void appends(String fileName, String content, String first, String last) {
+		File f = null;
+		//Need to replace fileName + .txt
+		//Wont work
+		if (fileList.contains(fileName +".txt")) {
+			int index = fileList.indexOf(fileName + ".txt");
+			f = new File (fileName);
+		} else {
+			f = new File(fileName);
+		}
+		f.appends(content, first, last);
+	}
 	// delete the filefrom the DFS
 	public void delete(String filename) {
 		
@@ -113,7 +127,32 @@ public class Metadata {
 		return F;
 	}
 	*/
-	
+	public String[] search(String filter, String index) {
+		int location = fileList.indexOf(new File(index));
+		File f = fileList.get(location);
+		char sFirstLetter = filter.charAt(0);
+		boolean found = false;
+		Chunk c;
+		for (int i = 0; i < f.getSize(); i++) {
+			c = f.getChunk(i);
+			if (sFirstLetter >= c.getFirstLetter().charAt(0) && sFirstLetter <= c.getLastLetter().charAt(0)) {
+				found = true;
+				break;
+			}
+		}
+		int guid = c.getGUID();
+		byte[] data = null; //REPLACE. GETS DATA FROM PEER
+		//PEER.GET
+		String str = new String(data, StandardCharsets.UTF_8);
+		String[] songs = str.split(" ");
+		ArrayList<String> result = new ArrayList<String>();
+		int sizeFilter = filter.length();
+		for (int i = 0; i < songs.length; i++) {
+			
+		}
+		
+		return null;
+	}
 	// searchSongs(String filter)
 	// read metadata
 	// let f be the inverted index of the songs

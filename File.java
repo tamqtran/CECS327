@@ -1,8 +1,13 @@
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -122,8 +127,69 @@ public class File {
 		}
 	}
 	
+	public void appends(String content, String first, String last) {
+		int guid = content.hashCode();
+		Chunk c = new Chunk(guid, first, last);
+		chunks.add(c);
+		
+		//INSERT LINE HERE TO PUT CONTENT INTO PEER
+		//PEER[].PUT(GUID,CONTENT.getBytes(Charset.forName("UTF-8")))
+		//Important to put the byte version of content, not content itself.
+	}
+	
 	// getter methods
 	public String getFileName() {return fileName;}
-	public List<Chunk> getChunks() {return chunks;}
+	public byte[] getChunkData(int i) {
+		Chunk[] chunksArray = (Chunk[]) chunks.toArray();
+		Chunk main = chunksArray[i];
+		String first = main.getFirstLetter();
+		String last = main.getLastLetter();
+		
+		Scanner scan = null;
+		try {
+			scan = new Scanner(Paths.get(fileName + ".txt"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		boolean correct = false;
+		
+		String data = null;
+		char LastChar = last.charAt(0);
+		LastChar = (char) (LastChar + 1);
+		while (scan.hasNextLine()) {
+			String line = scan.nextLine();
+			if (line.substring(0,1).equals(first)) {
+				correct = true;
+			}
+			if (correct) {
+				data = data + line + " ";
+			}
+			if (line.charAt(0) == LastChar) {
+				correct = false;
+			}
+			if (correct == false) {
+				break;
+			}
+		}
+		return data.getBytes(Charset.forName("UTF-8"));
+		
+		//May not be this complicated
+		//Probably get method with guid
+		//However this will be useful in the initialization file
+		
+		//IMPORTANT. IF YOU EVER NEED TO RECONVERT BACK TO STRING
+		//use this String str = new String(bytes, StandardCharsets.UTF_8);
+	}
+	public int getSize() {
+		return chunks.size();
+	}
+	public boolean equals(File f) {
+		if (this.getFileName().equals(f.getFileName())) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	public Chunk getChunk(int i) {return chunks.get(i);}
 }
