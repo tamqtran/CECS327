@@ -20,7 +20,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 	private JTable results;
 	private JScrollPane resultsJPS;
 	private JButton playButton, addButton;
-	private JLabel playlistLabel, responseLabel, errorLabel, searchLabel,
+	private JLabel playlistLabel, responseLabel, errorLabel, searchLabel, filterLabel,
 				   titleLabel, artistLabel, albumLabel;
 	private JComboBox<String> playList;
 	private String username, songName, songTitle, artist, album, 
@@ -38,7 +38,9 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 	 */
 	public SearchMenuPanel(String username, String[] search, String userSearch) {
 		this.username = username;
-//		System.out.println(username + " has searched: " + userSearch);
+		
+		System.out.println(username + " has searched: " + userSearch);
+		
 		// Custom Layout
 		this.setLayout(null);
 		this.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
@@ -53,15 +55,21 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		searchLabel = new JLabel("Searching for: " + u_search);
 		searchLabel.setSize(new Dimension(searchLabel.getPreferredSize()));
 		searchLabel.setLocation(10, 10);
-		searchLabel.setName("Search Entry");
+		searchLabel.setName("search entry");
 		this.add(searchLabel);
+		
+		filterLabel = new JLabel("Currently sorted by: " + filter);
+		filterLabel.setSize(new Dimension(filterLabel.getPreferredSize()));
+		filterLabel.setLocation(10, 25);
+		filterLabel.setName("filter");
+		this.add(filterLabel);
 		
 //		// Testing. Dummy values to store in JTable
 //		String data[][] = { {}, {}, {} };
 		
 		model = null;
 		updateSearch(search, userSearch);
-		System.out.println("Initial - filter by " + filter);
+		System.out.println("Filter by " + filter + " (Initial)");
 		// Creates a table to display the search results
 		results = new JTable(model);
 		results.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -71,10 +79,27 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 			public void mouseClicked(MouseEvent e) {
 				int col = results.columnAtPoint(e.getPoint());
 				filter = results.getColumnName(col);
-				System.out.println("Filter by " + filter);
-				flipOrder = (searchIndex != col) ? false : true;
-				searchIndex = col;
-				tableChangedFilter();
+				
+				System.out.println("Filter by " + filter);							// system call
+				System.out.println("searchIndex " + searchIndex + " / col " + col); // system call
+				
+				//	if the same column is pressed as the prior action,
+				//	then if it's already inverted,
+				// 	show inverted for filter; nothing otherwise,
+				//	or flipOrder is true; false otherwise
+				
+				filter +=   (searchIndex == col) ? ((flipOrder == true) ?   ""  : " (inverted)") : ""   ; 
+				flipOrder = (searchIndex == col) ? ((flipOrder == true) ? false :      true    ) : false; 
+				
+				// for flipOrder --- false: A-Z; true: Z-A
+				
+				System.out.println("flipOrder is now " + flipOrder);				// system call
+
+				searchIndex = col;			// set searchIndex to col
+				tableChangedFilter();		// change the table
+				
+				filterLabel.setText("Currently sorted for: " + filter);
+				filterLabel.setSize(new Dimension(filterLabel.getPreferredSize()));
 			}
 		});
 		
@@ -141,7 +166,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 						}
 						
 						// Changes written to the json file
-						 FileWriter fileWriter = new FileWriter(username+".json");
+						 FileWriter fileWriter = new FileWriter(pathname);
 						 fileWriter.write(obj1.toString());
 						 fileWriter.flush();
 						 fileWriter.close();
@@ -174,22 +199,19 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 			
 			search = sortSearch(search);	// sort the search
 			
+			// create the model
 			for (int i = 0; i < search.length; i++) {
 				  model.addRow(search[i].split("_"));
 			}
-			
-			searchLabel.setText("Searching for: " + u_search);
-			searchLabel.setSize(new Dimension(searchLabel.getPreferredSize()));
-			
-		} else {
+		} else { // create the error label
 			errorLabel = new JLabel("No results found for '" + userSearch + "'");
 			errorLabel.setSize(errorLabel.getPreferredSize());
 			errorLabel.setLocation(130, 415);
 			this.add(errorLabel);
-			
-			searchLabel.setText("Searching for: ");
-			searchLabel.setSize(new Dimension(searchLabel.getPreferredSize()));
-		}
+		}			
+		
+		searchLabel.setText("Searching for: " + u_search);
+		searchLabel.setSize(new Dimension(searchLabel.getPreferredSize()));
 	}
 	
 	/**
@@ -201,8 +223,6 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		updateSearch(search, userSearch);
 		results.setModel(model);
 		results.updateUI();
-		searchLabel.setText("Searching for: " + u_search);
-		searchLabel.setSize(new Dimension(searchLabel.getPreferredSize()));
 	}
 	
 	private String[] sortSearch(String [] search) {
@@ -222,14 +242,12 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 				if (c < results.getColumnCount()-1)
 					lineData[r] += "_";
 			}
-		}
-		//printArray(lineData);	//System call
-		
-		changeSearch(lineData, u_search);
+		} //printArray(lineData);	//System call
+		changeSearch(lineData, u_search); // change the table data to lineData
 	}
 	
 	/**
-	 * Driver method for quicksort. Sorts an array.
+	 * Driver method of quick sort. Sorts an array using quick sort.
 	 * @param array - the array to be sorted
 	 * @param low - the lowest point of the switch zone (usually index 0)
 	 * @param high - the highest point of the switch zone (usually the last element of the array)
@@ -246,16 +264,6 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 	}
 	
 	/**
-	 * System-prints the elements in an array.
-	 * @param array - a String array
-	 */
-	private void printArray(String [] array) {
-		for (String s : array) {
-			System.out.println("Printing: " + s);
-		}
-	}
-	
-	/**
 	 * Submethod of quick sort. Determines the pivot; switches every element around it based on the comparison
 	 * @param array - the array to be sorted
 	 * @param low - the low point of the switch zone
@@ -267,13 +275,14 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		int i = (low - 1);
 		for (int j = low; j < high; j++) {
 			int compare = array[j].split("_")[searchIndex].compareTo(pivotElement);
-			if (flipOrder ? compare <= 0 : compare >= 0) {
+			if (flipOrder ? compare >= 0 : compare <= 0) {
 				i++; qs_Swap(array, i, j);
 			}
 		}
 		qs_Swap(array, i+1, high);
 		return i+1;
 	}
+	
 	/**
 	 * Submethod for quicksort. Swaps two elements in an array.
 	 * @param array - the array to be sorted
@@ -284,6 +293,16 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		String temp = array[a];
 		array[a] = array[b];
 		array[b] = temp;
+	}
+	
+	/**
+	 * System-prints the elements in an array.
+	 * @param array - a String array
+	 */
+	private void printArray(String [] array) {
+		for (String s : array) {
+			System.out.println("Printing: " + s);
+		}
 	}
 	
 	/**

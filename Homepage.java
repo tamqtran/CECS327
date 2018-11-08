@@ -64,15 +64,22 @@ import org.json.JSONTokener;
  */
 public class Homepage 
 {
-	private final String 		specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]", SHIFT_PANEL = "Shifting", SEARCH_PANEL = "Search";
+
 	
 	private volatile static Clip current;
 	private int					songIndex;
 	private ArrayList<String> 	songList = new ArrayList<String>();
 	
 	private String 				userName, playlist;
+	
+	private final String 		specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]", 
+								SHIFT_PANEL = "Shifting", 
+								SEARCH_PANEL = "Search",
+								homeCard;
+	private final Font			Tahoma_Plain_FourZero = new Font("Tahoma", Font.PLAIN, 40);
+	
 	private JFrame 				frame;
-
+	
 	private JPanel 				HIGH_panel, 
 								Playlist_Panel, 
 								 PlaylistTitle, PlaylistOptions,
@@ -137,6 +144,7 @@ public class Homepage
 		userName = user; 											// takes the username from input
 		this.aSocket = aSocket;										// takes the socket from input
 		this.serverPort = serverPort;								// takes the serverPort from input
+		homeCard = "'MusicService' -  " + userName;
 		initialize(base);												// initializes the frame
 	}
 	
@@ -212,7 +220,7 @@ public class Homepage
 			public void mouseClicked(MouseEvent e) {
 				CardLayout c1 = (CardLayout)(CorePanel.getLayout());
 				c1.show(CorePanel, SHIFT_PANEL);
-				ShiftingPanel.requestFocusInWindow();
+				searchQuery_.requestFocusInWindow();
 				
 				JList list = (JList)e.getSource();				// this rectangle bounds between the first and last entries on playlist_List
 				Rectangle r = list.getCellBounds(0, list.getLastVisibleIndex());	
@@ -375,10 +383,22 @@ public class Homepage
 		_HistoryPanel = new JPanel();								// initialize _HistoryPanel and set layout
 		_HistoryPanel.setLayout(new FlowLayout());					// and maximum size for the panel
 		_HistoryPanel.setMaximumSize(new Dimension(200,40));		
+		
 		previousHistory_ = new JButton("\u276C \u276C");			// initialize previousHistory_ and nextHistory_ buttons
 		previousHistory_.setEnabled(false);
+		previousHistory_.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				searchQuery_.requestFocusInWindow();
+			}
+		});
+		
 		nextHistory_ = new JButton("\u276D \u276D");
 		nextHistory_.setEnabled(false);
+		nextHistory_.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				searchQuery_.requestFocusInWindow();
+			}
+		});
 		
 		previousHistory_.setName("previous panel");					// set names of buttons
 		nextHistory_.setName("next panel");
@@ -396,8 +416,13 @@ public class Homepage
 				if (ShiftingPanel.getComponents()[0].getName().equals("Base Home") 
 						|| ShiftingPanel.getComponents()[0].getName().equals("Home"))
 					System.out.println("Current panel in ShiftingPanel remains '" + ShiftingPanel.getCurrentPanelName() + "'");
-				else					
-					createNewHomePanel(null, titleLabel, "Home");
+				else {
+					JLabel title_ = new JLabel(homeCard, JLabel.CENTER);
+					title_.setFont(Tahoma_Plain_FourZero);	
+					
+					JPanel newHome = new JPanel(new BorderLayout());	
+					createNewHomePanel(newHome, title_, "Home");
+				}
 			}
 		});
 		
@@ -423,7 +448,7 @@ public class Homepage
 		_ProfilePanel.setMaximumSize(new Dimension(100,40));
 		
 		TopPanel.add(_HistoryPanel); 								// _SearchPanel and _ProfilePanel
-		TopPanel.add(Box.createRigidArea(new Dimension(1,1)));		// and _HistoryPanel are
+		TopPanel.add(Box.createRigidArea(new Dimension(5,5)));		// and _HistoryPanel are
 		TopPanel.add(_SearchPanel);									// added to TopPanel and gets a border set to it
 		TopPanel.add(Box.createHorizontalGlue());
 		TopPanel.add(home_);
@@ -440,9 +465,10 @@ public class Homepage
 		ShiftingPanel.setHistorySwitch(previousHistory_);			// assign action listeners to previousHistory_ and nextHistory_
 		ShiftingPanel.setHistorySwitch(nextHistory_);
 		
-		titleLabel = new JLabel("'MusicService' - " + userName, JLabel.CENTER);
-		titleLabel.setFont(new Font("Tahoma", Font.PLAIN, 40));		// initialize titleLabel and set font
+		titleLabel = new JLabel(homeCard, JLabel.CENTER);
+		titleLabel.setFont(Tahoma_Plain_FourZero);		// initialize titleLabel and set font
 		
+		HomePanel = new JPanel(new BorderLayout());	
 		createNewHomePanel(HomePanel, titleLabel, "Base Home");		// loads HomePanel into ShiftingPanel
 		
 		String[] temp = {};
@@ -760,6 +786,10 @@ public class Homepage
 		pane.add(LOW_panel); // add LOW_panel to pane (the content pane of frame)
 	}
 	
+	/**
+	 * A static method that plays an audio input stream.
+	 * @param music - the song that needs to be played
+	 */
 	public static void playMusic(InputStream music) {
 		try {
 			AudioInputStream audioIn = AudioSystem.getAudioInputStream(music);
@@ -796,9 +826,13 @@ public class Homepage
 		} return true;
 	}
 	
-	private void createNewHomePanel(JPanel source, JLabel title, String name) {
-		source = new JPanel(new BorderLayout());					// initialize newPanel, set size, and add titleLabel
-		
+	/**
+	 * A void method that adds a souce JPanel (a HomePanel) to ShiftingPanel
+	 * @param source - the panel being added
+	 * @param title - the label on the panel
+	 * @param name - the name of the panel being added
+	 */
+	private void createNewHomePanel(JPanel source, JLabel title, String name) {		
 		source.setSize(804,455);						
 		source.add(title, BorderLayout.CENTER);
 		source.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED)); // and set border around it (debug testing only)
