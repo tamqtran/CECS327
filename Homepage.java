@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -15,9 +16,6 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.DatagramPacket;
@@ -26,15 +24,12 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.UUID;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -50,12 +45,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
-import javax.swing.table.DefaultTableModel;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 /**
  * The Homepage class creates a frame that houses the main piece of this music streaming application.
@@ -64,8 +55,6 @@ import org.json.JSONTokener;
  */
 public class Homepage 
 {
-
-	
 	private volatile static Clip current;
 	private int					songIndex;
 	private ArrayList<String> 	songList = new ArrayList<String>();
@@ -110,9 +99,8 @@ public class Homepage
 	
 	private CreatePlaylistDialog playlistCreation;
 	
-	private boolean isSongPlaying = false 				// starts false; changes depending on changes occurring in frame
-//					, isThereASong = false
-	;
+	private boolean isSongPlaying = false, 				// starts false; changes depending on changes occurring in frame
+					isHistory = false;
 	
 	DatagramSocket aSocket;								//For server connection
 	int serverPort;
@@ -131,7 +119,7 @@ public class Homepage
 	 * @param args: a list of arguments. If none, then it will act as an empty array.
 	 */
 	public static void main(String[] args) { // test
-		new Homepage("allan",null, 6733, null);
+		new Homepage("allan",null, 6733, new JFrame());
 	}
 	
 	/**
@@ -172,10 +160,8 @@ public class Homepage
 		frame.addComponentListener(new ComponentAdapter() {			// add a component listener between the frame and ShiftingPanel
 			@Override
 			public void componentResized(ComponentEvent arg0) {
-				// TODO Auto-generated method stub
-				
+				// TODO Auto-generated method stub		
 				Dimension f = frame.getSize(), shift = new Dimension(196,147); // an insanely precise Dimension object
-				
 				ShiftingPanel.setSize((int)(f.getSize().getWidth() - shift.getWidth()), 
 										(int)(f.getSize().getHeight()- shift.getHeight()));
 				ShiftingPanel.updateUI(); 							// update the UI of ShiftingPanel after changing the size
@@ -215,12 +201,10 @@ public class Homepage
 		dm = new DefaultListModel(); 								// initialize dm and playlist_List (using dm)
 		playlist_List = new JList(dm);
 		playlist_List.setFont(new Font("Tahoma", Font.PLAIN, 14));		// set font for playlist_List
-		getPlaylists(dm);												// update list gui with playlist information from json
-				
+		getPlaylists(dm);												// update list gui with playlist information from json			
 		playlist_List.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				CardLayout c1 = (CardLayout)(CorePanel.getLayout());
-				c1.show(CorePanel, SHIFT_PANEL);
+				((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);
 				searchQuery_.requestFocusInWindow();
 				
 				JList list = (JList)e.getSource();				// this rectangle bounds between the first and last entries on playlist_List
@@ -278,10 +262,8 @@ public class Homepage
 		removePlaylist_.setName("remove a user's playlist");
 		removePlaylist_.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
-				System.out.println("Displaying options for which playlist to delete...");	
-				
-				// the list of options would be based on the user's personal playlists				
-				
+				System.out.println("Displaying options for which playlist to delete...");		
+				// the list of options would be based on the user's personal playlists					
 				Object[] possibilities = dm.toArray(); 				// each playlist name would be listed here
 				String removedPlaylist = (String) JOptionPane.showInputDialog(frame, "Which playlist are you removing?\n"
 						+ "(There's no going back once you do.)", "Playlist Removal", 
@@ -330,20 +312,30 @@ public class Homepage
 		searchField = new JComboBox();									// create searchField
 		searchField.setEditable(true);									// allow for an editable text field
 		searchField.setName("Search for...");							// set the name
-		searchField.getEditor().getEditorComponent()
-				.addFocusListener(new FocusListener() {			// set a focus listener to the text field itself
+		JTextField ec = (JTextField)searchField.getEditor().getEditorComponent();
+				ec.addFocusListener(new FocusListener() {			// set a focus listener to the text field itself
 			@Override
 			public void focusGained(FocusEvent e) {
 				// TODO Auto-generated method stub
-				CardLayout cards = (CardLayout)(CorePanel.getLayout());	
-				cards.show(CorePanel, SEARCH_PANEL);					// swap cards from ShiftingPanel to SearchMenuPanel
 				System.out.println("searchField focus GAINED");			// system call
+				System.out.println("in source: " + e.getSource().toString());
+				if (!isHistory) {
+					((CardLayout)(CorePanel.getLayout())).show(CorePanel, SEARCH_PANEL);	// swap cards from ShiftingPanel to SearchMenuPanel
+					CorePanel.updateUI();
+					
+				} else isHistory = false;
 			}
 			@Override
 			public void focusLost(FocusEvent e) {
 				// TODO Auto-generated method stub
 				System.out.println("searchField focus LOST");			// system call
-				searchQuery_.requestFocusInWindow();					// give focus back to searchQuery_ when focus is lost here
+				System.out.println("out source: " + e.getSource().toString());
+				
+				CardLayout cl = ((CardLayout)(CorePanel.getLayout()));
+				cl.show(CorePanel, SHIFT_PANEL);
+//				searchQuery_.requestFocusInWindow();					// give focus back to searchQuery_ when focus is lost here
+				CorePanel.updateUI();
+				
 			}
 		});
 		
@@ -381,19 +373,9 @@ public class Homepage
 		
 		previousHistory_ = new JButton("\u276C \u276C");			// initialize previousHistory_ and nextHistory_ buttons
 		previousHistory_.setEnabled(false);
-		previousHistory_.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				searchQuery_.requestFocusInWindow();
-			}
-		});
 		
 		nextHistory_ = new JButton("\u276D \u276D");
 		nextHistory_.setEnabled(false);
-		nextHistory_.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				searchQuery_.requestFocusInWindow();
-			}
-		});
 		
 		previousHistory_.setName("previous panel");					// set names of buttons
 		nextHistory_.setName("next panel");
@@ -419,6 +401,7 @@ public class Homepage
 					JPanel newHome = new JPanel(new BorderLayout());	
 					createNewHomePanel(newHome, title_, "Home");
 				}
+				searchQuery_.requestFocusInWindow();
 			}
 		});
 		
@@ -782,6 +765,8 @@ public class Homepage
 		pane.add(LOW_panel); // add LOW_panel to pane (the content pane of frame)
 	}
 	
+	protected JPanel getCorePanel() {return CorePanel;}
+	
 	/**
 	 * A static method that plays an audio input stream.
 	 * @param music - the song that needs to be played
@@ -806,6 +791,7 @@ public class Homepage
 			playlist = "x";
 		else playlist = name;
 		System.out.println("currently looking at " + name);
+		isHistory = true;
 	}
 	
 	// FOR USE WITH SEARCHQUERY_	

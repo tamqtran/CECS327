@@ -1,5 +1,6 @@
 // Created by Austin Tao on 10/5/2018
 
+import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -101,48 +102,44 @@ public class ShiftingPanel extends JLayeredPane
 		case "previous panel": 
 			prevButton = button;	// assign previousHistory_ as prevButton and assign an action listener to it
 			prevButton.addActionListener(new ActionListener() {
-				@Override
 				public void actionPerformed(ActionEvent e) {
 					System.out.println("Moving to previous panel...");	// System announcement
-					
+
 					// the current panel would be moved into nextPanels in pos 0 (shift)
 					for (Component p: getShiftingPanel().getComponentsInLayer(ZERO)) 
 						getShiftingPanel().setLayer(p, N_TWO);
-					
+
 					// the panel in pos 0 of previousPanels would become the current panel (shift)
-					
+
 					getShiftingPanel().setLayer(getShiftingPanel().getComponentsInLayer(N_ONE)[0], ZERO, 0);
-							
+
 					currentMovedBack();		//update history and compensate currentComponent
-					
+
 					updateAndCheck();
-					
-					setCurrentPlaylistInHomepage();
 				}
 			});
 			break;
 		case "next panel": 
 			nextButton = button;	// assign nextHistory_ as nextButton and assign an action listener to it
 			nextButton.addActionListener(new ActionListener() {
-				@Override
 				public void actionPerformed(ActionEvent e) {
 					System.out.println("Moving to next panel...");	//System announcement
-					
+
 					// the current panel would be moved into previousPanels in pos 0 (shift)		
 					for (Component p: getShiftingPanel().getComponentsInLayer(ZERO)) 
 						getShiftingPanel().setLayer(p, N_ONE, 0);
-						
+
 					// the panel in pos 0 for nextPanels would become the current panel (shift)
-					
+
 					getShiftingPanel().setLayer(getShiftingPanel().getComponentsInLayer(N_TWO)[nextPanels.length-1], ZERO, 0);
-					
+
 					currentMovedForward();		//compensate currentComponent
-					
+
 					updateAndCheck();
-					
-					setCurrentPlaylistInHomepage();
 				}
 			});
+			break;
+		default: 
 			break;
 		}
 	}
@@ -296,6 +293,8 @@ public class ShiftingPanel extends JLayeredPane
 		// system: tell the total number of panels in history, total number of previous panels, and total number of future panels
 		System.out.println("\nShiftingPanel layers: " + history.length + " total, " 
 		+ previousPanels.length + " prev, 1 current, " + nextPanels.length + " next");
+		
+		setCurrentPlaylistInHomepage();
 		
 		// enable or disable the history buttons depending on the emptiness of the previousPanels and nextPanels variables
 		if (previousPanels.length > 0) prevButton.setEnabled(true); else prevButton.setEnabled(false);	

@@ -13,10 +13,10 @@ import org.json.JSONTokener;
 import javax.swing.table.*;
 
 @SuppressWarnings("serial")
-public class SearchMenuPanel extends JPanel implements ActionListener, MouseListener {
+public class SearchMenuPanel extends JPanel implements ActionListener {
 	
 	//Declaring variables
-
+	private JPanel panel;
 	private JTable results;
 	private JScrollPane resultsJPS;
 	private JButton playButton, addButton;
@@ -107,8 +107,28 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		resultsJPS.setSize(new Dimension(400, 250));
 		resultsJPS.setLocation(10, 50);
 		resultsJPS.setName("resultsJPS");
-		results.addMouseListener(this);
-		
+		results.addMouseListener(new MouseAdapter() {
+			@Override
+		    public void mousePressed(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					// TODO Auto-generated method stub
+					int row = results.getSelectedRow();
+
+					songTitle = results.getModel().getValueAt(row, 0).toString();
+					artist = results.getModel().getValueAt(row, 1).toString();
+					album = results.getModel().getValueAt(row, 2).toString();
+
+					//change text on labels in homepage
+					titleLabel.setText(songTitle); titleLabel.setVisible(true);
+					artistLabel.setText(artist); artistLabel.setVisible(true);
+					albumLabel.setText(album);	albumLabel.setVisible(true);
+
+					songName = songTitle + "_" + artist + "_" + album;	
+					System.out.println("SearchMenuPanel "+ panel.getName() + ": '" + songName + "' selected");
+				}
+			}	
+		});
+			
 		// News JScrollPane else column names wont show up
 		this.add(resultsJPS);
 
@@ -181,6 +201,8 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 			}
 		});
 		this.add(addButton);
+		
+		panel = this;
 	}
 	
 	/**
@@ -223,6 +245,8 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		updateSearch(search, userSearch);
 		results.setModel(model);
 		results.updateUI();
+		
+		panel = this;
 	}
 	
 	private String[] sortSearch(String [] search) {
@@ -393,60 +417,5 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 	public String getSong() {
 		System.out.println("SearchMenuPanel " + this.getName() + " - song chosen: " + songName);
 		return songName;
-	}
-	
-	/**
-	 * An overridden MouseEvent method that detects what song has been clicked on.
-	 * @param e: a MouseEvent
-	 */
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-//		int row = this.results.getSelectedRow();
-//		
-//		songTitle = results.getModel().getValueAt(row, 0).toString();
-//		artist = results.getModel().getValueAt(row, 1).toString();
-//		album = results.getModel().getValueAt(row, 2).toString();
-//
-//		System.out.println("SearchMenuPanel "+ this.getName() + " -- '" + songTitle + "_" + artist + "_" + album + "' clicked");
-
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		if (e.getClickCount() == 2) {
-			// TODO Auto-generated method stub
-			int row = this.results.getSelectedRow();
-			
-			songTitle = results.getModel().getValueAt(row, 0).toString();
-			artist = results.getModel().getValueAt(row, 1).toString();
-			album = results.getModel().getValueAt(row, 2).toString();
-			
-			//change text on labels in homepage
-			titleLabel.setText(songTitle); titleLabel.setVisible(true);
-			artistLabel.setText(artist); artistLabel.setVisible(true);
-			albumLabel.setText(album);	albumLabel.setVisible(true);
-			
-			songName = songTitle + "_" + artist + "_" + album;	
-			System.out.println("SearchMenuPanel "+ this.getName() + ": '" + songName + "' selected");
-		}
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 }
