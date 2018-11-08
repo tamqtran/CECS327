@@ -18,25 +18,16 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 	//Declaring variables
 
 	private JTable results;
-
 	private JScrollPane resultsJPS;
-
 	private JButton playButton, addButton;
-
-	private JLabel playlistLabel, responseLabel, errorLabel,
+	private JLabel playlistLabel, responseLabel, errorLabel, searchLabel,
 				   titleLabel, artistLabel, albumLabel;
-
 	private JComboBox<String> playList;
-
 	private String username, songName, songTitle, artist, album, 
-					filter = "Title", u_search; //by default, the search filter is 'by title'
-	
+					filter = "Title", u_search = ""; //by default, the search filter is 'by title'
 	private int searchIndex = 0;
-	
 	private DefaultTableModel model;
-	
 	private final String[] columns = { "Title", "Artist(s)", "Album" };
-	
 	private boolean flipOrder = false;
 	
 	/**
@@ -45,7 +36,6 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 	 * @param search - string that contains the song artist name, album name, and song title name
 	 * @param userSearch - the desired search from the user
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public SearchMenuPanel(String username, String[] search, String userSearch) {
 		this.username = username;
 //		System.out.println(username + " has searched: " + userSearch);
@@ -60,7 +50,11 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		responseLabel.setName("response");
 		this.add(responseLabel);
 
-		
+		searchLabel = new JLabel("Searching for: " + u_search);
+		searchLabel.setSize(new Dimension(searchLabel.getPreferredSize()));
+		searchLabel.setLocation(10, 10);
+		searchLabel.setName("Search Entry");
+		this.add(searchLabel);
 		
 //		// Testing. Dummy values to store in JTable
 //		String data[][] = { {}, {}, {} };
@@ -183,11 +177,18 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 			for (int i = 0; i < search.length; i++) {
 				  model.addRow(search[i].split("_"));
 			}
+			
+			searchLabel.setText("Searching for: " + u_search);
+			searchLabel.setSize(new Dimension(searchLabel.getPreferredSize()));
+			
 		} else {
 			errorLabel = new JLabel("No results found for '" + userSearch + "'");
 			errorLabel.setSize(errorLabel.getPreferredSize());
 			errorLabel.setLocation(130, 415);
 			this.add(errorLabel);
+			
+			searchLabel.setText("Searching for: ");
+			searchLabel.setSize(new Dimension(searchLabel.getPreferredSize()));
 		}
 	}
 	
@@ -200,6 +201,8 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 		updateSearch(search, userSearch);
 		results.setModel(model);
 		results.updateUI();
+		searchLabel.setText("Searching for: " + u_search);
+		searchLabel.setSize(new Dimension(searchLabel.getPreferredSize()));
 	}
 	
 	private String[] sortSearch(String [] search) {
@@ -216,14 +219,11 @@ public class SearchMenuPanel extends JPanel implements ActionListener, MouseList
 			lineData[r] = results.getValueAt(r, 0).toString() + "_"; //lineData[r] gets replaced from null
 			for (int c = 1; c < results.getColumnCount(); c++) {
 				lineData[r] += results.getValueAt(r, c).toString();
-				if (c < results.getColumnCount()-1) {
+				if (c < results.getColumnCount()-1)
 					lineData[r] += "_";
-				}
-//				System.out.println("Pulling: " + lineData[r]);
 			}
 		}
-
-		printArray(lineData);	//System call
+		//printArray(lineData);	//System call
 		
 		changeSearch(lineData, u_search);
 	}
