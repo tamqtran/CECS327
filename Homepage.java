@@ -44,6 +44,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
 import org.json.JSONObject;
@@ -312,30 +313,39 @@ public class Homepage
 		searchField = new JComboBox();									// create searchField
 		searchField.setEditable(true);									// allow for an editable text field
 		searchField.setName("Search for...");							// set the name
-		JTextField ec = (JTextField)searchField.getEditor().getEditorComponent();
-				ec.addFocusListener(new FocusListener() {			// set a focus listener to the text field itself
+		searchField.getEditor().getEditorComponent()
+				.addFocusListener(new FocusListener() {			// set a focus listener to the text field itself
 			@Override
 			public void focusGained(FocusEvent e) {
 				// TODO Auto-generated method stub
-				System.out.println("searchField focus GAINED");			// system call
-				System.out.println("in source: " + e.getSource().toString());
-				if (!isHistory) {
-					((CardLayout)(CorePanel.getLayout())).show(CorePanel, SEARCH_PANEL);	// swap cards from ShiftingPanel to SearchMenuPanel
-					CorePanel.updateUI();
-					
-				} else isHistory = false;
+				SwingUtilities.invokeLater(new Runnable() { // the focus is run last
+					@Override
+					public void run() {
+						System.out.println("searchField focus GAINED");	// system call
+						//System.out.println("in source: " + e.getSource().toString());
+						if (!isHistory) {
+							((CardLayout)(CorePanel.getLayout())).show(CorePanel, SEARCH_PANEL);	
+							// swap cards from ShiftingPanel to SearchMenuPanel
+							CorePanel.updateUI();
+						} else isHistory = false;
+					}
+				});
 			}
 			@Override
 			public void focusLost(FocusEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println("searchField focus LOST");			// system call
-				System.out.println("out source: " + e.getSource().toString());
-				
-				CardLayout cl = ((CardLayout)(CorePanel.getLayout()));
-				cl.show(CorePanel, SHIFT_PANEL);
-//				searchQuery_.requestFocusInWindow();					// give focus back to searchQuery_ when focus is lost here
-				CorePanel.updateUI();
-				
+				//	TODO Auto-generated method stub
+				SwingUtilities.invokeLater(new Runnable() { // the focus is run last
+					@Override
+					public void run() {
+						System.out.println("searchField focus LOST");	// system call
+						//System.out.println("out source: " + e.getSource().toString());
+						((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);
+						// swap cards from SearchMenuPanel to ShiftingPanel
+						searchQuery_.requestFocusInWindow();	
+						// give focus back to searchQuery_
+						CorePanel.updateUI();
+					}
+				});
 			}
 		});
 		
