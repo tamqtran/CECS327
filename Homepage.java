@@ -208,6 +208,7 @@ public class Homepage
 		PlaylistTitle.setMaximumSize(new Dimension(100,15));
 		
 		playlist_ = new JLabel("My Playlists"); 					// initialize playlist_ label
+		playlist_.setName("list of user's playlist");
 		playlist_.setFont(new Font("Tahoma", Font.PLAIN, 15)); 		// set font for playlist_
 		PlaylistTitle.add(playlist_);  								// add playlist_ to PlaylistTitle
 					
@@ -225,10 +226,8 @@ public class Homepage
 				JList list = (JList)e.getSource();				// this rectangle bounds between the first and last entries on playlist_List
 				Rectangle r = list.getCellBounds(0, list.getLastVisibleIndex());	
 				
-				if (e.getButton() == MouseEvent.BUTTON1) 									// left mouse button double-click only
-				{		
-					if (e.getClickCount() == 2 && r != null && r.contains(e.getPoint()))	// and only within the rectangle (that exists) 
-					{ 
+				if (e.getButton() == MouseEvent.BUTTON1) {									// left mouse button double-click only
+					if (e.getClickCount() == 2 && r != null && r.contains(e.getPoint())) {	// and only within the rectangle (that exists) 
 						int index = list.locationToIndex(e.getPoint());
 						
 						System.out.println("Index identified: " + index);	// system: shows the index of the clicked item
@@ -237,8 +236,7 @@ public class Homepage
 						System.out.println("Current panel in ShiftingPanel is '" + ShiftingPanel.getCurrentPanelName() + "'");
 						
 						// checks if the current panel is the same one as the one that just got clicked
-						if (!list.getSelectedValue().toString().equals(ShiftingPanel.getCurrentPanelName())) 
-						{
+						if (!list.getSelectedValue().toString().equals(ShiftingPanel.getCurrentPanelName())) {
 							PlaylistPanel newPanel = new PlaylistPanel(userName, list.getSelectedValue().toString());
 							playlist = list.getSelectedValue().toString();
 							newPanel.setName(list.getSelectedValue().toString());	// initialize a new PlaylistPanel and set the name of the PlaylistPanel
@@ -267,10 +265,9 @@ public class Homepage
 		PlaylistOptions.setLayout(new BoxLayout(PlaylistOptions, BoxLayout.X_AXIS));
 
 		createPlaylist_ = new JButton("Create"); 						// initialize createPlaylist_ and assign action listener
-		createPlaylist_.addActionListener(new ActionListener() 
-		{
-			@Override public void actionPerformed(ActionEvent e) 
-			{
+		createPlaylist_.setName("create a new playlist for the user");
+		createPlaylist_.addActionListener(new ActionListener() {
+			@Override public void actionPerformed(ActionEvent e) {
 				System.out.println("Opening subwindow for playlist naming...");				
 				playlistCreation.setLocationRelativeTo(frame); 			// show playlist creation dialog
 				playlistCreation.setVisible(true); 						// set dialog visibility to true
@@ -278,13 +275,12 @@ public class Homepage
 		});
 		
 		removePlaylist_ = new JButton("Remove"); 						// initialize removePlaylist_ and assign action listener
-		removePlaylist_.addActionListener(new ActionListener() 
-		{
-			@Override public void actionPerformed(ActionEvent e) 
-			{
+		removePlaylist_.setName("remove a user's playlist");
+		removePlaylist_.addActionListener(new ActionListener() {
+			@Override public void actionPerformed(ActionEvent e) {
 				System.out.println("Displaying options for which playlist to delete...");	
 				
-				// the premise would be that the list of options would be based on the user's personal playlists				
+				// the list of options would be based on the user's personal playlists				
 				
 				Object[] possibilities = dm.toArray(); 				// each playlist name would be listed here
 				String removedPlaylist = (String) JOptionPane.showInputDialog(frame, "Which playlist are you removing?\n"
@@ -292,13 +288,11 @@ public class Homepage
 						JOptionPane.PLAIN_MESSAGE, null, possibilities, null);
 				if (removedPlaylist == null) System.out.println("No playlist was removed in the end..."); 
 				// the dialog was exited one way or another. Otherwise...
-				else 
-				{
-					removePlaylist(removedPlaylist, userName);		// the variable rp would represent the playlist name to be deleted
+				else {
+					removePlaylist(removedPlaylist, userName);		//removedPlaylist represents the playlist name to be deleted
 					getPlaylists(dm); 								// update the model (and thus the gui) afterwards
 					
 					// if the current song is from this playlist, remove visibility of the description panel
-					
 					ShiftingPanel.removeFromHistory(removedPlaylist);
 					System.out.println("The playlist --" + removedPlaylist + "-- was removed."); // system announcement
 				}	
@@ -336,8 +330,8 @@ public class Homepage
 		searchField = new JComboBox();									// create searchField
 		searchField.setEditable(true);									// allow for an editable text field
 		searchField.setName("Search for...");							// set the name
-		JTextField editorComponent = (JTextField) searchField.getEditor().getEditorComponent();
-		editorComponent.addFocusListener(new FocusListener() {			// set a focus listener to the text field itself
+		searchField.getEditor().getEditorComponent()
+				.addFocusListener(new FocusListener() {			// set a focus listener to the text field itself
 			@Override
 			public void focusGained(FocusEvent e) {
 				// TODO Auto-generated method stub
@@ -354,6 +348,7 @@ public class Homepage
 		});
 		
 		searchQuery_ = new JButton("Search");							// creates searchQuery_
+		searchQuery_.setName("search button");
 		searchQuery_.addActionListener(new ActionListener() {			// add action listener that searches for text in searchField
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -407,6 +402,7 @@ public class Homepage
 		_HistoryPanel.add(nextHistory_);
 		
 		home_ = new JButton("\u2302");								// home button - returns to home screen
+		home_.setName("go home");
 		home_.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -429,13 +425,13 @@ public class Homepage
 		_ProfilePanel = new JPanel();								// initialize _ProfilePanel and set layout
 		_ProfilePanel.setLayout(new FlowLayout());
 		username_ = new JLabel("User: " + userName + "  ");			// initialize username_ and logout_
+		username_.setName("show user name");
 		logout_ = new JButton("Logout");
+		logout_.setName("log out of user's account");
 		logout_.addActionListener(new ActionListener() { 			// assign action listener to logout_
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();									// disposes of current frame
-				
-				//send logout message to server
-				String [] arguments = {userName};
+				String [] arguments = {userName};					//send logout message to server
 				requestReply.UDPRequestReply("loggedOut",arguments, aSocket, serverPort);
 				System.out.println("Logging out..."); 							// system announcement
 		        new Login(aSocket, serverPort, frame).setVisible(true); 		// creates new Login() object
