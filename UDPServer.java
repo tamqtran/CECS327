@@ -1,6 +1,8 @@
 //package Server;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import javax.sound.sampled.AudioInputStream;
@@ -14,10 +16,20 @@ import java.io.*;
 
 public class UDPServer
 {
+	public class client{
+		int clientPort; // client port
+		int serverPort; // server port for client
+		public client(int cport, int sPort) {
+			clientPort = cport;
+			serverPort = sPort;
+		}
+	}
 	static Method json;
 	
 	public static void main(String args[]) throws IOException, ClassNotFoundException
 	{
+		List<client> clients = new ArrayList<client>();
+		
 		/*final ServerSocket serverSocket = new ServerSocket(6778);
 		Socket clientSocket = null;
 		byte[] rep = null;
@@ -77,8 +89,8 @@ public class UDPServer
     }
     */
 		int port = 6733;
-		final DatagramSocket aSocket = new DatagramSocket(port);
-	
+		final DatagramSocket aSocket = new DatagramSocket(port); // server port used for client login
+		
 		try
 		{
 			//aSocket = new DatagramSocket(6733);

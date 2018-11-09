@@ -4,12 +4,14 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
@@ -47,47 +49,92 @@ public class TCPServer {
         	printPeers(peers);
             bootstrap(peers);
             master = peers[0];
-            Number160 nr = new Number160(RND);
+            
+            // Put matadata and index into master peer
+            String metaData = readFile("METADATA.txt");
+            put(master, Number160.createHash("METADATA.txt"), metaData);
+            
+            String artistIndex = readFile("artistIndex.txt");
+            put(master, Number160.createHash("artistIndex.txt"), artistIndex);
+            
+            String albumIndex = readFile("albumIndex.txt");
+            put(master, Number160.createHash("albumIndex.txt"), albumIndex);
+            
+            String songIndex = readFile("songIndex.txt");
+            put(master, Number160.createHash("songIndex.txt"), songIndex);
+
+            Object index = get(peers[1], Number160.createHash("songIndex.txt"));
+            //System.out.println(index);
+            
+            // Put song in index to peer randomly
+            String [] songs = index.toString().split("\n");
+            for(int i = 1; i<songs.length; i++) {
+            	String [] songArray = songs[i].split(";");
+            	String songName = songArray[0]+"_"+songArray[1]+"_"+songArray[2]+".wav";
+            	byte [] songByte = getSong(songName);
+            	PeerDHT peer = peers[i%3];
+            	put(peer,Number160.createHash(songName),songByte);
+            }
+            
+            //Test playing bytes from peer get
+            
+            String requestSong = "Hello Goodbye_The Beatles_Magical Mystery Tour.wav";
+            byte [] songByte = (byte[]) get(peers[2],Number160.createHash(requestSong));
+            
+            Clip current = null;
+    		ByteArrayInputStream myInputStream = new ByteArrayInputStream(songByte);
+        	try {
+       
+    			AudioInputStream audioIn = AudioSystem.getAudioInputStream(myInputStream);
+    			current = AudioSystem.getClip();
+    			current.open(audioIn);
+    			myInputStream.close();
+    			current.start();
+    		}catch(Exception e) {
+    			e.printStackTrace();
+    		}
+        	
             
             
             //***** TEST TEST ****//
-//            File file = new File("Hello Goodbye_The Beatles_Magical Mystery Tour.wav");
-//    		int size = (int) file.length();
-//    		byte[] bytes = new byte[size];
-//    		try 
-//    		{
-//    			BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
-//    			buf.read(bytes, 0, bytes.length);
-//    			buf.close();
-//    		} 
-//    		catch (FileNotFoundException e) 
-//    		{
-//    			e.printStackTrace();
-//    		} 
-//    		catch (IOException e) 
-//    		{
-//    			e.printStackTrace();
-//    		}
-//    		System.out.println("Actual Song Byte: "+bytes);
-//            put(peers[0], nr, bytes); // put song into peer 0 master
-//            Data bsong = get(peers[2], nr); // get song using peer 1
-//            System.out.println("Got Song Byte: "+bsong);
-//            Clip current = null;
-//    		ByteArrayInputStream myInputStream = new ByteArrayInputStream(bsong.toBytes());
-//        	try {
-//       
-//    			AudioInputStream audioIn = AudioSystem.getAudioInputStream(myInputStream);
-//    			current = AudioSystem.getClip();
-//    			current.open(audioIn);
-//    			myInputStream.close();
-//    			current.start();
-//    		}catch(Exception e) {
-//    			e.printStackTrace();
-//    		}
+          /*File file = new File("Hello Goodbye_The Beatles_Magical Mystery Tour.wav");
+    		int size = (int) file.length();
+    		byte[] bytes = new byte[size];
+    		try 
+   		{
+    			BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
+    			buf.read(bytes, 0, bytes.length);
+    			buf.close();
+    		} 
+    		catch (FileNotFoundException e) 
+    		{
+    			e.printStackTrace();
+    		} 
+    		catch (IOException e) 
+    		{
+    			e.printStackTrace();
+    		}
+    		System.out.println("Actual Song Byte: "+bytes);
+            put(peers[0], new Number160(123), new Data( bytes)); // put song into peer 0 master
+           Data bsong = get(peers[2], new Number160(123)); // get song using peer 1
+            System.out.println("Got Song Byte: "+bsong);
+            Clip current = null;
+    		ByteArrayInputStream myInputStream = new ByteArrayInputStream(bsong.toBytes());
+        	try {
+       
+    			AudioInputStream audioIn = AudioSystem.getAudioInputStream(myInputStream);
+    			current = AudioSystem.getClip();
+    			current.open(audioIn);
+    			myInputStream.close();
+    			current.start();
+    		}catch(Exception e) {
+    			e.printStackTrace();
+    		}
+    		*/
         	/*****TEST**/
             
-            System.out.println(RND);
-            System.out.println(nr);
+            //System.out.println(RND);
+            //System.out.println(nr);
         }catch (Exception e) {
         	e.printStackTrace();
         } finally {
@@ -147,9 +194,20 @@ public class TCPServer {
 						try 
 						{						
 							//result = json.getClass().getMethod(method,argTypes).invoke(json, arguments);
-							result = getSong(arguments[0]);
+							
+							if(method.equals("getSong")) {
+								// get song in bytes & transfer it over to UDP server
+								//String requestSong = arguments[0];
+								byte [] songByte = (byte[]) get(peers[1],Number160.createHash(arguments[0]));
+								result = songByte;
+								//result = getSong(arguments[0]);
+								
+							} else {
+							//search here
+							result = 0;
+						}
 							System.out.println(result.toString());
-						} 
+						}
 						catch (Exception e) 
 						{
 							e.printStackTrace();
@@ -221,9 +279,9 @@ public class TCPServer {
 	        PeerDHT[] peers = new PeerDHT[nr];
 	        for ( int i = 0; i < nr; i++ ) {
 	            if ( i == 0 ) {
-	                peers[0] = new PeerBuilderDHT(new PeerBuilder( new Number160( RND ) ).ports( port ).start()).start();
+	                peers[0] = new PeerBuilderDHT(new PeerBuilder( new Number160( i+1 ) ).ports( port ).start()).start();
 	            } else {
-	                peers[i] = new PeerBuilderDHT(new PeerBuilder( new Number160( RND ) ).masterPeer( peers[0].peer() ).start()).start();
+	                peers[i] = new PeerBuilderDHT(new PeerBuilder( new Number160( i+1 ) ).masterPeer( peers[0].peer() ).ports(port+i).start()).start();
 	            }
 	        }
 	        return peers;
@@ -237,19 +295,18 @@ public class TCPServer {
 	    	}
 	    }
     
-    private static void put(final PeerDHT peer, final Number160 guid, byte[] data) 
-            throws IOException, ClassNotFoundException {
-        FuturePut futurePut = peer.put(guid).data(new Data(data)).start();
+    private static void put(final PeerDHT peer, final Number160 guid, Object data) throws IOException {
+    	FuturePut futurePut = peer.put(guid).object(data).start();
         futurePut.awaitUninterruptibly();
-        System.out.println("peer " + peer.peerID() + " stored [key: " + guid + ", value: "+ data);
+        System.out.println("peer " + peer.peerID() + " stored [key: " + guid + ", value: "+ new Data (data));
     }
     
-    private static Data get(final PeerDHT peer, final Number160 guid) 
-            throws IOException, ClassNotFoundException {
-        FutureGet futureGet = peer.get(guid).start();
+    private static Object get(final PeerDHT peer, final Number160 guid) throws ClassNotFoundException, IOException {
+           
+    	FutureGet futureGet = peer.get(guid).start();
         futureGet.awaitUninterruptibly();
         System.out.println("peer " + peer.peerID() + " got: \"" + futureGet.data() + "\" for the key " + guid);
-        return futureGet.data();
+        return futureGet.data().object();
     }
     
     //***  Method for Each request ***/
@@ -277,6 +334,30 @@ public class TCPServer {
 			return bytes;
 		
 	}
+    public static String readFile(String filename) throws IOException
+    {
+        String content = null;
+        File file = new File(filename); 
+        FileReader reader = null;
+        try {
+            reader = new FileReader(file);
+            char[] chars = new char[(int) file.length()];
+            reader.read(chars);
+            content = new String(chars);
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if(reader != null){
+                reader.close();
+            }
+        }
+        return content;
+    }
+    
+    public static String toHex(String arg) {
+    	  return String.format("%x", new BigInteger(1, arg.getBytes(/*YOUR_CHARSET?*/)));
+    	}
 	
     
 }

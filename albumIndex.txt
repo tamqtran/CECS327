@@ -1,6 +1,0 @@
-Album;SongTitle;Artist;GUID
-Balance of Power;So Serious;Electric Light Orchestra;3
-Magical Mystery Tour;Hello Goobye;The Beatles;1
-Origins;Shadows;Jilian Aversa;4
-The Dark Side of the Moon;Money;Pink Floyd;2
-Yellow Submarine;Yellow Submarine;The Beatles;5
