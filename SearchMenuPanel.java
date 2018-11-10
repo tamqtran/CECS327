@@ -16,19 +16,19 @@ import javax.swing.table.*;
 public class SearchMenuPanel extends JPanel implements ActionListener {
 	
 	//Declaring variables
-	private JPanel panel;
-	private JTable results;
+	private JPanel 		panel;
+	private JTable 		results;
 	private JScrollPane resultsJPS;
-	private JButton playButton, addButton;
-	private JLabel playlistLabel, responseLabel, errorLabel, searchLabel, filterLabel,
-				   titleLabel, artistLabel, albumLabel;
+	private JButton 	playButton, addButton;
+	private JLabel 		playlistLabel, responseLabel, errorLabel, searchLabel, filterLabel,
+				   		titleLabel, artistLabel, albumLabel;
 	private JComboBox<String> playList;
-	private String username, songName, songTitle, artist, album, 
-					filter = "Title", u_search = ""; //by default, the search filter is 'by title'
-	private int searchIndex = 0;
+	private String 		username, songName, songTitle, artist, album, 
+						filter = "Title", u_search = ""; //by default, the search filter is 'by title'
+	private int 		searchIndex = 0;
 	private DefaultTableModel model;
 	private final String[] columns = { "Title", "Artist(s)", "Album" };
-	private boolean flipOrder = false;
+	private boolean 	flipOrder = false;
 	
 	/**
 	 * Constructor for SearchMenuPanel
@@ -64,19 +64,16 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		filterLabel.setName("filter");
 		this.add(filterLabel);
 		
-//		// Testing. Dummy values to store in JTable
-//		String data[][] = { {}, {}, {} };
-		
 		model = null;
 		updateSearch(search, userSearch);
 		System.out.println("Filter by " + filter + " (Initial)");
+		
 		// Creates a table to display the search results
 		results = new JTable(model);
 		results.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		results.getTableHeader().setReorderingAllowed(false);
 		results.getTableHeader().addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
+			@Override public void mouseClicked(MouseEvent e) {
 				int col = results.columnAtPoint(e.getPoint());
 				filter = results.getColumnName(col);
 				
@@ -108,17 +105,15 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		resultsJPS.setLocation(10, 50);
 		resultsJPS.setName("resultsJPS");
 		results.addMouseListener(new MouseAdapter() {
-			@Override
-		    public void mousePressed(MouseEvent e) {
+			@Override public void mousePressed(MouseEvent e) {
 				if (e.getClickCount() == 2) {
-					// TODO Auto-generated method stub
 					int row = results.getSelectedRow();
 
 					songTitle = results.getModel().getValueAt(row, 0).toString();
 					artist = results.getModel().getValueAt(row, 1).toString();
 					album = results.getModel().getValueAt(row, 2).toString();
 
-					//change text on labels in homepage
+					//change text on labels in Homepage
 					titleLabel.setText(songTitle); titleLabel.setVisible(true);
 					artistLabel.setText(artist); artistLabel.setVisible(true);
 					albumLabel.setText(album);	albumLabel.setVisible(true);
@@ -132,7 +127,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		// News JScrollPane else column names wont show up
 		this.add(resultsJPS);
 
-		// A dropdown menu for the user to select which playlist to add song to
+		// A drop-down menu for the user to select which playlist to add song to
 		// pulls playlist from json file
 		playList = new JComboBox<String>(grabPlaylists());
 		playList.setSize(new Dimension(110, 30));
@@ -215,7 +210,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		if (search != null) {
 			model = new DefaultTableModel(null, columns) {
 				public boolean isCellEditable(int row, int column) {
-					return false; //This causes all cells to be not editable
+					return false; // This causes all cells to be not editable
 				}
 			};
 			
@@ -249,6 +244,11 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		panel = this;
 	}
 	
+	/**
+	 * Void method. Sorts the input array search and return a 'sorted' array
+	 * @param search: a string array
+	 * @return a sorted version of search
+	 */
 	private String[] sortSearch(String [] search) {
 		// sort by current filter
 		String[] sorted = quickSort(search, 0, search.length-1);
@@ -256,18 +256,24 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		return sorted;
 	}
 	
-	public void tableChangedFilter() {					
-		String[] lineData = new String[results.getRowCount()]; //lineData is an array of null strings
+	/**
+	 * Void method used only when the table headers is interacted with.
+	 */
+	public void tableChangedFilter() {
+		// lineData is an array of null strings
+		String[] lineData = new String[results.getRowCount()]; 
 
 		for (int r = 0; r < results.getRowCount(); r++) {
-			lineData[r] = results.getValueAt(r, 0).toString() + "_"; //lineData[r] gets replaced from null
+			// lineData[r] gets replaced from null
+			lineData[r] = results.getValueAt(r, 0).toString() + "_"; 
 			for (int c = 1; c < results.getColumnCount(); c++) {
 				lineData[r] += results.getValueAt(r, c).toString();
 				if (c < results.getColumnCount()-1)
 					lineData[r] += "_";
 			}
-		} //printArray(lineData);	//System call
-		changeSearch(lineData, u_search); // change the table data to lineData
+		}
+		// change the table data to lineData
+		changeSearch(lineData, u_search); 
 	}
 	
 	/**
@@ -339,7 +345,8 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		final String EXT = ".wav";
 
 		// System command to grab current working directory
-		String currentFolderPath = System.getProperty("user.dir"); // C:\Users\Austin\Eclipse_OxyMain\MusicStreaming 
+		String currentFolderPath = System.getProperty("user.dir"); 
+		//"user.dir" will return your MusicStreaming folder in the Eclipse Workspace
 		File currentFolder = new File(currentFolderPath);
 
 		// list() vs listFiles()
@@ -401,8 +408,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 	 * A set method for labels. Doing so allows for manipulation with the local label to affect the input label
 	 * @param label: a JLabel, either title_, artist_, or album_ from Homepage.java
 	 */
-	public void setLabel(JLabel label) 
-	{
+	public void setLabel(JLabel label) {
 		switch (label.getName()) { 			// the three labels are named via label.setName(labelName)
 		case "title": 		titleLabel = label;  break;
 		case "artist(s)": 	artistLabel = label; break;
