@@ -180,8 +180,7 @@ public class ShiftingPanel extends JLayeredPane
 	protected String getSong() {
 		if (history[0].getClass() == PlaylistPanel.class) {
 			songName = ((PlaylistPanel)history[0]).getListener().getSong();
-		}
-		else if (history[0].getClass() == SearchMenuPanel.class) {
+		} else if (history[0].getClass() == SearchMenuPanel.class) {
 			songName = ((SearchMenuPanel)history[0]).getSong();
 		} else songName = null;
 		
@@ -263,10 +262,9 @@ public class ShiftingPanel extends JLayeredPane
 		for (Component p : history)	{					//system: the layer the component is in
 			System.out.print("Index: " + i + "\tLayer: " + this.getLayer(p) 	// the position of each component in the layer
 			+ "\tpos: " + this.getPosition(p) + "\t  name: " + p.getName());			// and the name of each component
-			
-			if ((i++ == 0) && p.getName().equals(currentPanel)) {
-				System.out.println("\t<CURRENT>");
-			} else System.out.println();
+
+			System.out.println(((i++ == 0) && p.getName().equals(currentPanel)) ? "\t<CURRENT>" : "");
+
 		} System.out.println("Indices of -- baseComponent: " + baseComponent + ", currentComponent: " + currentComponent + "\n");
 	}
 	
@@ -283,8 +281,7 @@ public class ShiftingPanel extends JLayeredPane
 		// - change visibility for all the panels in history s.t. only the current panel (at index 0 of history) is functional
 		// - update the panels to any changes that may have occurred in one panel (playlist panels only)
 		for (int n = 0; n < history.length; n++) {
-			if (n == 0)	history[n].setVisible(true);
-			else 		history[n].setVisible(false);
+			history[n].setVisible((n == 0) ? true : false);
 			
 			if (history[n].getClass() == PlaylistPanel.class)
 				((PlaylistPanel)history[n]).updatePlaylist();
@@ -297,7 +294,9 @@ public class ShiftingPanel extends JLayeredPane
 		setCurrentPlaylistInHomepage();
 		
 		// enable or disable the history buttons depending on the emptiness of the previousPanels and nextPanels variables
-		if (previousPanels.length > 0) prevButton.setEnabled(true); else prevButton.setEnabled(false);	
-		if (nextPanels.length > 0) nextButton.setEnabled(true); else nextButton.setEnabled(false);
+//		if (previousPanels.length > 0) prevButton.setEnabled(true); else prevButton.setEnabled(false);	
+		prevButton.setEnabled((previousPanels.length > 0) ? true : false);
+//		if (nextPanels.length > 0) nextButton.setEnabled(true); else nextButton.setEnabled(false);
+		nextButton.setEnabled((nextPanels.length > 0) ? true : false);
 	}
 }

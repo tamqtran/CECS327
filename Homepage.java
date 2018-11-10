@@ -314,21 +314,30 @@ public class Homepage
 		searchField.setEditable(true);									// allow for an editable text field
 		searchField.setName("Search for...");							// set the name
 		searchField.getEditor().getEditorComponent()
-				.addFocusListener(new FocusListener() {			// set a focus listener to the text field itself
+		.addFocusListener(new FocusListener() {			// set a focus listener to the text field itself
 			@Override
 			public void focusGained(FocusEvent e) {
 				// TODO Auto-generated method stub
-				SwingUtilities.invokeLater(new Runnable() { // the focus is run last
-					@Override
-					public void run() {
-						System.out.println("searchField focus GAINED");	// system call
-						//System.out.println("in source: " + e.getSource().toString());
-						if (!isHistory) {
+				 SwingUtilities.invokeLater(new Runnable() { // the focus is run last
+				 @Override
+				 public void run() {						
+						if (isHistory) {
+							// swap cards from SearchMenuPanel to ShiftingPanel
+							((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);	
+							CorePanel.updateUI();
+							
+							// give focus to searchQuery_
+							searchQuery_.requestFocusInWindow();
+							// set isHistory to false
+							isHistory = false;
+						}
+						else {
+							System.out.println("searchField focus GAINED");	// system call
 							((CardLayout)(CorePanel.getLayout())).show(CorePanel, SEARCH_PANEL);	
 							// swap cards from ShiftingPanel to SearchMenuPanel
 							CorePanel.updateUI();
-						} else isHistory = false;
-					}
+						}
+				 	}
 				});
 			}
 			@Override
@@ -336,14 +345,27 @@ public class Homepage
 				//	TODO Auto-generated method stub
 				SwingUtilities.invokeLater(new Runnable() { // the focus is run last
 					@Override
-					public void run() {
-						System.out.println("searchField focus LOST");	// system call
-						//System.out.println("out source: " + e.getSource().toString());
-						((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);
-						// swap cards from SearchMenuPanel to ShiftingPanel
-						searchQuery_.requestFocusInWindow();	
-						// give focus back to searchQuery_
-						CorePanel.updateUI();
+					public void run() {	
+						// Don't do it if the focus is moved to any of the components in SearchPanel
+						//otherwise:
+						boolean check = false;
+						for(Component c : SearchPanel.getComponents()) {
+							if (c.hasFocus()) {
+								check = true; 
+								System.out.println("check made at " + c.getName()); 
+								break;
+							}
+						}
+
+						if (check == true) {
+							System.out.println("searchField focus LOST");	// system call
+							//System.out.println("out source: " + e.getSource().toString());
+							((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);
+							// swap cards from SearchMenuPanel to ShiftingPanel
+							searchQuery_.requestFocusInWindow();	
+							// give focus back to searchQuery_
+							CorePanel.updateUI();
+						}
 					}
 				});
 			}
@@ -445,6 +467,9 @@ public class Homepage
 		TopPanel.add(_ProfilePanel);
 		TopPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 		
+		CorePanel = new JPanel();									// CorePanel initialized
+		CorePanel.setLayout(new CardLayout());						// set layout to CardLayout
+		
 //		ShiftingPanel (the one that keeps changing)
 		ShiftingPanel = new ShiftingPanel(this);					// initialize ShiftingPanel and set border
 		ShiftingPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
@@ -463,10 +488,7 @@ public class Homepage
 		String[] temp = {};
 		SearchPanel = new SearchMenuPanel(userName, temp , "");
 		SearchPanel.setName("Search");
-		
-		CorePanel = new JPanel();									// CorePanel initialized
-		CorePanel.setLayout(new CardLayout());						// set layout to CardLayout
-		
+
 		CorePanel.add(ShiftingPanel, SHIFT_PANEL);					// add ShiftingPanel and SearchPanel to CorePanel
 		CorePanel.add(SearchPanel, SEARCH_PANEL);
 		CorePanel.setName("Core");
@@ -481,6 +503,7 @@ public class Homepage
 		HIGH_panel.add(Explore_Panel);
 		
 		pane.add(HIGH_panel); 										// add HIGH_panel to pane (the content pane for frame)
+		isHistory = false;
 	}
 	
 	/**
@@ -802,6 +825,9 @@ public class Homepage
 		else playlist = name;
 		System.out.println("currently looking at " + name);
 		isHistory = true;
+
+		((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);
+		CorePanel.updateUI();
 	}
 	
 	// FOR USE WITH SEARCHQUERY_	

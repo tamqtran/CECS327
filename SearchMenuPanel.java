@@ -88,7 +88,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 				// 	show inverted for filter; nothing otherwise,
 				//	or flipOrder is true; false otherwise
 				
-				filter +=   (searchIndex == col) ? ((flipOrder == true) ?   ""  : " (inverted)") : ""   ; 
+				filter  +=  (searchIndex == col) ? ((flipOrder == true) ?   ""  : " (inverted)") : ""   ; 
 				flipOrder = (searchIndex == col) ? ((flipOrder == true) ? false :      true    ) : false; 
 				
 				// for flipOrder --- false: A-Z; true: Z-A
@@ -137,7 +137,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		playList = new JComboBox<String>(grabPlaylists());
 		playList.setSize(new Dimension(110, 30));
 		playList.setLocation(280, 315);
-		playList.setName("playlist_dd");
+		playList.setName("playlist_dd");		
 		this.add(playList);
 
 		// Another display label
