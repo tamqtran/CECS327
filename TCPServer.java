@@ -40,6 +40,7 @@ public class TCPServer {
 	static Method json;
 	private static final Random RND = new Random(42L);
 	static PeerDHT[] peers;
+	
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		PeerDHT master = null;
         final int nrPeers = 3;
@@ -77,9 +78,9 @@ public class TCPServer {
             }
             
             //Test playing bytes from peer get
-            
-            String requestSong = "Hello Goodbye_The Beatles_Magical Mystery Tour.wav";
-            byte [] songByte = (byte[]) get(peers[2],Number160.createHash(requestSong));
+			/*
+            String requestSong = "Yellow Submarine_The Beatles_Yellow Submarine.wav";
+            byte [] songByte = (byte[]) get(peers[1],Number160.createHash(requestSong));
             
             Clip current = null;
     		ByteArrayInputStream myInputStream = new ByteArrayInputStream(songByte);
@@ -93,9 +94,8 @@ public class TCPServer {
     		}catch(Exception e) {
     			e.printStackTrace();
     		}
+      		*/
         	
-            
-            
             //***** TEST TEST ****//
           /*File file = new File("Hello Goodbye_The Beatles_Magical Mystery Tour.wav");
     		int size = (int) file.length();
@@ -137,10 +137,6 @@ public class TCPServer {
             //System.out.println(nr);
         }catch (Exception e) {
         	e.printStackTrace();
-        } finally {
-            if (master != null) {
-                master.shutdown();
-            }
         }
         json = new Method();
         
@@ -154,6 +150,7 @@ public class TCPServer {
 		
 			while(true)
 			{
+				
 				Socket socket = serverSocket.accept();
 				//System.out.println("Waiting for request...");
 				ObjectInputStream request = new ObjectInputStream(socket.getInputStream());
@@ -161,12 +158,13 @@ public class TCPServer {
 				System.out.println("Request from Port: "+ socket.getPort());
 				String stringRequest = (String) request.readObject();
 				System.out.println("Request: "+stringRequest.toString());
-			
+		        	
 				new Thread(new Runnable() 
 				{
 					@Override
 					public void run() 
 					{
+						PeerDHT[] myPeers = peers;
 						JSONObject JsonRequest=new JSONObject(stringRequest);
 			
 						//Request Data
@@ -178,10 +176,10 @@ public class TCPServer {
 			
 			
 						//Printing out request
-						/*System.out.println("ID: "+ID);
+						System.out.println("ID: "+ID);
 						System.out.println("Method: "+method);
 						System.out.println("Arguments: "+param);
-						*/ 
+						 
 			
 						Class<?>[] argTypes = new Class<?>[arguments.length];
 						for(int i = 0; i<arguments.length; i++) 
@@ -197,8 +195,9 @@ public class TCPServer {
 							
 							if(method.equals("getSong")) {
 								// get song in bytes & transfer it over to UDP server
-								//String requestSong = arguments[0];
-								byte [] songByte = (byte[]) get(peers[1],Number160.createHash(arguments[0]));
+								String requestSong = arguments[0];
+								Number160 guid = Number160.createHash(requestSong);
+					            byte [] songByte = (byte[]) get(myPeers[2],guid);
 								result = songByte;
 								//result = getSong(arguments[0]);
 								
@@ -229,14 +228,13 @@ public class TCPServer {
 						} 
 						catch (JSONException e1) 
 						{
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
-				}).start();
+				}).start(); 
+			
 			}
 		}
 		catch (SocketException e)
