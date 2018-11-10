@@ -73,8 +73,8 @@ public class Metadata {
 		File f = null;
 		//Need to replace fileName + .txt
 		//Wont work
-		if (fileList.contains(fileName +".txt")) {
-			int index = fileList.indexOf(fileName + ".txt");
+		if (fileList.contains(new File(fileName))) {
+			int index = fileList.indexOf(new File(fileName)));
 			f = new File (fileName);
 		} else {
 			f = new File(fileName);
@@ -148,10 +148,12 @@ public class Metadata {
 		ArrayList<String> result = new ArrayList<String>();
 		int sizeFilter = filter.length();
 		for (int i = 0; i < songs.length; i++) {
-			
+			if (filter.equals(songs[i].substring(0, sizeFilter))) {
+				result.add(songs[i]);
+			}
 		}
 		
-		return null;
+		return (String[]) result.toArray();
 	}
 	// searchSongs(String filter)
 	// read metadata

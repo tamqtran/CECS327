@@ -139,6 +139,7 @@ public class File {
 	
 	// getter methods
 	public String getFileName() {return fileName;}
+	
 	public byte[] getChunkData(int i) {
 		Chunk[] chunksArray = (Chunk[]) chunks.toArray();
 		Chunk main = chunksArray[i];
@@ -176,6 +177,9 @@ public class File {
 		
 		//May not be this complicated
 		//Probably get method with guid
+		//Im pretty sure it's a get method with peer, but we need peer in this file
+		//Chunk c = getChunk(i);
+		//peer.get(c.getGUID());
 		//However this will be useful in the initialization file
 		
 		//IMPORTANT. IF YOU EVER NEED TO RECONVERT BACK TO STRING
@@ -184,6 +188,7 @@ public class File {
 	public int getSize() {
 		return chunks.size();
 	}
+	//For 
 	public boolean equals(File f) {
 		if (this.getFileName().equals(f.getFileName())) {
 			return true;
@@ -191,5 +196,7 @@ public class File {
 			return false;
 		}
 	}
+	
+	//I need this
 	public Chunk getChunk(int i) {return chunks.get(i);}
 }
