@@ -17,6 +17,7 @@ import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Arrays;
 import java.util.Random;
 
 import javax.sound.sampled.AudioInputStream;
@@ -40,6 +41,7 @@ public class TCPServer {
 	static Method json;
 	private static final Random RND = new Random(42L);
 	static PeerDHT[] peers;
+	
 	
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		PeerDHT master = null;
@@ -71,10 +73,18 @@ public class TCPServer {
             String [] songs = index.toString().split("\n");
             for(int i = 1; i<songs.length; i++) {
             	String [] songArray = songs[i].split(";");
+            	
+            	// get song wav file name
             	String songName = songArray[0]+"_"+songArray[1]+"_"+songArray[2]+".wav";
+            	
+            	// get bytes of song from file
             	byte [] songByte = getSong(songName);
+            	
+            	// random peer
             	PeerDHT peer = peers[i%3];
-            	put(peer,Number160.createHash(songName),songByte);
+            	
+            	// args: random peer, guid from index file, song bytes
+            	put(peer,new Number160(songArray[3].trim()),songByte);
             }
             
             //Test playing bytes from peer get

@@ -1,6 +1,6 @@
 SongTitle;Artist;Album;GUID
-Hello Goodbye;The Beatles;Magical Mystery Tour;1
-Money;Pink Floyd;The Dark Side of the Moon;2
-So Serious;Electric Light Orchestra;Balance Of Power;3
-Shadows;Jilian Aversa;Origins;4
-Yellow Submarine;The Beatles;Yellow Submarine;5
+Hello Goodbye;The Beatles;Magical Mystery Tour;0x631e97bb9d892855b8fbabf564bead9bbd41d8f4
+Money;Pink Floyd;The Dark Side of the Moon;0xa8499df4ce3170f5c8dd5940f10966e196ff89f9
+Shadows;Jilian Aversa;Origins;0x3f077cdb15c495cbb5490e8a891147b1c392bfbc
+So Serious;Electric Light Orchestra;Balance Of Power;0x6de0875dcb44dfd471a75d0a338a77f046cd6d
+Yellow Submarine;The Beatles;Yellow Submarine;0x7b84064a6134acd333044bacd05747b5abdf1549
