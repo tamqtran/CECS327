@@ -11,6 +11,8 @@ import java.util.Scanner;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+
+import net.tomp2p.peers.Number160;
 public class File {
 	private String fileName;
 	private String jsonFile;
@@ -48,11 +50,12 @@ public class File {
 		*/
 		
 		// combine content to get string to use for constant guid for that song contents
-		String temp = null;
+		/*NOt using anymore, using tomp2p hash
+		 * String temp = null;
 		for (String s: content) {
 			temp = temp + s;
-		}
-		int guid = temp.hashCode();
+		}*/
+		Number160 guid = Number160.createHash(content[0]+"_"+content[1]+"_"+content[2]+ ".wav");
 		
 		// all index files names without extension
 		String[] nameOfFiles = {"songIndex","artistIndex","albumIndex"};
@@ -90,6 +93,7 @@ public class File {
 			
 			JSONObject specifiedChunk = null;
 			JSONArray chunkList = null;
+			
 			
 			// add changes to json files
 			Character c = Character.toUpperCase(content[i].charAt(0));

@@ -74,7 +74,7 @@ public class Metadata {
 		//Need to replace fileName + .txt
 		//Wont work
 		if (fileList.contains(new File(fileName))) {
-			int index = fileList.indexOf(new File(fileName)));
+			int index = fileList.indexOf(new File(fileName));
 			f = new File (fileName);
 		} else {
 			f = new File(fileName);

@@ -44,6 +44,10 @@ public class TCPServer {
 	
 	
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
+		
+		// create metadata to JSON indexes
+		Metadata meta = new Metadata();
+		
 		PeerDHT master = null;
         final int nrPeers = 3;
         final int port = 4001;
@@ -73,6 +77,9 @@ public class TCPServer {
             String [] songs = index.toString().split("\n");
             for(int i = 1; i<songs.length; i++) {
             	String [] songArray = songs[i].split(";");
+            	
+            	// add to metadata file
+            	meta.append("songIndex.txt", songArray);
             	
             	// get song wav file name
             	String songName = songArray[0]+"_"+songArray[1]+"_"+songArray[2]+".wav";
