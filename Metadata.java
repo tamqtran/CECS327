@@ -6,6 +6,41 @@ import java.util.List;
 import java.util.Scanner;
 import org.json.JSONArray;
 import org.json.JSONObject;
+<<<<<<< HEAD
+
+import net.tomp2p.dht.FutureGet;
+import net.tomp2p.dht.FuturePut;
+import net.tomp2p.dht.PeerBuilderDHT;
+import net.tomp2p.dht.PeerDHT;
+import net.tomp2p.p2p.Peer;
+import net.tomp2p.p2p.PeerBuilder;
+import net.tomp2p.peers.Number160;
+import net.tomp2p.storage.Data;
+//class File {
+//	String filename;
+//	List<Chunk> chunks;
+//	
+//	public byte[] getChunk(int i) {
+//		Chunk c = chunks.get(i);
+//		return c.content;
+//	}
+//	
+//	public File(String fn) {
+//		filename = fn;
+//	}
+//	
+//	public String getFilename() {return filename;}
+//	
+//	public void append(byte[] content) {
+//		int guid = getHash(content); //change this to whatever we need
+//		Chunk c = new Chunk(guid);
+//		chunks.add(c);
+//		peer[0].put(guid, content);
+//		
+//		metadata.append("inverted_index", content);
+//	}
+//}
+
 
 
 /**
@@ -16,7 +51,6 @@ import org.json.JSONObject;
 public class Metadata {
 	
 	protected List<File> fileList;
-	static PeerDHT peer;
 	
 	/**
 	 * Default Contructor for Metadata
@@ -30,7 +64,6 @@ public class Metadata {
 		}
 		sc.close();
 	}
-	
 	
 	/** 
 	 * Constructor for metadata with peer
@@ -47,6 +80,7 @@ public class Metadata {
 			}
 			sc.close();
 		}
+
 	// maybe byte[] instead of string for content
 	// append an inverted index file by add content at the end of filename. 
 	// if filename does not exists, it creates it and adds the content
@@ -150,6 +184,7 @@ public class Metadata {
 		return F;
 	}
 	*/
+
 	/**
 	 * Search song using filter
 	 * @param filter - text to search song
@@ -159,31 +194,46 @@ public class Metadata {
 	 * @throws IOException
 	 */
 	public String[] search(String filter, String index) throws ClassNotFoundException, IOException {
-		int location = fileList.indexOf(new File(index));
-		File f = fileList.get(location);
+		Scanner sc = new Scanner(Paths.get(index));
+		ArrayList<String> songsList = new ArrayList<String>();
+		while (sc.hasNextLine()) {
+		     songsList.add(sc.nextLine());
+		}
+		sc.close();
+		String[] songList = (String[]) songsList.toArray();
 		char sFirstLetter = filter.charAt(0);
 		boolean found = false;
+		ArrayList<String> result = new ArrayList<String>();
 		Chunk c;
-		for (int i = 0; i < f.getSize(); i++) {
-			c = f.getChunk(i);
-			if (sFirstLetter >= c.getFirstLetter().charAt(0) && sFirstLetter <= c.getLastLetter().charAt(0)) {
-				found = true;
-				break;
+		for (int i = 0; i < songList.length; i++) {
+			if (filter.equals(songList[i].substring(0, filter.length()))) {
+				result.add(songList[i]);
 			}
 		}
-		Number160 guid = new Number160(c.getGUID());
-		byte[] data = get(peer, guid);
-		String str = new String(data, StandardCharsets.UTF_8);
-		String[] songs = str.split("_");
-		ArrayList<String> result = new ArrayList<String>();
-		int sizeFilter = filter.length();
-		for (int i = 0; i < songs.length; i++) {
-			if (filter.equals(songs[i].substring(0, sizeFilter))) {
-				result.add(songs[i]);
+		ArrayList<String> moddedSearch = new ArrayList<String>();
+		if (index.equals("Artist")) {
+			for (int i = 0; i < result.size(); i++) {
+				String[] temp = result.get(i).split(";");
+				String temp2 = temp[1] + "_" + temp[0] +"_" + temp[2];
+				moddedSearch.add(temp2);
+			}
+		}
+		if (index.equals("Song")) {
+			for (int i = 0; i < result.size(); i++) {
+				String[] temp = result.get(i).split(";");
+				String temp2 = temp[1] + "_" + temp[0] + "_" + temp[2];
+				moddedSearch.add(temp2);
+			}
+		}
+		if (index.equals("Album")) {
+			for (int i = 0; i < result.size(); i++) {
+				String[] temp = result.get(i).split(";");
+				String temp2 = temp[1] + "_" + temp[2] + "_" + temp[0];
+				moddedSearch.add(temp2);
 			}
 		}
 		
-		return (String[]) result.toArray();
+		return (String[]) moddedSearch.toArray();
 	}
 	
 	/**

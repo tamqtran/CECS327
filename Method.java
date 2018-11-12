@@ -11,6 +11,8 @@ import java.util.UUID;
 import javax.swing.DefaultListModel;
 
 import java.net.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.*;
 
@@ -18,6 +20,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.json.JSONException;
+
+import net.tomp2p.dht.FutureGet;
+import net.tomp2p.dht.FuturePut;
+import net.tomp2p.dht.PeerBuilderDHT;
+import net.tomp2p.dht.PeerDHT;
+import net.tomp2p.p2p.Peer;
+import net.tomp2p.p2p.PeerBuilder;
+import net.tomp2p.peers.Number160;
+import net.tomp2p.storage.Data;
 
 public class Method 
 {
@@ -379,10 +390,37 @@ public class Method
 	 * @throws JSONException - catches errors concerning JSON files
 	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
-	public byte[] getSearch(String search) throws JSONException, UnsupportedEncodingException 
+	public byte[] getSearch(String search, String filter) throws JSONException,IOException, UnsupportedEncodingException 
 	{
-		String [] arg = {search};
-		return JSONReply("getSearch",arg,SearchMenuPanel.search(search));
+		String [] arg = {search, filter};
+		
+		final ServerSocket serverSocket = new ServerSocket(6778);
+		Socket clientSocket = null;
+		try {
+			//request
+			clientSocket  = new Socket("localhost", 6777);
+			ObjectOutputStream request = new ObjectOutputStream(clientSocket.getOutputStream());
+			request.writeObject(JSONRequestObject("search",arg).toString());
+			System.out.println(JSONRequestObject("search",arg).toString());
+			
+			//reply 3 seperations metadata.append
+			Socket socket = serverSocket.accept();
+			DataInputStream reply = new DataInputStream(socket.getInputStream());
+			size = reply.readInt();
+			bytes = new byte[size];
+			reply.readFully(bytes, 0, bytes.length);;
+			System.out.println("Reply: "+bytes.toString());
+			
+			request.close();
+			clientSocket.close();
+			socket.close();
+			reply.close();
+			serverSocket.close();
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		return JSONReply("getSearch",arg,new String(bytes, StandardCharsets.UTF_8));
 	}
 	
 	/**

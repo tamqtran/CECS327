@@ -228,7 +228,14 @@ public class TCPServer {
 								result = songByte;
 								//result = getSong(arguments[0]);
 								
-							} else {
+							} else if (method.equals("search")){
+								String filter = arguments[0];
+								String index = arguments[1];
+								String[] result1 = meta.search(filter, index, peers[0]);
+								result = result1;
+								
+							} else
+							{
 							//search here
 							result = 0;
 						}

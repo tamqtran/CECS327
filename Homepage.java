@@ -37,6 +37,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -88,6 +89,7 @@ public class Homepage
 	private JLabel 				playlist_, username_, 
 								title_, artist_, album_,
 								currentTime_, songTime_;
+	private JComboBox			searchFilter;
 	private DefaultListModel<String> 	dm;
 	private JList<?>			playlist_List;
 	private JScrollPane			UserSavedPanel;
@@ -130,6 +132,10 @@ public class Homepage
 		userName = user; 											// takes the username from input
 		this.aSocket = aSocket;										// takes the socket from input
 		this.serverPort = serverPort;								// takes the serverPort from input
+		/** Dropbox */
+		String[] filter = {"Song", "Artist", "Album"};
+		searchFilter = new JComboBox(filter);
+		searchFilter.setSize(new Dimension(110, 30));
 		initialize(base);												// initializes the frame
 	}
 	
@@ -908,7 +914,7 @@ public class Homepage
 	 * @param
 	 */
 	String[] getSearchResults(String search) {
-		String [] arguments = {search};
+		String [] arguments = {search, searchFilter.getSelectedItem().toString()};
 		JSONObject obj = requestReply.UDPRequestReply("getSearch", arguments, aSocket, serverPort);
 		String results  = obj.get("result").toString();
 		
