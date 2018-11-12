@@ -10,6 +10,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+/**
+ * Class that holds methods to deal with JSON
+ * @author Duong Pham
+ *
+ */
 public class JSONTEST {
 
 	public static void main(String[] args) {
@@ -179,7 +184,6 @@ public class JSONTEST {
 	}
 	
 	
-	/*-------------------------Playlist Frame------------------------------*
 	/**
 	 * Add a song to a playlist
 	 * @param playlist playlist to add the song

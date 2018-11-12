@@ -30,6 +30,11 @@ import net.tomp2p.p2p.PeerBuilder;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
 
+/**
+ * Class that holds methods to handle messages between client and server
+ * @author Duong Pham, Vincent Vu, Tam Tran
+ *
+ */
 public class Method 
 {
 	byte[] bytes;

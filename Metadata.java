@@ -45,7 +45,7 @@ import net.tomp2p.storage.Data;
 
 /**
  * The class handles the metadata for the music streaming project
- * @author Tam Tran, Vincent Vu
+ * @author Tam Tran, Vincent Vu, Austin Tao
  *
  */
 public class Metadata {

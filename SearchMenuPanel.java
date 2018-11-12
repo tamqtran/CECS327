@@ -12,6 +12,11 @@ import org.json.JSONTokener;
 
 import javax.swing.table.*;
 
+/**
+ * Search Menu Class that deals with searching for songs
+ * @author Vincent Vu
+ *
+ */
 @SuppressWarnings("serial")
 public class SearchMenuPanel extends JPanel implements ActionListener, MouseListener {
 	
