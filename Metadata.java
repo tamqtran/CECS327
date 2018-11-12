@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 import org.json.JSONArray;
 import org.json.JSONObject;
-<<<<<<< HEAD
+
 
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.FuturePut;
@@ -64,22 +64,6 @@ public class Metadata {
 		}
 		sc.close();
 	}
-	
-	/** 
-	 * Constructor for metadata with peer
-	 * @param peer
-	 * @throws IOException
-	 */
-		public Metadata(PeerDHT peer) throws IOException {
-			this.peer = peer;
-			fileList = new ArrayList<File>();
-			
-			Scanner sc = new Scanner(Paths.get("METADATA.txt"));
-			while (sc.hasNextLine()) {
-			     fileList.add(new File(sc.nextLine()));
-			}
-			sc.close();
-		}
 
 	// maybe byte[] instead of string for content
 	// append an inverted index file by add content at the end of filename. 

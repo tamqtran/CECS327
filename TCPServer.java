@@ -231,7 +231,7 @@ public class TCPServer {
 							} else if (method.equals("search")){
 								String filter = arguments[0];
 								String index = arguments[1];
-								String[] result1 = meta.search(filter, index, peers[0]);
+								String[] result1 = meta.search(filter, index);
 								result = result1;
 								
 							} else
