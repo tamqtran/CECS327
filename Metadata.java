@@ -16,32 +16,6 @@ import net.tomp2p.p2p.Peer;
 import net.tomp2p.p2p.PeerBuilder;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
-//class File {
-//	String filename;
-//	List<Chunk> chunks;
-//	
-//	public byte[] getChunk(int i) {
-//		Chunk c = chunks.get(i);
-//		return c.content;
-//	}
-//	
-//	public File(String fn) {
-//		filename = fn;
-//	}
-//	
-//	public String getFilename() {return filename;}
-//	
-//	public void append(byte[] content) {
-//		int guid = getHash(content); //change this to whatever we need
-//		Chunk c = new Chunk(guid);
-//		chunks.add(c);
-//		peer[0].put(guid, content);
-//		
-//		metadata.append("inverted_index", content);
-//	}
-//}
-
-
 
 /**
  * The class handles the metadata for the music streaming project
@@ -65,7 +39,6 @@ public class Metadata {
 		sc.close();
 	}
 
-	// maybe byte[] instead of string for content
 	// append an inverted index file by add content at the end of filename. 
 	// if filename does not exists, it creates it and adds the content
 		/**
@@ -129,21 +102,7 @@ public class Metadata {
 		
 		// nothing happens if the break condition never happens
 	}
-	
-	/*
-	// read the i-chunk of filename and returns an array of bytes
-	public byte[] read(String filename, int i) {
-
-		for (File f_ : fileList) { 
-			if (f_.getFileName().equals(filename)) {
-				return f_.getChunk(i).getChunkData();
-			}
-		}
 		
-		System.out.println(filename + " not found.");
-		return null; // no bytes; will only get here if no such file was found
-	}*/
-	
 	/**Returns the list of files in DFS
 	 * @return list of files in DFS
 	 */
@@ -155,8 +114,7 @@ public class Metadata {
 	 * @return ith File
 	 */
 	public File getFile(int i) {return fileList.get(i);}
-	
-	
+		
 	/*
 	// match file 
 	private File matchFile(String filename) {
@@ -188,9 +146,8 @@ public class Metadata {
 		for (int i = 0; i < songsList.size(); i++) {
 			System.out.println(songsList.get(i));
 		}
-		boolean found = false;
+		
 		List<String> result = new ArrayList<String>();
-		Chunk c;
 		System.out.println(songsList.get(0).substring(0, filter.length()-1));
 		for (int i = 0; i < songsList.size(); i++) {
 			if (filter.equalsIgnoreCase(songsList.get(i).substring(0, filter.length()))) {
@@ -201,26 +158,26 @@ public class Metadata {
 			System.out.println(result.get(i));
 		}
 		List<String> moddedSearch = new ArrayList<String>();
-		if (index.equals("Artist")) {
+		switch(index) {
+		case "Artist": 
 			for (int i = 0; i < result.size(); i++) {
 				String[] temp = result.get(i).split(";");
 				String temp2 = temp[1] + "_" + temp[0] +"_" + temp[2];
 				moddedSearch.add(temp2);
-			}
-		}
-		if (index.equals("Song")) {
+			} break;
+		case "Song": 
 			for (int i = 0; i < result.size(); i++) {
 				String[] temp = result.get(i).split(";");
 				String temp2 = temp[0] + "_" + temp[1] + "_" + temp[2];
 				moddedSearch.add(temp2);
-			}
-		}
-		if (index.equals("Album")) {
+			} break;
+		case "Album":
 			for (int i = 0; i < result.size(); i++) {
 				String[] temp = result.get(i).split(";");
 				String temp2 = temp[1] + "_" + temp[2] + "_" + temp[0];
 				moddedSearch.add(temp2);
-			}
+			} break;
+		default: break;
 		}
 
 		String[] array = moddedSearch.toArray(new String[moddedSearch.size()]);

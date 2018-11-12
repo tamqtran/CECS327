@@ -157,7 +157,7 @@ public class Homepage {
 	private void initialize(Frame base) {
 		// initialize the frame and set minimum dimensions and default close operation for the frame
 		frame = new JFrame("MusicService -- " + userName);
-		frame.setMinimumSize(new Dimension(775,650));
+		frame.setMinimumSize(new Dimension(800,500));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		// initializes and loads the upper half of frame components into frame's content pane
@@ -400,22 +400,10 @@ public class Homepage {
 				SwingUtilities.invokeLater(new Runnable() { // the focus is run last
 					@Override public void run() {
 						System.out.println("searchField focus GAINED");	// system call
-						System.out.println("isHistory: " + isHistory);
-						if (isHistory) {
-							System.out.println("Search");
-							// swap cards from SearchMenuPanel to ShiftingPanel
-							((CardLayout)(CorePanel.getLayout())).show(CorePanel, SEARCH_PANEL);	
-							CorePanel.updateUI();
-							
-							// set isHistory to false
-							isHistory = false;
-						} else {
-							System.out.println("Shift");
-							// swap cards from ShiftingPanel to SearchMenuPanel
-							((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);	
-							CorePanel.updateUI();
-							isHistory = true;
-						}
+						System.out.println("Search");
+						// swap cards from SearchMenuPanel to ShiftingPanel
+						((CardLayout)(CorePanel.getLayout())).show(CorePanel, SEARCH_PANEL);	
+						CorePanel.updateUI();
 						System.out.println();
 					}
 				});
@@ -434,29 +422,15 @@ public class Homepage {
 						System.out.println("searchField focus LOST");	// system call
 						// this will be skipped if focus was not passed to a component in SearchPanel. Otherwise...
 						if (check == true) {
-							System.out.println("check found");
-							System.out.println("Shift");
-							// swap cards from SearchMenuPanel to ShiftingPanel
-							((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);
+							System.out.println("Search");
+							// swap cards from ShiftingPanel to SearchMenuPanel
+							((CardLayout)(CorePanel.getLayout())).show(CorePanel, SEARCH_PANEL);	
 							CorePanel.updateUI();
 						} else {
-							System.out.println("check not found");
-							System.out.println("isHistory: " + isHistory);
-							if (isHistory) {
-								System.out.println("Search");
-								// swap cards from SearchMenuPanel to ShiftingPanel
-								((CardLayout)(CorePanel.getLayout())).show(CorePanel, SEARCH_PANEL);	
-								CorePanel.updateUI();
-								
-								// set isHistory to false
-								isHistory = false;
-							} else {
-								System.out.println("Shift");
-								// swap cards from ShiftingPanel to SearchMenuPanel
-								((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);	
-								CorePanel.updateUI();
-								isHistory = true;
-							}
+							System.out.println("Shift");
+							// swap cards from SearchMenuPanel to ShiftingPanel
+							((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);	
+							CorePanel.updateUI();
 						}
 						System.out.println();
 					}
@@ -487,6 +461,7 @@ public class Homepage {
 		searchFilter = new JComboBox<String>(filterTypes);
 		searchFilter.setEditable(false);
 		searchFilter.setName("search by");
+		searchFilter.setToolTipText("Choose one of these three filters. (Initial default on 'song')");
 		searchFilter.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
 				currentFilter = (String) searchFilter.getSelectedItem();
@@ -517,6 +492,10 @@ public class Homepage {
 						playlist = "x";						
 						SearchPanel.changeSearch(getSearchResults(text), text);	
 						// otherwise, it will change the table of SearchMenuPanel
+						
+						// swap cards from ShiftingPanel to SearchMenuPanel
+						((CardLayout)(CorePanel.getLayout())).show(CorePanel, SEARCH_PANEL);	
+						CorePanel.updateUI();
 					}
 				} catch (NullPointerException E) {
 					E.getStackTrace();
@@ -526,8 +505,8 @@ public class Homepage {
 		});
 		
 		// add searchField and searchQuery_ to _SearchPanel and set max dimensions
-		_SearchPanel.add(searchField);
 		_SearchPanel.add(searchQuery_);
+		_SearchPanel.add(searchField);
 		_SearchPanel.add(searchFilter);
 		_SearchPanel.setMaximumSize(new Dimension(200,40));
 		

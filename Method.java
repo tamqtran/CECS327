@@ -361,7 +361,6 @@ public class Method {
 			try {
 				result = (String[]) reply.readObject();
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -371,7 +370,6 @@ public class Method {
 			reply.close();
 			serverSocket.close();
 		} catch (IOException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
 		return JSONReply("getSearch",arg,result);
@@ -413,7 +411,6 @@ public class Method {
 				reply.close();
 				serverSocket.close();
 			} catch (IOException e2) {
-				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
 			
@@ -440,8 +437,7 @@ public class Method {
 			if(size - Integer.parseInt(count) > 64000) {
 				//System.out.println(i);
 				System.arraycopy(bytes, Integer.parseInt(count), bytePacket, 0, 64000);
-			}
-			else {
+			} else {
 				System.arraycopy(bytes, Integer.parseInt(count), bytePacket, 0, size - Integer.parseInt(count));
 			}
 			
