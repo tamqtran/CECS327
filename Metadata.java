@@ -6,37 +6,21 @@ import java.util.List;
 import java.util.Scanner;
 import org.json.JSONArray;
 import org.json.JSONObject;
-//class File {
-//	String filename;
-//	List<Chunk> chunks;
-//	
-//	public byte[] getChunk(int i) {
-//		Chunk c = chunks.get(i);
-//		return c.content;
-//	}
-//	
-//	public File(String fn) {
-//		filename = fn;
-//	}
-//	
-//	public String getFilename() {return filename;}
-//	
-//	public void append(byte[] content) {
-//		int guid = getHash(content); //change this to whatever we need
-//		Chunk c = new Chunk(guid);
-//		chunks.add(c);
-//		peer[0].put(guid, content);
-//		
-//		metadata.append("inverted_index", content);
-//	}
-//}
 
+
+/**
+ * The class handles the metadata for the music streaming project
+ * @author Tam Tran, Vincent Vu
+ *
+ */
 public class Metadata {
 	
 	protected List<File> fileList;
 	static PeerDHT peer;
 	
-	// constructor for metadata
+	/**
+	 * Default Contructor for Metadata
+	 */
 	public Metadata() throws IOException {
 		fileList = new ArrayList<File>();
 		
@@ -48,7 +32,11 @@ public class Metadata {
 	}
 	
 	
-	// constructor for metadata with peer
+	/** 
+	 * Constructor for metadata with peer
+	 * @param peer
+	 * @throws IOException
+	 */
 		public Metadata(PeerDHT peer) throws IOException {
 			this.peer = peer;
 			fileList = new ArrayList<File>();
@@ -62,7 +50,12 @@ public class Metadata {
 	// maybe byte[] instead of string for content
 	// append an inverted index file by add content at the end of filename. 
 	// if filename does not exists, it creates it and adds the content
-	public void append(String filename, String[] content) {
+		/**
+		 * Append filename with fileName and song content
+		 * @param filename - filename of the index used
+		 * @param content - song content
+		 */
+		public void append(String filename, String[] content) {
 		
 		// get correct file
 		File f = null;		
@@ -82,6 +75,13 @@ public class Metadata {
 		f.append(content);
 	}
 
+	/**
+	 * Append filename with fileName, song content. first letter of chunk, last letter of chunk
+	 * @param fileName - index file
+	 * @param content - song content
+	 * @param first - first letter of chunk
+	 * @param last - last letter of chunk
+	 */
 	public void appends(String fileName, String content, String first, String last) {
 		File f = null;
 		//Need to replace fileName + .txt
@@ -94,7 +94,11 @@ public class Metadata {
 		}
 		f.appends(content, first, last);
 	}
-	// delete the filefrom the DFS
+
+	/**
+	 * Delete the file from the DFS
+	 * @param filename - index file
+	 */
 	public void delete(String filename) {
 		
 		for (File f_ : fileList) {
@@ -108,24 +112,30 @@ public class Metadata {
 		// nothing happens if the break condition never happens
 	}
 	
-
+	/*
 	// read the i-chunk of filename and returns an array of bytes
 	public byte[] read(String filename, int i) {
 
 		for (File f_ : fileList) { 
 			if (f_.getFileName().equals(filename)) {
-				return f_.getChunk(i).getContent();
+				return f_.getChunk(i).getChunkData();
 			}
 		}
 		
 		System.out.println(filename + " not found.");
 		return null; // no bytes; will only get here if no such file was found
-	}
+	}*/
 	
-	// returns the list of files in DFS
+	/**Returns the list of files in DFS
+	 * @return list of files in DFS
+	 */
 	public List<File> Ls(){	return fileList; }
 	
-	// get a particular File from fileList
+	/**Get a particular File from fileList
+	 * 
+	 * @param i - ith File
+	 * @return ith File
+	 */
 	public File getFile(int i) {return fileList.get(i);}
 	
 	
@@ -140,7 +150,15 @@ public class Metadata {
 		return F;
 	}
 	*/
-	public String[] search(String filter, String index) {
+	/**
+	 * Search song using filter
+	 * @param filter - text to search song
+	 * @param index - which index file to search in 
+	 * @return song results
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
+	public String[] search(String filter, String index) throws ClassNotFoundException, IOException {
 		int location = fileList.indexOf(new File(index));
 		File f = fileList.get(location);
 		char sFirstLetter = filter.charAt(0);
@@ -168,6 +186,14 @@ public class Metadata {
 		return (String[]) result.toArray();
 	}
 	
+	/**
+	 * Get data from peer by using guid
+	 * @param peer - peer to get data from
+	 * @param guid - guid to map data
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
 	private static Object get(final PeerDHT peer, final Number160 guid) throws ClassNotFoundException, IOException {
         
     	FutureGet futureGet = peer.get(guid).start();
