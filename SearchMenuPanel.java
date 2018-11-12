@@ -14,7 +14,7 @@ import javax.swing.table.*;
 
 /**
  * Search Menu Class that deals with searching for songs
- * @author Vincent Vu
+ * @author Vincent Vu, Austin Tao
  *
  */
 @SuppressWarnings("serial")
