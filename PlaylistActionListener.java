@@ -1,3 +1,4 @@
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -182,9 +183,9 @@ public class PlaylistActionListener implements ActionListener, MouseListener {
 				album = model.getValueAt(0, 2).toString();
 
 				//change text on labels in homepage
-				titleLabel.setText(songTitle); titleLabel.setVisible(true);
-				artistLabel.setText(artist); artistLabel.setVisible(true);
-				albumLabel.setText(album);	albumLabel.setVisible(true);
+				titleLabel.setText(songTitle); titleLabel.setSize(new Dimension(titleLabel.getPreferredSize())); titleLabel.setVisible(true);
+				artistLabel.setText(artist); artistLabel.setSize(new Dimension(artistLabel.getPreferredSize())); artistLabel.setVisible(true);
+				albumLabel.setText(album); albumLabel.setSize(new Dimension(albumLabel.getPreferredSize())); albumLabel.setVisible(true);
 
 				song = songTitle + "_" + artist + "_" + album;
 				System.out.println("PlaylistPanel " + panel.getName() +" -- '" + song + "' selected");

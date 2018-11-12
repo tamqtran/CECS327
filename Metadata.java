@@ -4,18 +4,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 
 import net.tomp2p.dht.FutureGet;
-import net.tomp2p.dht.FuturePut;
-import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
-import net.tomp2p.p2p.Peer;
-import net.tomp2p.p2p.PeerBuilder;
 import net.tomp2p.peers.Number160;
-import net.tomp2p.storage.Data;
 //class File {
 //	String filename;
 //	List<Chunk> chunks;
@@ -65,7 +57,6 @@ public class Metadata {
 		sc.close();
 	}
 
-	// maybe byte[] instead of string for content
 	// append an inverted index file by add content at the end of filename. 
 	// if filename does not exists, it creates it and adds the content
 		/**
@@ -178,13 +169,13 @@ public class Metadata {
 	 * @throws IOException
 	 */
 	public String[] search(String filter, String index) throws ClassNotFoundException, IOException {
-		Scanner sc = new Scanner(Paths.get(index));
+		Scanner sc = new Scanner(Paths.get(index + "Index.txt"));
 		ArrayList<String> songsList = new ArrayList<String>();
 		while (sc.hasNextLine()) {
 		     songsList.add(sc.nextLine());
 		}
 		sc.close();
-		String[] songList = (String[]) songsList.toArray();
+		String[] songList = ((String[]) songsList.toArray());
 		char sFirstLetter = filter.charAt(0);
 		boolean found = false;
 		ArrayList<String> result = new ArrayList<String>();

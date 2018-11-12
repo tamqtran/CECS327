@@ -8,12 +8,8 @@
 //import java.util.Scanner;
 import java.util.UUID;
 
-import javax.swing.DefaultListModel;
-
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Scanner;
 import java.io.*;
 
 import org.json.JSONArray;
@@ -21,22 +17,13 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.json.JSONException;
 
-import net.tomp2p.dht.FutureGet;
-import net.tomp2p.dht.FuturePut;
-import net.tomp2p.dht.PeerBuilderDHT;
-import net.tomp2p.dht.PeerDHT;
-import net.tomp2p.p2p.Peer;
-import net.tomp2p.p2p.PeerBuilder;
-import net.tomp2p.peers.Number160;
-import net.tomp2p.storage.Data;
 
 /**
  * Class that holds methods to handle messages between client and server
  * @author Duong Pham, Vincent Vu, Tam Tran
  *
  */
-public class Method 
-{
+public class Method {
 	byte[] bytes;
 	int size = 0;
 	public Method() {}
@@ -49,18 +36,15 @@ public class Method
 	 * @throws JSONException - catches errors concerning JSON files 
 	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
-	public byte[] checkLogin(String username,String password) throws JSONException, UnsupportedEncodingException 
-	{
+	public byte[] checkLogin(String username,String password) throws JSONException, UnsupportedEncodingException {
 		String [] arg = {username,password};
 		String sPassword = null;
-		try (InputStream input = new FileInputStream(username+".json")) 
-		{
+		try (InputStream input = new FileInputStream(username+".json")) {
 			JSONObject obj1 = new JSONObject(new JSONTokener(input));
 			sPassword = obj1.get("password").toString();
 			
 		}
-		catch (Exception e) 
-		{
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 		
@@ -76,24 +60,20 @@ public class Method
 	 * @throws JSONException - catches errors concerning JSON files
 	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
-	public byte[] logIn(String username) throws JSONException, UnsupportedEncodingException
-	{
+	public byte[] logIn(String username) throws JSONException, UnsupportedEncodingException {
 		String[] arg = {username};
-		try (InputStream input = new FileInputStream(username+".json")) 
-		{
+		try (InputStream input = new FileInputStream(username+".json")) {
 			JSONObject obj1 = new JSONObject(new JSONTokener(input));
 			
 			boolean loggedIn = (boolean) obj1.get("loggedIn");
 			
 			// checking if another user has logged in
 			// true if someone logged in, false if someone is not
-			if(loggedIn == true)	
-			{
+			if(loggedIn == true) {
 				System.out.println("Error: Someone is already logged into this account");
 				return JSONReply("logIn",arg,false);
 			}
-			else
-			{
+			else {
 				// change variable so multiple users cant use it
 				obj1.put("loggedIn", true);
 				
@@ -104,8 +84,7 @@ public class Method
 			}
 			
 		}
-		catch (Exception e) 
-		{
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 		return JSONReply("logIn",arg,true);
@@ -118,17 +97,14 @@ public class Method
 	 * @throws JSONException - catches errors concerning JSON files
 	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
-	public byte[] loggedOut(String username) throws JSONException, UnsupportedEncodingException
-	{
+	public byte[] loggedOut(String username) throws JSONException, UnsupportedEncodingException {
 		String[] arg = {username};
-		try (InputStream input = new FileInputStream(username+".json")) 
-		{
+		try (InputStream input = new FileInputStream(username+".json")) {
 			JSONObject obj1 = new JSONObject(new JSONTokener(input));
 			
 			boolean loggedIn = (boolean) obj1.get("loggedIn");
 			
-			if(loggedIn == true)	
-			{
+			if(loggedIn == true) {
 				obj1.put("loggedIn", false);
 				
 				FileWriter fileWriter = new FileWriter(username+".json");
@@ -140,8 +116,7 @@ public class Method
 			}
 				
 		}
-		catch (Exception e) 
-		{
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 		return JSONReply("loggedOut",arg,false);
@@ -154,17 +129,14 @@ public class Method
 	 * @throws JSONException - catches errors concerning JSON files
 	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
-	public byte[] getName(String username) throws JSONException, UnsupportedEncodingException 
-	{
+	public byte[] getName(String username) throws JSONException, UnsupportedEncodingException {
 		String [] arg = {username};
 		String name = null;
-		try (InputStream input = new FileInputStream(username+".json")) 
-		{
+		try (InputStream input = new FileInputStream(username+".json")) {
 			JSONObject obj1 = new JSONObject(new JSONTokener(input));
 			name = obj1.get("name").toString();
 		}
-		catch (Exception e) 
-		{
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 			return JSONReply("getName",arg,name);
@@ -177,20 +149,17 @@ public class Method
 	 * @throws JSONException - catches errors concerning JSON files
 	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
-	public byte[] getSonglist(String username) throws JSONException, UnsupportedEncodingException 
-	{
+	public byte[] getSonglist(String username) throws JSONException, UnsupportedEncodingException {
 		String [] arg = {username};
 		JSONObject obj1;
 		JSONArray songlist = null;
-		try (InputStream input = new FileInputStream(username+".json")) 
-		{
+		try (InputStream input = new FileInputStream(username+".json")) {
 			obj1 = new JSONObject(new JSONTokener(input));
 		    //read playlists
 		    songlist = obj1.getJSONArray("songlist");
 		    
 		}
-		catch (Exception e) 
-		{
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 		return JSONReply("getSonglist",arg,songlist);
@@ -203,20 +172,17 @@ public class Method
 	 * @throws JSONException - catches errors concerning JSON files
 	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
-	public byte[] getPlaylists(String username) throws JSONException, UnsupportedEncodingException 
-	{
+	public byte[] getPlaylists(String username) throws JSONException, UnsupportedEncodingException {
 		String [] arg = {username};
 		JSONObject obj1;
 		JSONArray playlist = null;
-		try (InputStream input = new FileInputStream(username+".json")) 
-		{
+		try (InputStream input = new FileInputStream(username+".json")) {
 			obj1 = new JSONObject(new JSONTokener(input));
 		    //read playlists
 		    playlist = obj1.getJSONArray("playlists");
 		    
 		}
-		catch (Exception e) 
-		{
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 		return JSONReply("getPlaylists",arg,playlist);
@@ -230,16 +196,13 @@ public class Method
 	 * @throws JSONException - catches errors concerning JSON files
 	 * @throws UnsupportedEncodingException - catches errors concerning encoding  
 	 */
-	 public byte[] addPlaylist(String username, String playlist) throws JSONException, UnsupportedEncodingException 
-	 {
+	 public byte[] addPlaylist(String username, String playlist) throws JSONException, UnsupportedEncodingException {
 		String [] arg = {username,playlist};
-		try (InputStream input = new FileInputStream(username+".json")) 
-		{
+		try (InputStream input = new FileInputStream(username+".json")) {
 		    JSONObject obj1 = new JSONObject(new JSONTokener(input));
 		    
 		    JSONArray currentList = obj1.getJSONArray("playlists");
-		    if(!currentList.toList().contains(playlist)) 
-		    {
+		    if(!currentList.toList().contains(playlist)) {
 		    	currentList.put(playlist);
 		    	obj1.put(playlist, new JSONArray()); //empty song list for this array
 		    }
@@ -250,8 +213,7 @@ public class Method
 			fileWriter.close();
 		    
 		}
-		catch (Exception e) 
-		{
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 		return JSONReply("addPlaylist",arg,true);
@@ -264,11 +226,9 @@ public class Method
 	 * @throws JSONException - catches errors concerning JSON files
 	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	  */
-	public byte[] removePlaylist(String username, String playlist) throws JSONException, UnsupportedEncodingException 
-	{
+	public byte[] removePlaylist(String username, String playlist) throws JSONException, UnsupportedEncodingException {
 		String [] arg = {username,playlist};
-		try (InputStream input = new FileInputStream(username+".json")) 
-		{
+		try (InputStream input = new FileInputStream(username+".json"))	{
 			JSONObject obj1 = new JSONObject(new JSONTokener(input));
 				    
 			JSONArray currentList = obj1.getJSONArray("playlists");
@@ -280,8 +240,7 @@ public class Method
 			fileWriter.flush();
 			fileWriter.close();    
 		}
-		catch (Exception e) 
-		{
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 		
@@ -297,16 +256,13 @@ public class Method
 	 * @throws JSONException - catches errors concerning JSON files
 	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
-	public byte[] removeSong(String username, String playlist, String song) throws JSONException, UnsupportedEncodingException 
-	{
+	public byte[] removeSong(String username, String playlist, String song) throws JSONException, UnsupportedEncodingException {
 		String [] arg = {username,playlist,song};
-		try (InputStream input = new FileInputStream(username+".json")) 
-		{
+		try (InputStream input = new FileInputStream(username+".json")) {
 		    JSONObject obj1 = new JSONObject(new JSONTokener(input));
 		    
 		    JSONArray currentPlaylist = obj1.getJSONArray("playlists");
-		    if(currentPlaylist.toList().contains(playlist)) 
-		    {
+		    if(currentPlaylist.toList().contains(playlist)) {
 		    	JSONArray currentList = obj1.getJSONArray(playlist);
 		    	currentList.remove(currentList.toList().indexOf(song));
 		    }
@@ -316,8 +272,7 @@ public class Method
 			fileWriter.close();
 		    
 		}
-		catch (Exception e) 
-		{
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 		return JSONReply("removeSong",arg,true);
@@ -332,19 +287,15 @@ public class Method
 	 * @throws JSONException - catches errors concerning JSON files
 	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
-	public byte[] addSong(String username, String playlist, String song) throws JSONException, UnsupportedEncodingException 
-	{
+	public byte[] addSong(String username, String playlist, String song) throws JSONException, UnsupportedEncodingException {
 		String [] arg = {username,playlist,song};
-		try (InputStream input = new FileInputStream(username+".json")) 
-		{
+		try (InputStream input = new FileInputStream(username+".json")) {
 		    JSONObject obj1 = new JSONObject(new JSONTokener(input));
 		    
 		    JSONArray currentPlaylist = obj1.getJSONArray("playlists");
-		    if(currentPlaylist.toList().contains(playlist)) 
-		    {
+		    if(currentPlaylist.toList().contains(playlist)) {
 		    	 JSONArray currentList = obj1.getJSONArray(playlist);
-				    if(!currentList.toList().contains(song)) 
-				    {
+				    if(!currentList.toList().contains(song)) {
 				    	currentList.put(song);
 				    }
 		    }
@@ -354,8 +305,7 @@ public class Method
 			fileWriter.flush();
 			fileWriter.close();
 		}
-		catch (Exception e) 
-		{
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 		return JSONReply("addSong",arg,true);
@@ -369,20 +319,17 @@ public class Method
 	 * @throws JSONException - catches errors concerning JSON files
 	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 * */
-	public byte[] getSongs(String username, String playlist) throws JSONException, UnsupportedEncodingException 
-	{
+	public byte[] getSongs(String username, String playlist) throws JSONException, UnsupportedEncodingException {
 		String [] arg = {username,playlist};
 		JSONObject obj1;
 		JSONArray songs = null;
-		try (InputStream input = new FileInputStream(username+".json")) 
-		{
+		try (InputStream input = new FileInputStream(username+".json")) {
 			obj1 = new JSONObject(new JSONTokener(input));
 		    //read playlists
 			songs = obj1.getJSONArray(playlist);
 		  
 		}
-		catch (Exception e) 
-		{
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 		return JSONReply("getSongs",arg,songs);
@@ -395,8 +342,7 @@ public class Method
 	 * @throws JSONException - catches errors concerning JSON files
 	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
-	public byte[] getSearch(String search, String filter) throws JSONException,IOException, UnsupportedEncodingException 
-	{
+	public byte[] getSearch(String search, String filter) throws JSONException,IOException, UnsupportedEncodingException {
 		String [] arg = {search, filter};
 		
 		final ServerSocket serverSocket = new ServerSocket(6778);
@@ -436,12 +382,10 @@ public class Method
 	 * @throws JSONException - catches errors concerning JSON files
 	 * @throws IOException 
 	 */
-	public byte[] playSong(String song, String count) throws JSONException, IOException 
-	{
+	public byte[] playSong(String song, String count) throws JSONException, IOException {
 		String [] arg = {song, count};
 		//File file = new File(song);
-		if(count.equals("-1")) 
-		{
+		if(count.equals("-1")) {
 			final ServerSocket serverSocket = new ServerSocket(6778);
 			Socket clientSocket = null;
 			try {
@@ -487,18 +431,14 @@ public class Method
 			}*/
 			return JSONReply("playSong",arg,size);
 		}
-		else 
-		{
-			
+		else {
 			byte[] bytePacket = new byte[64000];
 			
-			if(size - Integer.parseInt(count) > 64000) 
-			{
+			if(size - Integer.parseInt(count) > 64000) {
 				//System.out.println(i);
 				System.arraycopy(bytes, Integer.parseInt(count), bytePacket, 0, 64000);
 			}
-			else
-			{
+			else {
 				System.arraycopy(bytes, Integer.parseInt(count), bytePacket, 0, size - Integer.parseInt(count));
 			}
 			
@@ -514,31 +454,24 @@ public class Method
 	 * @throws JSONException - catches errors concerning JSON files
 	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
-	public byte[] getSong(String song) throws JSONException, UnsupportedEncodingException 
-	{
+	public byte[] getSong(String song) throws JSONException, UnsupportedEncodingException {
 		
 		java.io.File file = new java.io.File(song);
 		int size = (int) file.length();
 		byte[] bytes = new byte[size];
-		try 
-		{
+		try {
 			BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
 			buf.read(bytes, 0, bytes.length);
 			buf.close();
 		} 
-		catch (FileNotFoundException e) 
-		{
+		catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} 
-		catch (IOException e) 
-		{
+		catch (IOException e) {
 			e.printStackTrace();
 		}
-			
-			return bytes;
-		
+		return bytes;
 	}
-	
 	
 	/**
 	 * This method creates the reply for the Server to send to the Client.
@@ -549,26 +482,22 @@ public class Method
 	 * @throws JSONException - catches errors concerning JSON files
 	 * @throws UnsupportedEncodingException - catches errors concerning encoding 
 	 */
-	static byte[] JSONReply(String method, Object[] args, Object reply) throws JSONException, UnsupportedEncodingException
-	{
+	static byte[] JSONReply(String method, Object[] args, Object reply) throws JSONException, UnsupportedEncodingException {
 	        //Arguments
 	        JSONArray jsonArgs = new JSONArray();
-	        for (int i=0; i<args.length; i++)
-	        {
+	        for (int i=0; i<args.length; i++) {
 	        	jsonArgs.put(args[i]);
 	        }
 	
 	        //Json Object
 	        JSONObject jsonReply = new JSONObject();
-	        try 
-	        {
+	        try {
 	        	jsonReply.put("id", UUID.randomUUID().hashCode());
 	        	jsonReply.put("method", method);
 	        	jsonReply.put("arguments", jsonArgs);
 	        	jsonReply.put("result", reply);
 	        }
-	        catch (JSONException e)
-	        {
+	        catch (JSONException e) {
 	                System.out.println(e);
 	        }
 	        return jsonReply.toString().getBytes("utf-8");
@@ -587,7 +516,6 @@ public class Method
 	        for (int i=0; i<args.length; i++) {
 	        	jsonArgs.put(args[i]);
 	        }
-	
 	        
 	        JSONObject jsonRequest = new JSONObject(); //Json Object
 	        try {
