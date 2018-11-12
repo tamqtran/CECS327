@@ -178,23 +178,29 @@ public class Metadata {
 	 * @throws IOException
 	 */
 	public String[] search(String filter, String index) throws ClassNotFoundException, IOException {
-		Scanner sc = new Scanner(Paths.get(index));
-		ArrayList<String> songsList = new ArrayList<String>();
+		Scanner sc = new Scanner(Paths.get(index.toLowerCase() + "index.txt"));
+		List<String> songsList = new ArrayList<String>();
 		while (sc.hasNextLine()) {
 		     songsList.add(sc.nextLine());
 		}
 		sc.close();
-		String[] songList = (String[]) songsList.toArray();
-		char sFirstLetter = filter.charAt(0);
+		System.out.println("Searching for " + filter);
+		for (int i = 0; i < songsList.size(); i++) {
+			System.out.println(songsList.get(i));
+		}
 		boolean found = false;
-		ArrayList<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<String>();
 		Chunk c;
-		for (int i = 0; i < songList.length; i++) {
-			if (filter.equals(songList[i].substring(0, filter.length()))) {
-				result.add(songList[i]);
+		System.out.println(songsList.get(0).substring(0, filter.length()-1));
+		for (int i = 0; i < songsList.size(); i++) {
+			if (filter.equalsIgnoreCase(songsList.get(i).substring(0, filter.length()))) {
+				result.add(songsList.get(i));
 			}
 		}
-		ArrayList<String> moddedSearch = new ArrayList<String>();
+		for (int i = 0; i < result.size(); i++) {
+			System.out.println(result.get(i));
+		}
+		List<String> moddedSearch = new ArrayList<String>();
 		if (index.equals("Artist")) {
 			for (int i = 0; i < result.size(); i++) {
 				String[] temp = result.get(i).split(";");
@@ -216,8 +222,12 @@ public class Metadata {
 				moddedSearch.add(temp2);
 			}
 		}
-		
-		return (String[]) moddedSearch.toArray();
+
+		String[] array = moddedSearch.toArray(new String[moddedSearch.size()]);
+		for (int i = 0; i < moddedSearch.size(); i++) {
+			System.out.println(moddedSearch.get(i));
+		}
+		return array;
 	}
 	
 	/**

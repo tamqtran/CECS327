@@ -396,6 +396,7 @@ public class Method
 		
 		final ServerSocket serverSocket = new ServerSocket(6778);
 		Socket clientSocket = null;
+		String[] result = null;
 		try {
 			//request
 			clientSocket  = new Socket("localhost", 6777);
@@ -405,13 +406,15 @@ public class Method
 			
 			//reply 3 seperations metadata.append
 			Socket socket = serverSocket.accept();
-			DataInputStream reply = new DataInputStream(socket.getInputStream());
-			size = reply.readInt();
-			bytes = new byte[size];
-			reply.readFully(bytes, 0, bytes.length);;
-			System.out.println("Reply: "+bytes.toString());
+			ObjectInputStream reply = new ObjectInputStream(socket.getInputStream());
+			try {
+				result = (String[]) reply.readObject();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
-			request.close();
+
 			clientSocket.close();
 			socket.close();
 			reply.close();
@@ -420,7 +423,7 @@ public class Method
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
-		return JSONReply("getSearch",arg,new String(bytes, StandardCharsets.UTF_8));
+		return JSONReply("getSearch",arg,result);
 	}
 	
 	/**
@@ -452,7 +455,7 @@ public class Method
 				DataInputStream reply = new DataInputStream(socket.getInputStream());
 				size = reply.readInt();
 				bytes = new byte[size];
-				reply.readFully(bytes, 0, bytes.length);;
+				reply.readFully(bytes, 0, bytes.length);
 				System.out.println("Reply: "+bytes.toString());
 				
 				request.close();

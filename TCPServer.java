@@ -245,12 +245,19 @@ public class TCPServer {
 						{
 							e.printStackTrace();
 						}
-						
-						byte[] rep = (byte[]) result;
+						String[] rep1 = null;
+						if (method.equals("search")) {
+							rep1 = (String[]) result;
+						}
+						byte[] rep = null;
+						if (method.equals("getSong")) {
+							rep = (byte[]) result;
+						}
 						//Reply
 						try 
 						{
 							Socket clientSocket  = new Socket("localhost", 6778);
+							if (method.equals("getSong")) {
 							DataOutputStream reply = new DataOutputStream(clientSocket.getOutputStream());
 							reply.writeInt(rep.length);
 							reply.write(rep);
@@ -259,6 +266,16 @@ public class TCPServer {
 							reply.close();
 							socket.close();
 							clientSocket.close();
+							}
+							if (method.equals("search")) {
+								ObjectOutputStream reply = new ObjectOutputStream(clientSocket.getOutputStream());
+								reply.writeObject(rep1);
+								
+								request.close();
+								reply.close();
+								socket.close();
+								clientSocket.close();
+							}
 						} 
 						catch (JSONException e1) 
 						{

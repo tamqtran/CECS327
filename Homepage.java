@@ -914,7 +914,7 @@ public class Homepage
 	 * @param
 	 */
 	String[] getSearchResults(String search) {
-		String [] arguments = {search, searchFilter.getSelectedItem().toString()};
+		String [] arguments = {search, "Artist"};
 		JSONObject obj = requestReply.UDPRequestReply("getSearch", arguments, aSocket, serverPort);
 		String results  = obj.get("result").toString();
 		
