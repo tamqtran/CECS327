@@ -37,13 +37,22 @@ import net.tomp2p.p2p.PeerBuilder;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
 
-
+/**
+ * This is the class that initializes the TomP2P middleware with 3 peers
+ * @author Duong Pham
+ *
+ */
 public class TCPServer {
 	static Method json;
 	private static final Random RND = new Random(42L);
 	static PeerDHT[] peers;
 	
-	
+	/**
+	 * Runs Main to set up P2P, create 3 peers, initialize metdata, puts songs in peers, and connects to UDP Server 
+	 * @param args - args
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		
 		// create metadata to JSON indexes
@@ -274,7 +283,7 @@ public class TCPServer {
 	
 	/**
 	 * Print out a list containing the address of each peer
-	 * @param peers array
+	 * @param peers - array of peers
 	 */
 	 public static void printPeers(PeerDHT[] peers) {
 	    	for(int i = 0; i<peers.length; i++) {
@@ -286,8 +295,8 @@ public class TCPServer {
 	/**
      * Create peers with a port and attach it to the first peer in the array.
      * 
-     * @param nr The number of peers to be created
-     * @param port The port that all the peer listens to. The multiplexing is done via the peer Id
+     * @param nr - The number of peers to be created
+     * @param port - The port that all the peer listens to. The multiplexing is done via the peer Id
      * @return The created peers
      * @throws IOException IOException
      */
@@ -302,6 +311,12 @@ public class TCPServer {
 	        }
 	        return peers;
 	    }
+	 
+	 /**
+	  * Bootstraps peers to the first peer in the array.
+	  * 
+	  * @param peers The peers that should be bootstrapped
+	  */
 	 public static void bootstrap( PeerDHT[] peers ) {
 	    	//make perfect bootstrap, the regular can take a while
 	    	for(int i=0;i<peers.length;i++) {
@@ -311,12 +326,27 @@ public class TCPServer {
 	    	}
 	    }
     
+	/**
+	 * Puts the song byte into peers by mapping it with the song's guid
+	 * @param peer - peer to put song into
+	 * @param guid - guid of song
+	 * @param data - data of song
+	 * @throws IOException
+	 */
     private static void put(final PeerDHT peer, final Number160 guid, Object data) throws IOException {
     	FuturePut futurePut = peer.put(guid).object(data).start();
         futurePut.awaitUninterruptibly();
         System.out.println("peer " + peer.peerID() + " stored [key: " + guid + ", value: "+ new Data (data));
     }
     
+    /**
+     * Get data of song by using song guid get it in peer
+     * @param peer - peer to get song from 
+     * @param guid - guid of song
+     * @return data of song
+     * @throws ClassNotFoundException
+     * @throws IOException
+     */
     private static Object get(final PeerDHT peer, final Number160 guid) throws ClassNotFoundException, IOException {
            
     	FutureGet futureGet = peer.get(guid).start();
@@ -325,7 +355,13 @@ public class TCPServer {
         return futureGet.data().object();
     }
     
-    //***  Method for Each request ***/
+    /**
+     * Get song in byte form
+     * @param song - song to change into byte form
+     * @return song bytes
+     * @throws JSONException
+     * @throws UnsupportedEncodingException
+     */
     public static byte[] getSong(String song) throws JSONException, UnsupportedEncodingException 
 	{
 		
@@ -350,6 +386,13 @@ public class TCPServer {
 			return bytes;
 		
 	}
+    
+    /**
+     * Read file
+     * @param filename - file to be read
+     * @return string of content of file
+     * @throws IOException
+     */
     public static String readFile(String filename) throws IOException
     {
         String content = null;
@@ -371,6 +414,11 @@ public class TCPServer {
         return content;
     }
     
+    /**
+     * Change string to Hex
+     * @param arg - string
+     * @return hex of arg string
+     */
     public static String toHex(String arg) {
     	  return String.format("%x", new BigInteger(1, arg.getBytes(/*YOUR_CHARSET?*/)));
     	}

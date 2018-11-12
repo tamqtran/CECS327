@@ -14,6 +14,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.*;
 
+/**
+ * This class is for the UDP relationship to work between server and client
+ * @author Simba
+ *
+ */
 public class UDPServer
 {
 	public class client{
