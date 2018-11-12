@@ -27,9 +27,9 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 	private JButton 	playButton, addButton;
 	private JLabel 		playlistLabel, responseLabel, searchLabel, filterLabel,
 				   		titleLabel, artistLabel, albumLabel;
-	private JComboBox<String> playList;
+	private JComboBox<String> playList, searchFilter;
 	private String 		username, songName, songTitle, artist, album, 
-						filter = "song", u_search = ""; //by default, the search filter is 'by title'
+						sfilter = "song", tfilter = "song", u_search = ""; //by default, the search filter is 'by title'
 	private int 		searchIndex = 0;
 	private DefaultTableModel model;
 	private final String[] columns = { "Song", "Artist", "Album" };
@@ -59,19 +59,36 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 
 		searchLabel = new JLabel("Searching for: '" + u_search + "'");
 		searchLabel.setSize(new Dimension(searchLabel.getPreferredSize()));
-		searchLabel.setLocation(10, 10);
+		searchLabel.setLocation(50, 10);
 		searchLabel.setName("search entry");
 		this.add(searchLabel);
 		
-		filterLabel = new JLabel("Currently sorted by: " + filter);
+		
+//		searchFilter = new JComboBox<String>(columns);
+//		searchFilter.setSize(new Dimension(110, 30));
+//		searchFilter.setEditable(false);
+//		searchFilter.setName("search filter");
+//		searchFilter.setSelectedIndex(0);
+//		searchFilter.setLocation(10, 5);
+//		searchFilter.addActionListener(new ActionListener() {
+//			@Override public void actionPerformed(ActionEvent e) {
+//				sfilter = (String) searchFilter.getSelectedItem();
+//				System.out.println(sfilter);
+//			}
+//		});
+//		System.out.println(sfilter);
+//		this.add(searchFilter);
+		
+		
+		filterLabel = new JLabel("Currently sorted by: " + tfilter);
 		filterLabel.setSize(new Dimension(filterLabel.getPreferredSize()));
-		filterLabel.setLocation(10, 25);
+		filterLabel.setLocation(50, 25);
 		filterLabel.setName("filter");
 		this.add(filterLabel);
 		
 		model = null;
 		updateSearch(search, userSearch);
-		System.out.println("Filter by " + filter + " (Initial)");
+		System.out.println("Filter by " + tfilter + " (Initial)");
 		
 		// Creates a table to display the search results
 		results = new JTable(model);
@@ -80,9 +97,9 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		results.getTableHeader().addMouseListener(new MouseAdapter() {
 			@Override public void mouseClicked(MouseEvent e) {
 				int col = results.columnAtPoint(e.getPoint());
-				filter = results.getColumnName(col).toLowerCase();
+				tfilter = results.getColumnName(col).toLowerCase();
 				
-				System.out.println("Filter by " + filter);							// system call
+				System.out.println("Filter by " + tfilter);							// system call
 				System.out.println("searchIndex " + searchIndex + " / col " + col); // system call
 				
 				//	if the same column is pressed as the prior action,
@@ -90,7 +107,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 				// 	show inverted for filter; nothing otherwise,
 				//	or flipOrder is true; false otherwise
 				
-				filter  +=  (searchIndex == col) ? ((flipOrder == true) ?   ""  : " (inverted)") : ""   ; 
+				tfilter  +=  (searchIndex == col) ? ((flipOrder == true) ?   ""  : " (inverted)") : ""   ; 
 				flipOrder = (searchIndex == col) ? ((flipOrder == true) ? false :      true    ) : false; 
 				
 				// for flipOrder --- false: A-Z; true: Z-A
@@ -100,7 +117,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 				searchIndex = col;			// set searchIndex to col
 				tableChangedFilter();		// change the table
 				
-				filterLabel.setText("Currently sorted for: " + filter);
+				filterLabel.setText("Currently sorted for: " + tfilter);
 				filterLabel.setSize(new Dimension(filterLabel.getPreferredSize()));
 			}
 		});
@@ -441,5 +458,5 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		return songName;
 	}
 	
-	public String getFilter() {return filter;}
+//	public String getFilter() {return sfilter;}
 }

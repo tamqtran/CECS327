@@ -211,7 +211,7 @@ public class Metadata {
 		if (index.equals("Song")) {
 			for (int i = 0; i < result.size(); i++) {
 				String[] temp = result.get(i).split(";");
-				String temp2 = temp[1] + "_" + temp[0] + "_" + temp[2];
+				String temp2 = temp[0] + "_" + temp[1] + "_" + temp[2];
 				moddedSearch.add(temp2);
 			}
 		}

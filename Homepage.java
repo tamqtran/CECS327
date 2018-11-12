@@ -66,8 +66,9 @@ public class Homepage {
 	private ArrayList<String> 	songList = new ArrayList<String>();
 	private List<String>		historyLog = new ArrayList<String>();
 	
-	private String 				userName, playlist;
+	private String 				userName, playlist, currentFilter;
 	
+	private final String[]		filterTypes = {"Song", "Artist", "Album"};
 	private final String 		specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]", 
 								SHIFT_PANEL = "Shifting", SEARCH_PANEL = "Search",
 								homeCard;
@@ -101,7 +102,7 @@ public class Homepage {
 	
 	private JSlider				timedSlider; // song manipulator
 	
-	private JComboBox<String>	searchField;
+	private JComboBox<String>	searchField, searchFilter;
 	
 	private JScrollPane			UserSavedPanel;
 	
@@ -156,7 +157,7 @@ public class Homepage {
 	private void initialize(Frame base) {
 		// initialize the frame and set minimum dimensions and default close operation for the frame
 		frame = new JFrame("MusicService -- " + userName);
-		frame.setMinimumSize(new Dimension(775,500));
+		frame.setMinimumSize(new Dimension(775,650));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		// initializes and loads the upper half of frame components into frame's content pane
@@ -173,6 +174,7 @@ public class Homepage {
 		// create and pack playlist creation dialog
 		playlistCreation = new CreatePlaylistDialog(frame, userName, dm, aSocket, serverPort);
 		playlistCreation.pack();
+		
 		// set the frame's root pane's default button to searchQuery_
 		frame.getRootPane().setDefaultButton(searchQuery_);	
 		
@@ -385,8 +387,7 @@ public class Homepage {
 		searchField = new JComboBox<String>();
 		searchField.setEditable(true);
 		searchField.setName("Search for...");
-		searchField.setToolTipText("Double-click the text field to clear it. " 
-								+ "Long press an item in the drop-down menu to remove it.");
+		searchField.setToolTipText("Double-click the text field to clear it.");
 				
 		isHistory = true; 
 		//initialize isHistory (used for searchField focus)
@@ -483,6 +484,16 @@ public class Homepage {
 			}
 		});
 		
+		searchFilter = new JComboBox<String>(filterTypes);
+		searchFilter.setEditable(false);
+		searchFilter.setName("search by");
+		searchFilter.addActionListener(new ActionListener() {
+			@Override public void actionPerformed(ActionEvent e) {
+				currentFilter = (String) searchFilter.getSelectedItem();
+			}
+		});
+		searchFilter.setSelectedIndex(0);
+		
 		// initialize searchQuery_ and add an action listener that searches for text in searchField
 		searchQuery_ = new JButton("Search");							
 		searchQuery_.setName("search button");
@@ -503,7 +514,7 @@ public class Homepage {
 						JOptionPane.showMessageDialog(frame, "You can't do that. Stop it!", 
 								"Inane warning - code injection rejection", JOptionPane.WARNING_MESSAGE);
 					} else {
-						playlist = "x";					
+						playlist = "x";						
 						SearchPanel.changeSearch(getSearchResults(text), text);	
 						// otherwise, it will change the table of SearchMenuPanel
 					}
@@ -517,6 +528,7 @@ public class Homepage {
 		// add searchField and searchQuery_ to _SearchPanel and set max dimensions
 		_SearchPanel.add(searchField);
 		_SearchPanel.add(searchQuery_);
+		_SearchPanel.add(searchFilter);
 		_SearchPanel.setMaximumSize(new Dimension(200,40));
 		
 		// initialize _HistoryPanel and set layout and maximum size for the panel
@@ -1040,7 +1052,7 @@ public class Homepage {
 	 * @param search: filter specification
 	 */
 	String[] getSearchResults(String search) {
-		String [] arguments = {search, SearchPanel.getFilter()};
+		String [] arguments = {search, currentFilter};
 		JSONObject obj = requestReply.UDPRequestReply("getSearch", arguments, aSocket, serverPort);
 		String results  = obj.get("result").toString();
 		
