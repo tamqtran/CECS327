@@ -9,6 +9,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * This class holds methods to create messages for UDP interaction
+ * @author Duong Pham, Tam Tran
+ *
+ */
 public class requestReply 
 {
 	/**

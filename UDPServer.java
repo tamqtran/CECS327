@@ -16,7 +16,7 @@ import java.io.*;
 
 /**
  * This class is for the UDP relationship to work between server and client
- * @author Simba
+ * @author Duong Pham
  *
  */
 public class UDPServer
