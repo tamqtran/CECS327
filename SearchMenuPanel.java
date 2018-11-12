@@ -32,7 +32,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 						filter = "song", u_search = ""; //by default, the search filter is 'by title'
 	private int 		searchIndex = 0;
 	private DefaultTableModel model;
-	private final String[] columns = { "Song", "Artist(s)", "Album" };
+	private final String[] columns = { "Song", "Artist", "Album" };
 	private boolean 	flipOrder = false;
 	
 	/**
@@ -345,6 +345,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 	}
 	
 	/**
+	 * OBSOLETE
 	 * Search method to search for the user's desired song and display relevant results
 	 * @param text: what the user wants to search for
 	 * @return String array of the search results
