@@ -34,6 +34,7 @@ import org.json.JSONObject;
 public class Metadata {
 	
 	protected List<File> fileList;
+	static PeerDHT peer;
 	
 	// constructor for metadata
 	public Metadata() throws IOException {
@@ -46,6 +47,18 @@ public class Metadata {
 		sc.close();
 	}
 	
+	
+	// constructor for metadata with peer
+		public Metadata(PeerDHT peer) throws IOException {
+			this.peer = peer;
+			fileList = new ArrayList<File>();
+			
+			Scanner sc = new Scanner(Paths.get("METADATA.txt"));
+			while (sc.hasNextLine()) {
+			     fileList.add(new File(sc.nextLine()));
+			}
+			sc.close();
+		}
 	// maybe byte[] instead of string for content
 	// append an inverted index file by add content at the end of filename. 
 	// if filename does not exists, it creates it and adds the content
@@ -140,11 +153,10 @@ public class Metadata {
 				break;
 			}
 		}
-		int guid = c.getGUID();
-		byte[] data = null; //REPLACE. GETS DATA FROM PEER
-		//PEER.GET
+		Number160 guid = new Number160(c.getGUID());
+		byte[] data = get(peer, guid);
 		String str = new String(data, StandardCharsets.UTF_8);
-		String[] songs = str.split(" ");
+		String[] songs = str.split("_");
 		ArrayList<String> result = new ArrayList<String>();
 		int sizeFilter = filter.length();
 		for (int i = 0; i < songs.length; i++) {
@@ -155,6 +167,14 @@ public class Metadata {
 		
 		return (String[]) result.toArray();
 	}
+	
+	private static Object get(final PeerDHT peer, final Number160 guid) throws ClassNotFoundException, IOException {
+        
+    	FutureGet futureGet = peer.get(guid).start();
+        futureGet.awaitUninterruptibly();
+        System.out.println("peer " + peer.peerID() + " got: \"" + futureGet.data() + "\" for the key " + guid);
+        return futureGet.data().object();
+    }
 	// searchSongs(String filter)
 	// read metadata
 	// let f be the inverted index of the songs

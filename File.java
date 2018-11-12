@@ -168,7 +168,7 @@ public class File {
 				correct = true;
 			}
 			if (correct) {
-				data = data + line + " ";
+				data = data + line + "_";
 			}
 			if (line.charAt(0) == LastChar) {
 				correct = false;
