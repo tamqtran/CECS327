@@ -260,10 +260,8 @@ public class ShiftingPanel extends JLayeredPane {
 		setCurrentPlaylistInHomepage();
 		
 		// enable or disable the history buttons depending on the emptiness of the previousPanels and nextPanels variables
-//		if (previousPanels.length > 0) prevButton.setEnabled(true); else prevButton.setEnabled(false);	
 		prevButton.setEnabled((previousPanels.length > 0) ? true : false);
-//		if (nextPanels.length > 0) nextButton.setEnabled(true); else nextButton.setEnabled(false);
-		nextButton.setEnabled((nextPanels.length > 0) ? true : false);
+		nextButton.setEnabled((nextPanels.length > 0)     ? true : false);
 	}
 	
 //	GET METHODS

@@ -20,7 +20,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 	private JTable 		results;
 	private JScrollPane resultsJPS;
 	private JButton 	playButton, addButton;
-	private JLabel 		playlistLabel, responseLabel, errorLabel, searchLabel, filterLabel,
+	private JLabel 		playlistLabel, responseLabel, searchLabel, filterLabel,
 				   		titleLabel, artistLabel, albumLabel;
 	private JComboBox<String> playList;
 	private String 		username, songName, songTitle, artist, album, 
@@ -47,12 +47,12 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 				
 		//Response Label. Displays whether action is successful or not
 		responseLabel = new JLabel("");
-		responseLabel.setSize(new Dimension(320, 50));
-		responseLabel.setLocation(130, 355);
+		responseLabel.setSize(new Dimension(responseLabel.getPreferredSize()));
+		responseLabel.setLocation(200, 17);
 		responseLabel.setName("response");
 		this.add(responseLabel);
 
-		searchLabel = new JLabel("Searching for: " + u_search);
+		searchLabel = new JLabel("Searching for: '" + u_search + "'");
 		searchLabel.setSize(new Dimension(searchLabel.getPreferredSize()));
 		searchLabel.setLocation(10, 10);
 		searchLabel.setName("search entry");
@@ -114,9 +114,9 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 					album = results.getModel().getValueAt(row, 2).toString();
 
 					//change text on labels in Homepage
-					titleLabel.setText(songTitle); titleLabel.setVisible(true);
-					artistLabel.setText(artist); artistLabel.setVisible(true);
-					albumLabel.setText(album);	albumLabel.setVisible(true);
+					titleLabel.setText(songTitle); titleLabel.setSize(new Dimension(titleLabel.getPreferredSize())); titleLabel.setVisible(true);
+					artistLabel.setText(artist); artistLabel.setSize(new Dimension(artistLabel.getPreferredSize())); artistLabel.setVisible(true);
+					albumLabel.setText(album); albumLabel.setSize(new Dimension(albumLabel.getPreferredSize())); albumLabel.setVisible(true);
 
 					songName = songTitle + "_" + artist + "_" + album;	
 					System.out.println("SearchMenuPanel "+ panel.getName() + ": '" + songName + "' selected");
@@ -172,10 +172,12 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 						if (!songlistToAdd.toList().contains(selectedSong)) {
 							songlistToAdd.put(selectedSong);
 							responseLabel.setText("Success! This song was added to that playlist.");
+							responseLabel.setSize(new Dimension(responseLabel.getPreferredSize()));
 							responseLabel.setForeground(Color.BLUE);
 							System.out.println("Song '" + selectedSong + "' has been added to playlist '" + selectedPL + "'");
 						} else {
 							responseLabel.setText("Warning! This song already exists in that playlist");
+							responseLabel.setSize(new Dimension(responseLabel.getPreferredSize()));
 							responseLabel.setForeground(Color.RED);
 							System.out.println("Song '" + selectedSong + "' already exists in playlist '" + selectedPL + "'");
 						}
@@ -191,6 +193,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 					}
 				} else {
 					responseLabel.setText("No song is being selected");
+					responseLabel.setSize(new Dimension(responseLabel.getPreferredSize()));
 					responseLabel.setForeground(Color.RED);
 				}
 			}
@@ -207,12 +210,14 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 	 */
 	private void updateSearch(String [] search, String userSearch) {
 		u_search = userSearch;
+		model = new DefaultTableModel(null, columns) {
+			public boolean isCellEditable(int row, int column) {
+				return false; // This causes all cells to be not editable
+			}
+		};
 		if (search != null) {
-			model = new DefaultTableModel(null, columns) {
-				public boolean isCellEditable(int row, int column) {
-					return false; // This causes all cells to be not editable
-				}
-			};
+			responseLabel.setText("");
+			responseLabel.setSize(new Dimension(responseLabel.getPreferredSize()));
 			
 			search = sortSearch(search);	// sort the search
 			
@@ -221,13 +226,12 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 				  model.addRow(search[i].split("_"));
 			}
 		} else { // create the error label
-			errorLabel = new JLabel("No results found for '" + userSearch + "'");
-			errorLabel.setSize(errorLabel.getPreferredSize());
-			errorLabel.setLocation(130, 415);
-			this.add(errorLabel);
+			responseLabel.setText("No results found for '" + userSearch + "'");
+			responseLabel.setSize(new Dimension(responseLabel.getPreferredSize()));
+			responseLabel.setForeground(Color.RED);
 		}			
 		
-		searchLabel.setText("Searching for: " + u_search);
+		searchLabel.setText("Searching for: '" + u_search + "'");
 		searchLabel.setSize(new Dimension(searchLabel.getPreferredSize()));
 	}
 	
@@ -347,7 +351,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		// System command to grab current working directory
 		String currentFolderPath = System.getProperty("user.dir"); 
 		//"user.dir" will return your MusicStreaming folder in the Eclipse Workspace
-		File currentFolder = new File(currentFolderPath);
+		File currentFolder = new java.io.File(currentFolderPath + "\\Music");
 
 		// list() vs listFiles()
 		// List- string array
@@ -376,14 +380,19 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		try (InputStream input = new FileInputStream(pathname)) {
 			obj1 = new JSONObject(new JSONTokener(input));
 
-			// read playlists
-			String playlist = obj1.get("playlists").toString();
-			String[] playlistArray = playlist.substring(2, playlist.length() - 2).split("\",\"");
-			return playlistArray;
+			try {// read playlists
+				String playlist = obj1.get("playlists").toString();
+				String[] playlistArray = playlist.substring(2, playlist.length() - 2).split("\",\"");
+				return playlistArray;
+			} catch(StringIndexOutOfBoundsException e) {
+				System.out.println("There are no available playlists for this user.");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		
+		String [] none = {};
+		return none;
 	}
 
 	// Action Listener for buttons

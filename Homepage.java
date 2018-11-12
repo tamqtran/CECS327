@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -13,6 +14,8 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.ByteArrayInputStream;
@@ -24,6 +27,8 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -44,6 +49,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
@@ -56,8 +62,9 @@ import org.json.JSONObject;
  */
 public class Homepage {
 	private volatile static Clip current;
-	private int					songIndex;
+	private int					songIndex, currentListIndex = -1;
 	private ArrayList<String> 	songList = new ArrayList<String>();
+	private List<String>		historyLog = new ArrayList<String>();
 	
 	private String 				userName, playlist;
 	
@@ -124,9 +131,9 @@ public class Homepage {
 	 * Test driver for this class.
 	 * @param args: a list of arguments. If none, then it will act as an empty array.
 	 */
-	public static void main(String[] args) { // test
-		new Homepage("allan",null, 6733, new JFrame());
-	}
+//	public static void main(String[] args) { // test
+//		new Homepage("allan",null, 6733, new JFrame());
+//	}
 	
 	/**
 	 * Main constructor.
@@ -179,7 +186,10 @@ public class Homepage {
 										(int)(f.getSize().getHeight()- shift.getHeight()));
 				
 				// update the UI of ShiftingPanel after changing the size
-				ShiftingPanel.updateUI(); 							
+				ShiftingPanel.updateUI();
+				
+				LOW_panel.setSize((int)f.getSize().getWidth(), (int)LOW_panel.getMinimumSize().getHeight());
+				LOW_panel.updateUI();
 			}
 		});
 		
@@ -191,7 +201,7 @@ public class Homepage {
 	 * This initialization method handles the upper half of the frame.
 	 * @param pane: the frame's content pane
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings("unchecked")
 	private void addHighComponentsToHome(Container pane) {	
 		// set up pane layout
 		pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
@@ -205,11 +215,10 @@ public class Homepage {
 		// initialize Playlist_Panel and set layout and max dimensions
 		Playlist_Panel = new JPanel(); 								
 		Playlist_Panel.setLayout(new BoxLayout(Playlist_Panel, BoxLayout.Y_AXIS));
-		Playlist_Panel.setMaximumSize(new Dimension(200,1000));
 		
 		// initialize PlaylistTitle and set max dimensions
 		PlaylistTitle = new JPanel(); 								
-		PlaylistTitle.setMaximumSize(new Dimension(100,15));
+		PlaylistTitle.setMaximumSize(new Dimension(90,25));
 		
 		// initialize playlist_ label, set font, and add to PlaylistTitle
 		playlist_ = new JLabel("My Playlists"); 					
@@ -218,8 +227,8 @@ public class Homepage {
 		PlaylistTitle.add(playlist_);
 		
 		// initialize dm and playlist_List (using dm)
-		dm = new DefaultListModel(); 								
-		playlist_List = new JList(dm);
+		dm = new DefaultListModel<String>(); 								
+		playlist_List = new JList<String>(dm);
 		
 		// set font for playlist_List
 		playlist_List.setFont(Tahoma_Plain_OneFour);
@@ -230,11 +239,11 @@ public class Homepage {
 			public void mouseClicked(MouseEvent e) {
 				// Shift front card to ShiftingPanel and focus on searchQuery_
 				((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);
-				searchQuery_.requestFocusInWindow();
+				CorePanel.updateUI();
 				
-				JList list = (JList)e.getSource();				
+				JList<String> list = (JList<String>)e.getSource();				
 				// this rectangle bounds between the first and last entries on playlist_List
-				Rectangle r = list.getCellBounds(0, list.getLastVisibleIndex());	
+				Rectangle r = list.getCellBounds(list.getFirstVisibleIndex(), list.getLastVisibleIndex());	
 				
 				// left mouse button double-click only
 				if (e.getButton() == MouseEvent.BUTTON1) {	
@@ -324,6 +333,8 @@ public class Homepage {
 					// update the model
 					getPlaylists(dm);
 					
+					if (dm.isEmpty()) currentListIndex = -1;
+					
 					// if the current song is from this playlist, remove visibility of the description panel 
 					// and remove all iterations of PlaylistPanels with this name from ShiftingPanel
 					ShiftingPanel.removeFromHistory(removedPlaylist); 
@@ -335,18 +346,23 @@ public class Homepage {
 		});
 		
 		// set the layout with rigid areas and JButtons for PlaylistOptions
-		PlaylistOptions.add(Box.createRigidArea(new Dimension(6,5)));		PlaylistOptions.add(createPlaylist_);
-		PlaylistOptions.add(Box.createRigidArea(new Dimension(5,5)));		PlaylistOptions.add(removePlaylist_);
-		PlaylistOptions.add(Box.createRigidArea(new Dimension(6,5)));
+		PlaylistOptions.add(Box.createRigidArea(new Dimension(5,0)));		PlaylistOptions.add(createPlaylist_);
+		PlaylistOptions.add(Box.createRigidArea(new Dimension(5,0)));		PlaylistOptions.add(removePlaylist_);
+		PlaylistOptions.add(Box.createRigidArea(new Dimension(5,0)));
 		
 		// set the layout with rigid areas and JPanels to Playlist_Panel
 		Playlist_Panel.add(Box.createVerticalStrut(5));		Playlist_Panel.add(PlaylistTitle);
 		Playlist_Panel.add(Box.createVerticalStrut(5));		Playlist_Panel.add(UserSavedPanel);
 		Playlist_Panel.add(Box.createVerticalStrut(5));		Playlist_Panel.add(PlaylistOptions);
-		Playlist_Panel.add(Box.createRigidArea(new Dimension(3,3)));
+		Playlist_Panel.add(Box.createRigidArea(new Dimension(0,3)));
 		
 		// set border type for Playlist_Panel
-		Playlist_Panel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED)); 	
+		Playlist_Panel.setBorder(BorderFactory
+				.createBevelBorder(BevelBorder.RAISED) 
+//				.createLineBorder(Color.RED)
+				);
+//		Playlist_Panel.setPreferredSize(new Dimension(200,600));
+		Playlist_Panel.setMaximumSize(new Dimension(200,500));
 		
 //		large song album cover (e_CoverPanel) can go here later
 		
@@ -362,65 +378,107 @@ public class Homepage {
 		_SearchPanel = new JPanel(); 									
 		_SearchPanel.setLayout(new FlowLayout());
 		
+		//DefaultComboBoxModel<String> cbm = new DefaultComboBoxModel<String>();		
+		
 		// initialize searchField and set it as editable
-		searchField = new JComboBox();									
+		searchField = new JComboBox<String>();
 		searchField.setEditable(true);
 		searchField.setName("Search for...");
+		searchField.setToolTipText("Double-click the text field to clear it. " 
+								+ "Long press an item in the drop-down menu to remove it.");
+				
+		isHistory = true; 
+		//initialize isHistory (used for searchField focus)
 		
-		// set a focus listener to the text field component of searchField
-		searchField.getEditor().getEditorComponent()
-		.addFocusListener(new FocusListener() {			
+		// add focus and mouse listeners to the text field component of searchField
+		JTextField editorComponent = (JTextField)searchField.getEditor().getEditorComponent();
+		editorComponent.setText("");
+		editorComponent.addFocusListener(new FocusListener() {			
 			@Override public void focusGained(FocusEvent e) {
-				// the focus is run last
-				SwingUtilities.invokeLater(new Runnable() { 
-					@Override public void run() {						
+				SwingUtilities.invokeLater(new Runnable() { // the focus is run last
+					@Override public void run() {
+						System.out.println("searchField focus GAINED");	// system call
+						System.out.println("isHistory: " + isHistory);
 						if (isHistory) {
+							System.out.println("Search");
 							// swap cards from SearchMenuPanel to ShiftingPanel
-							((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);	
-							CorePanel.updateUI();
-
-							// give focus to searchQuery_
-							searchQuery_.requestFocusInWindow();
-
-							// set isHistory to false
-							isHistory = false;
-
-						} else {
-							System.out.println("searchField focus GAINED");	// system call
-
-							// swap cards from ShiftingPanel to SearchMenuPanel
 							((CardLayout)(CorePanel.getLayout())).show(CorePanel, SEARCH_PANEL);	
 							CorePanel.updateUI();
+							
+							// set isHistory to false
+							isHistory = false;
+						} else {
+							System.out.println("Shift");
+							// swap cards from ShiftingPanel to SearchMenuPanel
+							((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);	
+							CorePanel.updateUI();
+							isHistory = true;
 						}
+						System.out.println();
 					}
 				});
 			}
 			@Override public void focusLost(FocusEvent e) {
-				// the focus is run last
-				SwingUtilities.invokeLater(new Runnable() { 
+				SwingUtilities.invokeLater(new Runnable() { // the focus is run last
 					@Override public void run() {	
 						// Don't do it if the focus is moved to any of the components in SearchPanel
 						boolean check = false;
 						for(Component c : SearchPanel.getComponents()) {
 							if (c.hasFocus()) {
-								check = true; 
-								System.out.println("check made at " + c.getName()); 
+								check = true;
 								break;
 							}
 						}
+						System.out.println("searchField focus LOST");	// system call
 						// this will be skipped if focus was not passed to a component in SearchPanel. Otherwise...
 						if (check == true) {
-							System.out.println("searchField focus LOST");	// system call
-
+							System.out.println("check found");
+							System.out.println("Shift");
 							// swap cards from SearchMenuPanel to ShiftingPanel
 							((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);
 							CorePanel.updateUI();
-
-							// give focus back to searchQuery_
-							searchQuery_.requestFocusInWindow();								
+						} else {
+							System.out.println("check not found");
+							System.out.println("isHistory: " + isHistory);
+							if (isHistory) {
+								System.out.println("Search");
+								// swap cards from SearchMenuPanel to ShiftingPanel
+								((CardLayout)(CorePanel.getLayout())).show(CorePanel, SEARCH_PANEL);	
+								CorePanel.updateUI();
+								
+								// set isHistory to false
+								isHistory = false;
+							} else {
+								System.out.println("Shift");
+								// swap cards from ShiftingPanel to SearchMenuPanel
+								((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);	
+								CorePanel.updateUI();
+								isHistory = true;
+							}
 						}
+						System.out.println();
 					}
 				});
+			}
+		});
+		editorComponent.addMouseListener(new MouseAdapter() {
+			@Override public void mouseClicked(MouseEvent e) {
+				System.out.println("item index: " + searchField.getSelectedIndex());
+				if (searchField.getSelectedIndex() < 0);
+				// iff double-clicked w/ a (left) mouseButton BUTTON1, then the entry in searchField is wiped
+				else if (e.getButton() == MouseEvent.BUTTON1) {
+					if (e.getClickCount() == 1) {
+						System.out.println("item clicked: " 
+								+ ((searchField.getSelectedItem().equals("")) ? "<blank>" : searchField.getSelectedItem()));
+					}
+					if (e.getClickCount() == 2) {
+						System.out.println("item double-clicked: " 
+								+ ((searchField.getSelectedItem().equals("")) ? "<blank>" : searchField.getSelectedItem()));
+						editorComponent.setText("");
+						searchField.setSelectedIndex(-1);
+					}
+				}
+				System.out.println();
 			}
 		});
 		
@@ -429,26 +487,28 @@ public class Homepage {
 		searchQuery_.setName("search button");
 		searchQuery_.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
-				String text = (String)searchField.getSelectedItem();
+				try {
+					String text = (String)searchField.getSelectedItem();
 				
-				if (text.equals("")) return;	// do nothing
-				else {
-					// add to the drop-down
-					searchField.insertItemAt(text, 0);
-					// wipe the searchField text
-					searchField.setSelectedItem("");
-				}
+					if (text.equals(""));	// do nothing
+					else { // add to the drop-down
+						searchField.insertItemAt(text, 0);
+					}
 
-				System.out.println("Searching for: " + text);
-				// if special characters are used then this will go off
-				if (!codeDenial(text)) {
-					searchField.removeItem(text);	// error dialog
-					JOptionPane.showMessageDialog(frame, "You can't do that. Stop it!", 
-							"Inane warning - code injection rejection", JOptionPane.WARNING_MESSAGE);
-				} else {
-					playlist = "x";					
-					SearchPanel.changeSearch(getSearchResults(text), text);	
-					// otherwise, it will change the table of SearchMenuPanel
+					System.out.println("Searching for: " + text);
+					// if special characters are used then this will go off
+					if (!codeDenial(text)) {
+						searchField.removeItem(text);	// error dialog
+						JOptionPane.showMessageDialog(frame, "You can't do that. Stop it!", 
+								"Inane warning - code injection rejection", JOptionPane.WARNING_MESSAGE);
+					} else {
+						playlist = "x";					
+						SearchPanel.changeSearch(getSearchResults(text), text);	
+						// otherwise, it will change the table of SearchMenuPanel
+					}
+				} catch (NullPointerException E) {
+					E.getStackTrace();
+					System.out.println("Nothing is here.");
 				}
 			}
 		});
@@ -477,25 +537,27 @@ public class Homepage {
 		_HistoryPanel.add(previousHistory_);						
 		_HistoryPanel.add(nextHistory_);
 		
-		// initialize the home button - returns to home screen
-		home_ = new JButton("\u2302");								
+		// initialize home_ and assign an action listener to home_
+		home_ = new JButton("\u2302");
 		home_.setName("go home");
 		home_.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			@Override public void actionPerformed(ActionEvent e) {
+				// system: tells the current panel of ShiftingPanel
 				System.out.println("Current panel in ShiftingPanel is '" + ShiftingPanel.getCurrentPanelName() + "'");
 				
+				// stops the process if the current panel is already a HomePanel. Otherwise...
 				if (ShiftingPanel.getComponents()[0].getName().equals("Base Home") 
 						|| ShiftingPanel.getComponents()[0].getName().equals("Home"))
 					System.out.println("Current panel in ShiftingPanel remains '" + ShiftingPanel.getCurrentPanelName() + "'");
 				else {
+					// create title banner and set font
 					JLabel title_ = new JLabel(homeCard, JLabel.CENTER);
 					title_.setFont(Tahoma_Plain_FourZero);	
 					
-					JPanel newHome = new JPanel(new BorderLayout());	
+					// initialize a new panel and load it into ShiftingPanel
+					JPanel newHome = new JPanel(new BorderLayout());
 					createNewHomePanel(newHome, title_, "Home");
 				}
-				searchQuery_.requestFocusInWindow();
 			}
 		});
 		
@@ -511,7 +573,7 @@ public class Homepage {
 		
 		// assign action listener to logout_
 		logout_.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			@Override public void actionPerformed(ActionEvent e) {
 				//send logout message to server
 				String [] arguments = {userName};					
 				requestReply.UDPRequestReply("loggedOut",arguments, aSocket, serverPort);
@@ -527,13 +589,13 @@ public class Homepage {
 			}	
 		});
 		
-		// add username_ and logut_ to _Profile and set max dimensions
+		// add username_ and logut_ to _ProfilePanel and set max dimensions
 		_ProfilePanel.add(username_); 								
 		_ProfilePanel.add(logout_);	  								
 		_ProfilePanel.setMaximumSize(new Dimension(100,40));
 		
 		// _SearchPanel and _ProfilePanel and _HistoryPanel are added to TopPanel and gets a border set to it
-		TopPanel.add(_HistoryPanel); 	TopPanel.add(Box.createRigidArea(new Dimension(5,5)));		
+		TopPanel.add(_HistoryPanel); 	TopPanel.add(Box.createRigidArea(new Dimension(1,1)));		
 		TopPanel.add(_SearchPanel);		TopPanel.add(Box.createHorizontalGlue());
 		TopPanel.add(home_);			TopPanel.add(Box.createRigidArea(new Dimension(1,1)));
 		TopPanel.add(_ProfilePanel);
@@ -583,9 +645,7 @@ public class Homepage {
 		HIGH_panel.add(Explore_Panel);
 		
 		// add HIGH_panel to pane (the content pane for frame)
-		pane.add(HIGH_panel); 										
-		isHistory = false; 
-		//initialize isHistory as false (used for searchField focus)
+		pane.add(HIGH_panel);
 	}
 	
 	/**
@@ -625,10 +685,10 @@ public class Homepage {
 		// tie labels to SearchPanel
 		SearchPanel.setLabel(title_);		SearchPanel.setLabel(artist_);		SearchPanel.setLabel(album_);
 		// add rigid areas and labels to Description_Panel
-		Description_Panel.add(Box.createRigidArea(new Dimension(1,1)));			Description_Panel.add(title_);
-		Description_Panel.add(Box.createRigidArea(new Dimension(1,1)));			Description_Panel.add(artist_);
-		Description_Panel.add(Box.createRigidArea(new Dimension(1,1)));			Description_Panel.add(album_);
-		Description_Panel.add(Box.createRigidArea(new Dimension(1,1)));
+		Description_Panel.add(Box.createRigidArea(new Dimension(0,1)));			Description_Panel.add(title_);
+		Description_Panel.add(Box.createRigidArea(new Dimension(0,1)));			Description_Panel.add(artist_);
+		Description_Panel.add(Box.createRigidArea(new Dimension(0,1)));			Description_Panel.add(album_);
+		Description_Panel.add(Box.createRigidArea(new Dimension(0,1)));
 		
 		// set minimum, preferred, and maximum sizes for Description_Panel
 		Description_Panel.setMinimumSize(new Dimension(175,200));		
@@ -682,7 +742,7 @@ public class Homepage {
 		playPause_.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent arg0) {
 				// avoid it completely if playlist is a HomePanel 
-				if (playlist.equals("Base Home") || playlist.equals("Home")) {}	
+				if (playlist.equals("Base Home") || playlist.equals("Home"));
 				else {
 					if (current!=null && current.isActive()) {	
 						clipFrame = current.getFramePosition();
@@ -697,8 +757,7 @@ public class Homepage {
 						current.close();
 						playPause_.setText("\u25B6"); 
 						isSongPlaying = false;
-					} 
-					else if ((current == null) || (current!=null && !current.isActive())) {
+					} else if ((current == null) || (current!=null && !current.isActive())) {
 						String song = title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav";
 						if (pause && song.equals(currentSong)) {
 							myInputStream = new ByteArrayInputStream((Arrays.copyOfRange(byteSong, 0 ,packet*64000)));
@@ -714,8 +773,7 @@ public class Homepage {
 								playPause_.setText("\u2758" + "\u2758");
 							}catch(Exception e) {
 								e.printStackTrace();
-							} 
-						} else {
+						}	} else {
 							try {
 								String [] arguments = {title_.getText() + "_" + artist_.getText() + "_" + album_.getText()  + ".wav","-1"};
 								JSONObject obj = requestReply.UDPRequestReply("playSong", arguments, aSocket, serverPort);
@@ -725,14 +783,11 @@ public class Homepage {
 								packet = 0;
 								pause = false;
 								new Thread(new Runnable() {
-									@Override
-									public void run() {
+									@Override public void run() {
 										for(int i = 0; i<=size/64000; i++) {
 											if(isSongPlaying) {
-												try {	
-													//ClipSyn still has problem if you play a song, stop it, then play it again
-													//ClipSyn is used to make sure that only one clip linelistener is running at a time
-
+												try { // ClipSyn still has problem if you play a song, stop it, then play it again
+													  // ClipSyn is used to make sure that only one clip linelistener is running at a time
 													if(i>20 && i%10 == 0)
 														if(clipSyn == true)	clipSyn = false;
 													
@@ -746,21 +801,16 @@ public class Homepage {
 
 													//Reply
 													byte[] buffer = new byte[64000];
-
 													DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
-
 													aSocket.receive(reply);
 
 													if(size - i*64000 > 64000) {
 														//System.out.println(i);
 														System.arraycopy(reply.getData(), 0, byteSong, i*64000, 64000);
-													}
-													else {
+													} else {
 														System.arraycopy(reply.getData(), 0, byteSong, i*64000, size - i*64000);
 														//System.out.println("numb: "+i);
-													}
-
-												} catch (SocketException e) {
+												}	} catch (SocketException e) {
 													System.out.println("Socket: " + e.getMessage());
 												} catch (IOException e) {
 													System.out.println("IO: " + e.getMessage());
@@ -779,7 +829,6 @@ public class Homepage {
 										public void update(LineEvent event) {
 											System.out.println("outhere");
 											if (event.getType() == LineEvent.Type.STOP && !pause) {
-
 												System.out.println("INHERE");
 												clipFrame = current.getFramePosition();
 												//current.stop();
@@ -794,12 +843,10 @@ public class Homepage {
 														current.start();
 												} catch(Exception e) {
 													e.printStackTrace();
-												}
-												clipSyn=true;
+												} clipSyn=true;
 											}
 										}
 									});
-
 								} catch(Exception e) {
 									e.printStackTrace();
 								}
@@ -832,11 +879,8 @@ public class Homepage {
 //							current.setFramePosition(pos);
 //							current.start();
 //
-//							if(songIndex == songList.size() -1)	{
-//								songIndex = 0;
-//							} else {
-//								songIndex++;
-//							}
+//							if(songIndex == songList.size() -1) songIndex = 0;
+//							else								songIndex++;
 //						} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e1) {
 //							e1.printStackTrace();
 //						}
@@ -868,9 +912,9 @@ public class Homepage {
 		Song_Panel.add(_SongButtons);
 		
 		// add rigid areas and panels to LOW_panel and set border
-		LOW_panel.add(Box.createRigidArea(new Dimension(1,1))); 	LOW_panel.add(Description_Panel);						
-		LOW_panel.add(Box.createRigidArea(new Dimension(2,2)));		LOW_panel.add(Song_Panel);
-		LOW_panel.add(Box.createRigidArea(new Dimension(1,1)));
+		LOW_panel.add(Box.createRigidArea(new Dimension(1,0))); 	LOW_panel.add(Description_Panel);						
+		LOW_panel.add(Box.createRigidArea(new Dimension(2,0)));		LOW_panel.add(Song_Panel);
+		LOW_panel.add(Box.createRigidArea(new Dimension(1,0)));
 		LOW_panel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));				
 		
 		// add LOW_panel to pane (the content pane of frame)
@@ -903,16 +947,20 @@ public class Homepage {
 	 * @param name: the name of the current playlist
 	 */
 	protected void setCurrentPlaylist(String name) {
-		if (name.contains("Search for:"))
-			playlist = "x";
+		if (name.contains("Search for:")) playlist = "x";
 		else playlist = name;
 		System.out.println("currently looking at " + name);
 		isHistory = true;
 		
 		// ensure CorePanel front card is ShiftingPanel
-		((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);
-		CorePanel.updateUI();
+//		if (isHistory == false) {
+			((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);
+			CorePanel.updateUI();
+//		}
+		isHistory = true;
 	}
+	
+	protected void setHistory(boolean setting) {isHistory = setting;}
 	
 	// FOR USE WITH SEARCHQUERY_	
 	/** ORIGIN: Login.java
@@ -965,10 +1013,14 @@ public class Homepage {
 		JSONObject obj = requestReply.UDPRequestReply("getPlaylists",arguments, aSocket, serverPort);
 		String playlist = obj.get("result").toString();	
 		
-		//add playlist to default list
-	    String [] playlistArray = playlist.substring(2, playlist.length() - 2).split("\",\"");
-	    for(int i = 0; i < playlistArray.length; i++) 
-	    	dm.addElement(playlistArray[i]);
+		try {
+			//add playlist to default list
+			String [] playlistArray = playlist.substring(2, playlist.length() - 2).split("\",\"");
+			for(int i = 0; i < playlistArray.length; i++) 
+				dm.addElement(playlistArray[i]);
+		} catch(StringIndexOutOfBoundsException e) {
+			System.out.println("No available playlists for this user.");
+		}
 	}
 	
 	/** ORIGIN: Profile.java

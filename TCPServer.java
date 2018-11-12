@@ -48,23 +48,23 @@ public class TCPServer {
             bootstrap(peers);
             master = peers[0];
             Number160 nr = new Number160(RND);
-            
-            
+
+
             //***** TEST TEST ****//
 //            File file = new File("Hello Goodbye_The Beatles_Magical Mystery Tour.wav");
 //    		int size = (int) file.length();
 //    		byte[] bytes = new byte[size];
-//    		try 
+//    		try
 //    		{
 //    			BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
 //    			buf.read(bytes, 0, bytes.length);
 //    			buf.close();
-//    		} 
-//    		catch (FileNotFoundException e) 
+//    		}
+//    		catch (FileNotFoundException e)
 //    		{
 //    			e.printStackTrace();
-//    		} 
-//    		catch (IOException e) 
+//    		}
+//    		catch (IOException e)
 //    		{
 //    			e.printStackTrace();
 //    		}
@@ -75,7 +75,7 @@ public class TCPServer {
 //            Clip current = null;
 //    		ByteArrayInputStream myInputStream = new ByteArrayInputStream(bsong.toBytes());
 //        	try {
-//       
+//
 //    			AudioInputStream audioIn = AudioSystem.getAudioInputStream(myInputStream);
 //    			current = AudioSystem.getClip();
 //    			current.open(audioIn);
@@ -85,7 +85,7 @@ public class TCPServer {
 //    			e.printStackTrace();
 //    		}
         	/*****TEST**/
-            
+
             System.out.println(RND);
             System.out.println(nr);
         }catch (Exception e) {
@@ -96,80 +96,80 @@ public class TCPServer {
             }
         }
         json = new Method();
-        
+
 		final ServerSocket serverSocket = new ServerSocket(6777);
 
 		try
 		{
 			//aSocket = new DatagramSocket(6733);
 			System.out.println("Server started on port: "+6777);
-			
-		
+
+
 			while(true)
 			{
 				Socket socket = serverSocket.accept();
 				//System.out.println("Waiting for request...");
 				ObjectInputStream request = new ObjectInputStream(socket.getInputStream());
-				
+
 				System.out.println("Request from Port: "+ socket.getPort());
 				String stringRequest = (String) request.readObject();
 				System.out.println("Request: "+stringRequest.toString());
-			
-				new Thread(new Runnable() 
+
+				new Thread(new Runnable()
 				{
 					@Override
-					public void run() 
+					public void run()
 					{
 						JSONObject JsonRequest=new JSONObject(stringRequest);
-			
+
 						//Request Data
 						@SuppressWarnings("unused")
 						int ID = JsonRequest.getInt("id");
 						String method = JsonRequest.get("method").toString();
 						String param = JsonRequest.get("arguments").toString();
 						String [] arguments = param.substring(2, param.length() - 2).split("\",\"");
-			
-			
+
+
 						//Printing out request
 						/*System.out.println("ID: "+ID);
 						System.out.println("Method: "+method);
 						System.out.println("Arguments: "+param);
-						*/ 
-			
+						*/
+
 						Class<?>[] argTypes = new Class<?>[arguments.length];
-						for(int i = 0; i<arguments.length; i++) 
+						for(int i = 0; i<arguments.length; i++)
 						{
 							argTypes[i] = String.class;
 						}
 						Object result = null;
-			
+
 						//Method call
-						try 
-						{						
+						try
+						{
 							//result = json.getClass().getMethod(method,argTypes).invoke(json, arguments);
 							result = getSong(arguments[0]);
 							System.out.println(result.toString());
-						} 
-						catch (Exception e) 
+						}
+						catch (Exception e)
 						{
 							e.printStackTrace();
 						}
-						
+
 						byte[] rep = (byte[]) result;
 						//Reply
-						try 
+						try
 						{
 							Socket clientSocket  = new Socket("localhost", 6778);
 							DataOutputStream reply = new DataOutputStream(clientSocket.getOutputStream());
 							reply.writeInt(rep.length);
 							reply.write(rep);
-							
+
 							request.close();
 							reply.close();
 							socket.close();
 							clientSocket.close();
-						} 
-						catch (JSONException e1) 
+						}
+						catch (JSONException e1)
 						{
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -185,19 +185,19 @@ public class TCPServer {
 		{
 			System.out.println("Socket: " + e.getMessage());
 		}
-		catch (IOException e) 
+		catch (IOException e)
 		{
 			System.out.println("IO: " + e.getMessage());
 		}
 
-		finally 
+		finally
 		{
-			if(serverSocket != null) 
+			if(serverSocket != null)
 				serverSocket.close();
 		}
-        
+
 	}
-	
+
 	/**
 	 * Print out a list containing the address of each peer
 	 * @param peers array
@@ -207,11 +207,11 @@ public class TCPServer {
 	    		System.out.println("Peer " + peers[i].peerAddress());
 	    	}
 	    }
-	
-	
+
+
 	/**
      * Create peers with a port and attach it to the first peer in the array.
-     * 
+     *
      * @param nr The number of peers to be created
      * @param port The port that all the peer listens to. The multiplexing is done via the peer Id
      * @return The created peers
@@ -236,48 +236,47 @@ public class TCPServer {
 	    		}
 	    	}
 	    }
-    
-    private static void put(final PeerDHT peer, final Number160 guid, byte[] data) 
+
+    private static void put(final PeerDHT peer, final Number160 guid, byte[] data)
             throws IOException, ClassNotFoundException {
         FuturePut futurePut = peer.put(guid).data(new Data(data)).start();
         futurePut.awaitUninterruptibly();
         System.out.println("peer " + peer.peerID() + " stored [key: " + guid + ", value: "+ data);
     }
-    
-    private static Data get(final PeerDHT peer, final Number160 guid) 
+
+    private static Data get(final PeerDHT peer, final Number160 guid)
             throws IOException, ClassNotFoundException {
         FutureGet futureGet = peer.get(guid).start();
         futureGet.awaitUninterruptibly();
         System.out.println("peer " + peer.peerID() + " got: \"" + futureGet.data() + "\" for the key " + guid);
         return futureGet.data();
     }
-    
+
     //***  Method for Each request ***/
-    public static byte[] getSong(String song) throws JSONException, UnsupportedEncodingException 
+    public static byte[] getSong(String song) throws JSONException, UnsupportedEncodingException
 	{
-		
+
 		File file = new File(song);
 		int size = (int) file.length();
 		byte[] bytes = new byte[size];
-		try 
+		try
 		{
 			BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
 			buf.read(bytes, 0, bytes.length);
 			buf.close();
-		} 
-		catch (FileNotFoundException e) 
-		{
-			e.printStackTrace();
-		} 
-		catch (IOException e) 
+		}
+		catch (FileNotFoundException e)
 		{
 			e.printStackTrace();
 		}
-			
-			return bytes;
-		
-	}
-	
-    
-}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 
+			return bytes;
+
+	}
+
+
+}
