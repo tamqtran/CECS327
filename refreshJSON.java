@@ -6,7 +6,6 @@ import java.io.*;
 
 /**
  * This file is the file that initializes the testing JSON files to start
- * This file starts the program
  * @author Tam Tran
  *
  */
@@ -112,59 +111,48 @@ public class refreshJSON
 		System.out.println(tony);
 	
 		
-		// testing METADATA
-		JSONObject METADATA = new JSONObject();
+		// testing making JSON of songIndex, artistIndex, albumIndex
+		JSONObject songIndex = new JSONObject();
+		JSONObject artistIndex = new JSONObject();
+		JSONObject albumIndex = new JSONObject();
+		
+		// song index
+		songIndex.put("file", "songIndex.txt");
+		songIndex.put("size", "MB");				// probably change
+		
 		JSONArray chunks = new JSONArray();
 		
-		JSONObject chunk1 = new JSONObject();	// songtitle that starts from letter a to i
-		JSONObject chunk2 = new JSONObject();	// songtitle that starts from letter j to q
-		JSONObject chunk3 = new JSONObject();	// songtitle that starts from letter r to z
+		JSONObject chunkA_I = new JSONObject();
 		
-		JSONArray chunkList1 = new JSONArray();
-		JSONArray chunkList2 = new JSONArray();
-		JSONArray chunkList3 = new JSONArray();
-		
-		JSONObject song1 = new JSONObject();
-		song1.put("filename","Hello Goodbye_The Beatles_Magical Mystery Tour.wav");
-		song1.put("guid", "1");
-		
-		JSONObject song2 = new JSONObject();
-		song2.put("filename","Money_Pink Floyd_The Dark Side of the Moon.wav");
-		song2.put("guid", "2");
-		
-		JSONObject song3 = new JSONObject();
-		song3.put("filename","Shadows_Jilian Aversa_Origins.wav");
-		song3.put("guid", "3");
-		
-		JSONObject song4 = new JSONObject();
-		song4.put("filename","So Serious_Electric Light Orchestra_Balance of Power.wav");
-		song4.put("guid", "4");
-		
-		JSONObject song5 = new JSONObject();
-		song5.put("filename","Yellow Submarine_The Beatles_Yellow Submarine.wav");
-		song5.put("guid", "5");
-		
-		chunkList1.put(song1);
-		chunkList2.put(song2);
-		chunkList3.put(song3);
-		chunkList3.put(song4);
-		chunkList3.put(song5);
-		
-		chunk1.put("chunk", chunkList1);
-		chunk2.put("chunk", chunkList2);
-		chunk3.put("chunk", chunkList3);
-		
-		chunks.put(chunk1);
-		chunks.put(chunk2);
-		chunks.put(chunk3);
-		
-		METADATA.put("chunks", chunks);
+		JSONArray chunkArrayA_I = new JSONArray();
+		/*
+		JSONObject temp = new JSONObject();
+		temp.put("guid", "0");
+		temp.put("songFile", "something.wav");
+		chunkArrayA_I.put(temp);
+		*/
+		chunkA_I.put("chunkA_I", chunkArrayA_I);
 		
 		
+		JSONObject chunkJ_Q = new JSONObject();
+		JSONArray chunkArrayJ_Q = new JSONArray();
+		//chunkArrayJ_Q.put(temp);
+		chunkJ_Q.put("chunkJ_Q", chunkArrayJ_Q);
+		
+		JSONObject chunkR_Z = new JSONObject();
+		JSONArray chunkArrayR_Z = new JSONArray();
+		//chunkArrayR_Z.put(temp);
+		chunkR_Z.put("chunkR_Z", chunkArrayR_Z);
+		
+		chunks.put(chunkA_I);				//  letter a to i
+		chunks.put(chunkJ_Q);				//  letter j to q 
+		chunks.put(chunkR_Z);				//  letter r to z
+		
+		songIndex.put("chunks", chunks);
 		try 											// Write into json file
 		{
-			FileWriter fileWriter = new FileWriter("METADATA.json");
-			fileWriter.write(METADATA.toString());
+			FileWriter fileWriter = new FileWriter("songIndex.json");
+			fileWriter.write(songIndex.toString());
 			fileWriter.flush();
 			fileWriter.close();
 		}catch (Exception e) 							// catch exception
@@ -172,7 +160,41 @@ public class refreshJSON
 			e.printStackTrace();
 		}
 		
-		System.out.println(METADATA);
+		//artist index
+		artistIndex.put("file", "artistIndex.txt");
+		artistIndex.put("size", "MB");				// probably change
+		artistIndex.put("chunks", chunks);
+		
+		try 											// Write into json file
+		{
+			FileWriter fileWriter = new FileWriter("artistIndex.json");
+			fileWriter.write(artistIndex.toString());
+			fileWriter.flush();
+			fileWriter.close();
+		}catch (Exception e) 							// catch exception
+		{
+			e.printStackTrace();
+		}
+		
+		//artist index
+		albumIndex.put("file", "albumIndex.txt");
+		albumIndex.put("size", "MB");				// probably change
+		albumIndex.put("chunks", chunks);
+		
+		try 											// Write into json file
+		{
+			FileWriter fileWriter = new FileWriter("albumIndex.json");
+			fileWriter.write(albumIndex.toString());
+			fileWriter.flush();
+			fileWriter.close();
+		}catch (Exception e) 							// catch exception
+		{
+			e.printStackTrace();
+			}
+	
+		System.out.println(songIndex);
+		System.out.println(artistIndex);
+		System.out.println(albumIndex);
 	}
 
 }

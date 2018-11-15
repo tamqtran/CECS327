@@ -66,8 +66,10 @@ public class Homepage {
 	private ArrayList<String> 	songList = new ArrayList<String>();
 	private List<String>		historyLog = new ArrayList<String>();
 	
-	private String 				userName, playlist;
+	private String 				userName, playlist, currentFilter;
 	
+	private final String[]		filterTypes = {"Song", "Artist", "Album"};
+
 	private final String 		specials = "[!@#$%&*()+=|<>?{}\\[\\]~-]", 
 								SHIFT_PANEL = "Shifting", SEARCH_PANEL = "Search",
 								homeCard;
@@ -95,12 +97,14 @@ public class Homepage {
 	
 	private JLabel 				playlist_, username_, 
 								title_, artist_, album_,
+
 								currentTime_, songTime_, // song timers
 								titleLabel;
 	
 	private JSlider				timedSlider; // song manipulator
 	
-	private JComboBox<String>	searchField;
+	private JComboBox<String>	searchField, searchFilter;
+
 	
 	private JScrollPane			UserSavedPanel;
 	
@@ -155,7 +159,9 @@ public class Homepage {
 	private void initialize(Frame base) {
 		// initialize the frame and set minimum dimensions and default close operation for the frame
 		frame = new JFrame("MusicService -- " + userName);
-		frame.setMinimumSize(new Dimension(775,500));
+
+		frame.setMinimumSize(new Dimension(800,500));
+
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		// initializes and loads the upper half of frame components into frame's content pane
@@ -172,9 +178,10 @@ public class Homepage {
 		// create and pack playlist creation dialog
 		playlistCreation = new CreatePlaylistDialog(frame, userName, dm, aSocket, serverPort);
 		playlistCreation.pack();
+		
 		// set the frame's root pane's default button to searchQuery_
 		frame.getRootPane().setDefaultButton(searchQuery_);	
-		
+
 		// add a component listener between the frame and ShiftingPanel
 		frame.addComponentListener(new ComponentAdapter() {	
 			@Override public void componentResized(ComponentEvent arg0) {
@@ -244,7 +251,7 @@ public class Homepage {
 				JList<String> list = (JList<String>)e.getSource();				
 				// this rectangle bounds between the first and last entries on playlist_List
 				Rectangle r = list.getCellBounds(list.getFirstVisibleIndex(), list.getLastVisibleIndex());	
-				
+
 				// left mouse button double-click only
 				if (e.getButton() == MouseEvent.BUTTON1) {	
 					// and only within the rectangle (that exists)
@@ -384,8 +391,9 @@ public class Homepage {
 		searchField = new JComboBox<String>();
 		searchField.setEditable(true);
 		searchField.setName("Search for...");
-		searchField.setToolTipText("Double-click the text field to clear it. " 
-								+ "Long press an item in the drop-down menu to remove it.");
+
+		searchField.setToolTipText("Double-click the text field to clear it.");
+
 				
 		isHistory = true; 
 		//initialize isHistory (used for searchField focus)
@@ -398,22 +406,12 @@ public class Homepage {
 				SwingUtilities.invokeLater(new Runnable() { // the focus is run last
 					@Override public void run() {
 						System.out.println("searchField focus GAINED");	// system call
-						System.out.println("isHistory: " + isHistory);
-						if (isHistory) {
-							System.out.println("Search");
-							// swap cards from SearchMenuPanel to ShiftingPanel
-							((CardLayout)(CorePanel.getLayout())).show(CorePanel, SEARCH_PANEL);	
-							CorePanel.updateUI();
-							
-							// set isHistory to false
-							isHistory = false;
-						} else {
-							System.out.println("Shift");
-							// swap cards from ShiftingPanel to SearchMenuPanel
-							((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);	
-							CorePanel.updateUI();
-							isHistory = true;
-						}
+
+						System.out.println("Search");
+						// swap cards from SearchMenuPanel to ShiftingPanel
+						((CardLayout)(CorePanel.getLayout())).show(CorePanel, SEARCH_PANEL);	
+						CorePanel.updateUI();
+
 						System.out.println();
 					}
 				});
@@ -432,29 +430,16 @@ public class Homepage {
 						System.out.println("searchField focus LOST");	// system call
 						// this will be skipped if focus was not passed to a component in SearchPanel. Otherwise...
 						if (check == true) {
-							System.out.println("check found");
-							System.out.println("Shift");
-							// swap cards from SearchMenuPanel to ShiftingPanel
-							((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);
+
+							System.out.println("Search");
+							// swap cards from ShiftingPanel to SearchMenuPanel
+							((CardLayout)(CorePanel.getLayout())).show(CorePanel, SEARCH_PANEL);	
 							CorePanel.updateUI();
 						} else {
-							System.out.println("check not found");
-							System.out.println("isHistory: " + isHistory);
-							if (isHistory) {
-								System.out.println("Search");
-								// swap cards from SearchMenuPanel to ShiftingPanel
-								((CardLayout)(CorePanel.getLayout())).show(CorePanel, SEARCH_PANEL);	
-								CorePanel.updateUI();
-								
-								// set isHistory to false
-								isHistory = false;
-							} else {
-								System.out.println("Shift");
-								// swap cards from ShiftingPanel to SearchMenuPanel
-								((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);	
-								CorePanel.updateUI();
-								isHistory = true;
-							}
+							System.out.println("Shift");
+							// swap cards from SearchMenuPanel to ShiftingPanel
+							((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);	
+							CorePanel.updateUI();
 						}
 						System.out.println();
 					}
@@ -482,6 +467,17 @@ public class Homepage {
 			}
 		});
 		
+		searchFilter = new JComboBox<String>(filterTypes);
+		searchFilter.setEditable(false);
+		searchFilter.setName("search by");
+		searchFilter.setToolTipText("Choose one of these three filters. (Initial default on 'song')");
+		searchFilter.addActionListener(new ActionListener() {
+			@Override public void actionPerformed(ActionEvent e) {
+				currentFilter = (String) searchFilter.getSelectedItem();
+			}
+		});
+		searchFilter.setSelectedIndex(0);
+		
 		// initialize searchQuery_ and add an action listener that searches for text in searchField
 		searchQuery_ = new JButton("Search");							
 		searchQuery_.setName("search button");
@@ -502,9 +498,15 @@ public class Homepage {
 						JOptionPane.showMessageDialog(frame, "You can't do that. Stop it!", 
 								"Inane warning - code injection rejection", JOptionPane.WARNING_MESSAGE);
 					} else {
-						playlist = "x";					
+
+						playlist = "x";						
 						SearchPanel.changeSearch(getSearchResults(text), text);	
 						// otherwise, it will change the table of SearchMenuPanel
+						
+						// swap cards from ShiftingPanel to SearchMenuPanel
+						((CardLayout)(CorePanel.getLayout())).show(CorePanel, SEARCH_PANEL);	
+						CorePanel.updateUI();
+
 					}
 				} catch (NullPointerException E) {
 					E.getStackTrace();
@@ -514,8 +516,11 @@ public class Homepage {
 		});
 		
 		// add searchField and searchQuery_ to _SearchPanel and set max dimensions
-		_SearchPanel.add(searchField);
+
 		_SearchPanel.add(searchQuery_);
+		_SearchPanel.add(searchField);
+		_SearchPanel.add(searchFilter);
+
 		_SearchPanel.setMaximumSize(new Dimension(200,40));
 		
 		// initialize _HistoryPanel and set layout and maximum size for the panel
@@ -1039,7 +1044,7 @@ public class Homepage {
 	 * @param search: filter specification
 	 */
 	String[] getSearchResults(String search) {
-		String [] arguments = {search};
+		String [] arguments = {search, currentFilter};
 		JSONObject obj = requestReply.UDPRequestReply("getSearch", arguments, aSocket, serverPort);
 		String results  = obj.get("result").toString();
 		

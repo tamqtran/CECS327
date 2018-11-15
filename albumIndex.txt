@@ -1,0 +1,6 @@
+Album;SongTitle;Artist;GUID
+Balance Of Power;So Serious;Electric Light Orchestra;0x6de0875dcb44dfd471a75d0a338a77f046cd6d
+Magical Mystery Tour;Hello Goodbye;The Beatles;0x631e97bb9d892855b8fbabf564bead9bbd41d8f4
+Origins;Shadows;Jilian Aversa;0x3f077cdb15c495cbb5490e8a891147b1c392bfbc
+The Dark Side of the Moon;Money;Pink Floyd;0xa8499df4ce3170f5c8dd5940f10966e196ff89f9
+Yellow Submarine;Yellow Submarine;The Beatles;0x7b84064a6134acd333044bacd05747b5abdf1549

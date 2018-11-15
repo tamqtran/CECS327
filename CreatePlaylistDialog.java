@@ -1,5 +1,6 @@
 // This file has been created by Austin Tao on 10/2/2018.
-// Inspired by Oracle's CustomDialog.java example.
+// 
+
 
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -20,6 +21,11 @@ import javax.swing.JTextField;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * The Playlist Dialog class
+ * @author Austin Tao
+ * Inspired by Oracle's CustomDialog.java example
+ */
 @SuppressWarnings("serial")
 public class CreatePlaylistDialog extends JDialog implements ActionListener, PropertyChangeListener {
 
@@ -36,6 +42,14 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 	DatagramSocket aSocket;
 	int serverPort;
 
+	/**
+	 * Create the playlist dialog
+	 * @param homeFrame - home page
+	 * @param user -user of playlist
+	 * @param dm - list of playlist
+	 * @param aSocket - socket to talk to server
+	 * @param serverPort - port to talk to server
+	 */
 	public CreatePlaylistDialog(Frame homeFrame, String user, DefaultListModel<String> dm, DatagramSocket aSocket,int serverPort) {
 		super(homeFrame, true);
 		username_ = user;									// assign locally the user's username
@@ -69,6 +83,9 @@ public class CreatePlaylistDialog extends JDialog implements ActionListener, Pro
 		optionPane.addPropertyChangeListener(this);				// assigns the property change listener defined in this class to the option pane
 	}
 	
+	/**
+	 * Change property of text values
+	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent e) {
 		String prop = e.getPropertyName();

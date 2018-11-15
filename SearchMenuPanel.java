@@ -12,6 +12,11 @@ import org.json.JSONTokener;
 
 import javax.swing.table.*;
 
+/**
+ * Search Menu Class that deals with searching for songs
+ * @author Vincent Vu, Austin Tao
+ *
+ */
 @SuppressWarnings("serial")
 public class SearchMenuPanel extends JPanel implements ActionListener {
 	
@@ -24,10 +29,11 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 				   		titleLabel, artistLabel, albumLabel;
 	private JComboBox<String> playList;
 	private String 		username, songName, songTitle, artist, album, 
-						filter = "Title", u_search = ""; //by default, the search filter is 'by title'
+						filter = "song", u_search = ""; //by default, the search filter is 'by title'
 	private int 		searchIndex = 0;
 	private DefaultTableModel model;
-	private final String[] columns = { "Title", "Artist(s)", "Album" };
+	private final String[] columns = { "Song", "Artist", "Album" };
+
 	private boolean 	flipOrder = false;
 	
 	/**
@@ -75,7 +81,9 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		results.getTableHeader().addMouseListener(new MouseAdapter() {
 			@Override public void mouseClicked(MouseEvent e) {
 				int col = results.columnAtPoint(e.getPoint());
-				filter = results.getColumnName(col);
+
+				filter = results.getColumnName(col).toLowerCase();
+
 				
 				System.out.println("Filter by " + filter);							// system call
 				System.out.println("searchIndex " + searchIndex + " / col " + col); // system call
@@ -234,7 +242,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		searchLabel.setText("Searching for: '" + u_search + "'");
 		searchLabel.setSize(new Dimension(searchLabel.getPreferredSize()));
 	}
-	
+
 	/**
 	 * Changes results based on the search array input
 	 * @param search - an array of song strings related to userSearch
@@ -340,6 +348,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 	}
 	
 	/**
+	 * OBSOLETE
 	 * Search method to search for the user's desired song and display relevant results
 	 * @param text: what the user wants to search for
 	 * @return String array of the search results
@@ -349,9 +358,11 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		final String EXT = ".wav";
 
 		// System command to grab current working directory
-		String currentFolderPath = System.getProperty("user.dir"); 
+
+		String currentFolderPath = System.getProperty("user.dir"); // C:\Users\Austin\Eclipse_OxyMain\MusicStreaming
 		//"user.dir" will return your MusicStreaming folder in the Eclipse Workspace
-		File currentFolder = new java.io.File(currentFolderPath + "\\Music");
+		java.io.File currentFolder = new java.io.File(currentFolderPath);// + "\\Music");
+
 
 		// list() vs listFiles()
 		// List- string array
