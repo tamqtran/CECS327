@@ -117,7 +117,7 @@ public class Login implements ActionListener {
 		pane.add(Box.createRigidArea(new Dimension(0,10)));		pane.add(errorPanel);
 	}
 			
-	/*
+	/**
 	 * The actionListener for the login button. When pressed, the system will test the typed-in username and password against
 	 * current users in the system. If the username and password is found, then the login will let them through.
 	 * Any mistake will be pointed out as an error message (in red).
