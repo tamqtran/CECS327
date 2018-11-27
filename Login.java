@@ -1,6 +1,3 @@
-/* 
- * This file was created 8/30/2018 by Austin Tao.
-*/
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;

@@ -1,6 +1,5 @@
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -14,8 +13,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.ByteArrayInputStream;
@@ -27,7 +24,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import javax.sound.sampled.AudioInputStream;
@@ -49,7 +45,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
@@ -265,8 +260,7 @@ public class Homepage {
 						// checks if the current panel is the same one as the one that just got clicked
 						if (!list.getSelectedValue().toString().equals(ShiftingPanel.getCurrentPanelName())) {
 							// initialize a new PlaylistPanel and set the name of the PlaylistPanel
-							PlaylistPanel newPanel = new PlaylistPanel(userName, list.getSelectedValue().toString());
-							playlist = list.getSelectedValue().toString();
+							PlaylistPanel newPanel = new PlaylistPanel(userName, list.getSelectedValue().toString(), aSocket, serverPort);
 							newPanel.setName(list.getSelectedValue().toString());	
 							
 							// set the labels from Description_Panel to follow the actions of the buttons from PlaylistPanel 
@@ -395,7 +389,7 @@ public class Homepage {
 		// add focus and mouse listeners to the text field component of searchField
 		JTextField editorComponent = (JTextField)searchField.getEditor().getEditorComponent();
 		editorComponent.setText("");
-		editorComponent.addFocusListener(new FocusListener() {			
+		editorComponent.addFocusListener(new FocusListener() {
 			@Override public void focusGained(FocusEvent e) {
 				SwingUtilities.invokeLater(new Runnable() { // the focus is run last
 					@Override public void run() {
@@ -468,6 +462,7 @@ public class Homepage {
 			}
 		});
 		searchFilter.setSelectedIndex(0);
+		currentFilter = "Song";
 		
 		// initialize searchQuery_ and add an action listener that searches for text in searchField
 		searchQuery_ = new JButton("Search");							
@@ -952,7 +947,11 @@ public class Homepage {
 		isHistory = true;
 	}
 	
-	protected void setHistory(boolean setting) {isHistory = setting;}
+	/**
+	 * Set method. Sets the variable 'isHistory' to whichever boolean the input 'setting' is.
+	 * @param setting - a boolean
+	 */
+	protected void setHistory(boolean setting) { isHistory = setting; }
 	
 	// FOR USE WITH SEARCHQUERY_	
 	/** ORIGIN: Login.java
@@ -990,9 +989,7 @@ public class Homepage {
 	 * A void method that can make a frame visible.
 	 * @param b boolean (true/false) that determines visibility of the frame (where true makes it visible, and false makes it not visible
 	 */
-	public void setVisible(boolean b) {
-		frame.setVisible(b);
-	}
+	public void setVisible(boolean b) {	frame.setVisible(b); }
 	
 	/** ORIGIN: Profile.java
 	 * Read playlists array from json file and add to gui list
@@ -1030,7 +1027,8 @@ public class Homepage {
 	 * Get search results 
 	 * @param search: filter specification
 	 */
-	String[] getSearchResults(String search) {
+	protected String[] getSearchResults(String search) {
+		System.out.println("Homepage call");
 		String [] arguments = {search, currentFilter};
 		JSONObject obj = requestReply.UDPRequestReply("getSearch", arguments, aSocket, serverPort);
 		String results  = obj.get("result").toString();

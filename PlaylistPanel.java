@@ -1,5 +1,6 @@
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.DatagramSocket;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -14,7 +15,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-
 /**
  * PlaylistPanel.java is the JPanel that acts as the GUI for the playlist page 
  * 
@@ -22,8 +22,7 @@ import org.json.JSONTokener;
  * @since 09-05-2018
  */
 @SuppressWarnings("serial")
-public class PlaylistPanel extends JPanel
-{
+public class PlaylistPanel extends JPanel {
 	// declaring variables
 	public JLabel playlistName, playlistAuthor;
 	
@@ -40,16 +39,21 @@ public class PlaylistPanel extends JPanel
 		   playlist,
 		   songName;
 	
+	// server connection info of related Homepage
+	DatagramSocket aSocket;
+	int serverPort;
+	
 	/**
 	 * Constructor for GUI playlist panel with components added 
 	 * @param username - user's name
 	 * @param playlist - user's chosen playlist
 	 */
-	public PlaylistPanel(String username, String playlist)
-	{
+	public PlaylistPanel(String username, String playlist, DatagramSocket aSocket, int serverPort) {
 		// initialize variables
 		this.username = username;
 		this.playlist = playlist;
+		this.aSocket = aSocket;
+		this.serverPort = serverPort;
 		
 		// initialize  variable that adds functionality to the buttons
 		listener = new PlaylistActionListener(this);

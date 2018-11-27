@@ -1,4 +1,6 @@
-import java.net.*;
+import java.net.DatagramSocket;
+import java.net.SocketException;
+
 import java.util.Scanner;
 
 /**
@@ -7,24 +9,20 @@ import java.util.Scanner;
  * @author Tam Tran
  *
  */
-public class start 
-{
+public class start {
 	static Scanner sc;
 	
-	public static void main(String[] args) 
-	{
+	public static void main(String[] args) {
 		/*Start Client*/
 		int serverPort = 6733;
 		DatagramSocket aSocket = null;
 		sc = new Scanner(System.in);
 		
-		try 
-		{
+		try {
 			aSocket = new DatagramSocket();
-			System.out.println("Client started on port: "+aSocket.getPort());
+			System.out.println("Client started on port: " + aSocket.getPort());
 		}
-		catch (SocketException e)
-		{
+		catch (SocketException e) {
 			System.out.println("Socket: " + e.getMessage());
 		}
 		
@@ -33,6 +31,5 @@ public class start
 		// call initial Frame to start the program
 		new Login(aSocket,serverPort, null);
 	}
-	
 
 }

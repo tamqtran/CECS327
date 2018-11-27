@@ -21,7 +21,7 @@ import org.json.JSONTokener;
 /**
  * PlaylistActionListener.java adds functionality to the buttons in PlaylistPanel.java
  * 
- * @author Tam Tran
+ * @author Tam Tran, Austin Tao
  * @since 09-09-2018
  */
 public class PlaylistActionListener implements ActionListener, MouseListener {
@@ -121,8 +121,12 @@ public class PlaylistActionListener implements ActionListener, MouseListener {
 	 * @return a DefaultTAbleModel, containing data pertaining to the selected song
 	 */
 	private DefaultTableModel createModel( JList<String> list) {
-		DefaultTableModel model = new DefaultTableModel(null, new String[]{"Song Title", "Artist", "Album"});
-		String[] transferSong = SearchMenuPanel.search(list.getSelectedValue().toString());
+		
+		System.out.println("PlaylistPanel -> SearchMenuPanel");
+		String[] transferSong = SearchMenuPanel.search(list.getSelectedValue().toString(), panel.aSocket, panel.serverPort); 
+		System.out.println("SearchMenuPanel -> PlaylistPanel");
+		
+		DefaultTableModel model = new DefaultTableModel(null, new String[]{"Song Title", "Artist", "Album"});		
 		model.setRowCount(0);
 		for (int i = 0; i < transferSong.length; i++)
 			model.addRow(transferSong[i].split("_"));

@@ -201,15 +201,15 @@ public class PlayButton {
 				for(int j = 0; j < listOfSongs.length(); j++)											// adds all songs from array into JList
 				{
 					String temp = listOfSongs.getString(j);
-					String[] transferSong = SearchMenuPanel.search(temp);
+//					String[] transferSong = panel.getListener().search(temp);
 
 					// get the list of .wav files and separate by song, artist, and album
 					String[] column = { "Song Title", "Artist", "Album" };
 					DefaultTableModel model = new DefaultTableModel(null, column);
 					model.setRowCount(0);
-					for (int i = 0; i < transferSong.length; i++) {
-						model.addRow(transferSong[i].split("_"));
-					};
+//					for (int i = 0; i < transferSong.length; i++) {
+//						model.addRow(transferSong[i].split("_"));
+//					};
 
 					// get selected song variables
 					String songTitle = model.getValueAt(0, 0).toString();

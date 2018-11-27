@@ -3,7 +3,7 @@
  * @author Tam Tran, Vincent Vu
  *
  */
-public class Chunk {
+public class Meta_Chunk {
 	protected int guid;
 	private String firstLetter, lastLetter;
 
@@ -13,7 +13,7 @@ public class Chunk {
 	 * @param lastLetter - last letter in chunk
 	 */
 	@SuppressWarnings("null")
-	public Chunk(String firstLetter, String lastLetter) {		
+	public Meta_Chunk(String firstLetter, String lastLetter) {		
 		//this.guid = (Integer) null;
 		this.firstLetter = firstLetter;
 		this.lastLetter = lastLetter;
@@ -24,7 +24,7 @@ public class Chunk {
 	 * @param firstLetter - first letter in chunk
 	 * @param lastLetter - last letter in chunk
 	 */
-	public Chunk(int guid, String firstLetter, String lastLetter) {
+	public Meta_Chunk(int guid, String firstLetter, String lastLetter) {
 		this.guid = guid;
 		this.firstLetter = firstLetter;
 		this.lastLetter = lastLetter;
@@ -33,7 +33,7 @@ public class Chunk {
 	/**Default Constructor for Chunk
 	 * @param guid - guid for chunk
 	 */
-	public Chunk(int guid) {
+	public Meta_Chunk(int guid) {
 		this.guid = guid;
 		this.firstLetter = null;
 		this.lastLetter = null;
