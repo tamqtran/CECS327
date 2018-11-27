@@ -24,7 +24,7 @@ public class PlaylistFrame extends JFrame
 		setResizable(false);
 		setSize(700, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.panel = new PlaylistPanel(username, playlist);
+		this.panel = new PlaylistPanel(username, playlist, null, 0);
 		this.add(panel);
 		this.setVisible(true);
 	}

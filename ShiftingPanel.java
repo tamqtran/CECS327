@@ -1,5 +1,3 @@
-// Created by Austin Tao on 10/5/2018
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;

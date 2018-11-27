@@ -19,22 +19,22 @@ import net.tomp2p.peers.Number160;
  * @author Tam Tran, Vincent Vu
  *
  */
-public class File {
+public class Meta_File {
 	private String fileName;
 	private String jsonFile;
-	private List<Chunk> chunks;
+	private List<Meta_Chunk> meta_Chunks;
 
 	/**
 	 * Default Constructor for File
 	 * @param file - index file
 	 */
-	public File(String file){
+	public Meta_File(String file){
 		fileName = file;
 		jsonFile = file.substring(0, file.length()-4) +  ".json";
-		chunks = new ArrayList<Chunk>();
-		chunks.add(new Chunk("a","i"));
-		chunks.add(new Chunk("j","q"));
-		chunks.add(new Chunk("r","z"));
+		meta_Chunks = new ArrayList<Meta_Chunk>();
+		meta_Chunks.add(new Meta_Chunk("a","i"));
+		meta_Chunks.add(new Meta_Chunk("j","q"));
+		meta_Chunks.add(new Meta_Chunk("r","z"));
 	}
 
 
@@ -152,8 +152,8 @@ public class File {
 	 */
 	public void appends(String content, String first, String last) {
 		int guid = content.hashCode();
-		Chunk c = new Chunk(guid, first, last);
-		chunks.add(c);
+		Meta_Chunk c = new Meta_Chunk(guid, first, last);
+		meta_Chunks.add(c);
 
 		//INSERT LINE HERE TO PUT CONTENT INTO PEER
 		//PEER[].PUT(GUID,CONTENT.getBytes(Charset.forName("UTF-8")))
@@ -172,8 +172,8 @@ public class File {
 	 * @return byte of the content
 	 */
 	public byte[] getChunkData(int i) {
-		Chunk[] chunksArray = (Chunk[]) chunks.toArray();
-		Chunk main = chunksArray[i];
+		Meta_Chunk[] chunksArray = (Meta_Chunk[]) meta_Chunks.toArray();
+		Meta_Chunk main = chunksArray[i];
 		String first = main.getFirstLetter();
 		String last = main.getLastLetter();
 
@@ -222,7 +222,7 @@ public class File {
 	 * @return size of chunk
 	 */
 	public int getSize() {
-		return chunks.size();
+		return meta_Chunks.size();
 	}
 	
 	/**
@@ -230,7 +230,7 @@ public class File {
 	 * @param f - file to compare
 	 * @return boolean(true if equal, false if not equal)
 	 */
-	public boolean equals(File f) {
+	public boolean equals(Meta_File f) {
 		if (this.getFileName().equals(f.getFileName())) {
 			return true;
 		} else {
@@ -243,5 +243,5 @@ public class File {
 	 * @param i - ith chunk
 	 * @return the ith chunk
 	 */
-	public Chunk getChunk(int i) {return chunks.get(i);}
+	public Meta_Chunk getChunk(int i) {return meta_Chunks.get(i);}
 }

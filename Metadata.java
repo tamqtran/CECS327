@@ -24,17 +24,17 @@ import net.tomp2p.storage.Data;
  */
 public class Metadata {
 	
-	protected List<File> fileList;
+	protected List<Meta_File> fileList;
 	
 	/**
 	 * Default Contructor for Metadata
 	 */
 	public Metadata() throws IOException {
-		fileList = new ArrayList<File>();
+		fileList = new ArrayList<Meta_File>();
 		
 		Scanner sc = new Scanner(Paths.get("METADATA.txt"));
 		while (sc.hasNextLine()) {
-		     fileList.add(new File(sc.nextLine()));
+		     fileList.add(new Meta_File(sc.nextLine()));
 		}
 		sc.close();
 	}
@@ -49,8 +49,8 @@ public class Metadata {
 		public void append(String filename, String[] content) {
 		
 		// get correct file
-		File f = null;		
-		for (File f_ : fileList) {
+		Meta_File f = null;		
+		for (Meta_File f_ : fileList) {
 			if (f_.getFileName().equals(filename)) {
 				f = f_;	break;
 			} // will continue otherwise
@@ -59,7 +59,7 @@ public class Metadata {
 		// no fileName found, make a new one
 		if (f == null) {
 			System.out.println(filename + " is new; creating new file...");
-			f = new File(filename);
+			f = new Meta_File(filename);
 			fileList.add(f); // add file to fileList
 		}
 		
@@ -74,14 +74,14 @@ public class Metadata {
 	 * @param last - last letter of chunk
 	 */
 	public void appends(String fileName, String content, String first, String last) {
-		File f = null;
+		Meta_File f = null;
 		//Need to replace fileName + .txt
 		//Wont work
-		if (fileList.contains(new File(fileName))) {
-			int index = fileList.indexOf(new File(fileName));
-			f = new File (fileName);
+		if (fileList.contains(new Meta_File(fileName))) {
+			int index = fileList.indexOf(new Meta_File(fileName));
+			f = new Meta_File (fileName);
 		} else {
-			f = new File(fileName);
+			f = new Meta_File(fileName);
 		}
 		f.appends(content, first, last);
 	}
@@ -92,7 +92,7 @@ public class Metadata {
 	 */
 	public void delete(String filename) {
 		
-		for (File f_ : fileList) {
+		for (Meta_File f_ : fileList) {
 			if (f_.getFileName().equals(filename)) {
 				fileList.remove(f_);
 				System.out.println(filename + " found and removed.");
@@ -106,14 +106,14 @@ public class Metadata {
 	/**Returns the list of files in DFS
 	 * @return list of files in DFS
 	 */
-	public List<File> Ls(){	return fileList; }
+	public List<Meta_File> Ls(){	return fileList; }
 	
 	/**Get a particular File from fileList
 	 * 
 	 * @param i - ith File
 	 * @return ith File
 	 */
-	public File getFile(int i) {return fileList.get(i);}
+	public Meta_File getFile(int i) {return fileList.get(i);}
 		
 	/*
 	// match file 
@@ -158,27 +158,21 @@ public class Metadata {
 			System.out.println(result.get(i));
 		}
 		List<String> moddedSearch = new ArrayList<String>();
+		
+		int a = 0, b = 1, c = 2; // 'Song' configuration by default; song = 0, artist = 1, album = 2
 		switch(index) {
-		case "Artist": 
-			for (int i = 0; i < result.size(); i++) {
-				String[] temp = result.get(i).split(";");
-				String temp2 = temp[1] + "_" + temp[0] +"_" + temp[2];
-				moddedSearch.add(temp2);
-			} break;
-		case "Song": 
-			for (int i = 0; i < result.size(); i++) {
-				String[] temp = result.get(i).split(";");
-				String temp2 = temp[0] + "_" + temp[1] + "_" + temp[2];
-				moddedSearch.add(temp2);
-			} break;
-		case "Album":
-			for (int i = 0; i < result.size(); i++) {
-				String[] temp = result.get(i).split(";");
-				String temp2 = temp[1] + "_" + temp[2] + "_" + temp[0];
-				moddedSearch.add(temp2);
-			} break;
-		default: break;
+		case "Song": 	a = 0; b = 1; c = 2; break;
+		case "Artist": 	a = 1; b = 0; c = 2; break;
+		case "Album": 	a = 2; b = 0; c = 1; break;
+		default: 		break;
 		}
+		
+		for (int i = 0; i < result.size(); i++) {
+			String[] temp = result.get(i).split(";");
+			String temp2 = temp[a] + "_" + temp[b] +"_" + temp[c];
+			moddedSearch.add(temp2);
+		}
+		
 
 		String[] array = moddedSearch.toArray(new String[moddedSearch.size()]);
 		for (int i = 0; i < moddedSearch.size(); i++) {

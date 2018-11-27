@@ -20,7 +20,7 @@ public class testMETADATA {
 //		System.out.println(Paths.get("METADATA.txt"));
 		Metadata meta= new Metadata();
 		for(int i = 0; i < meta.fileList.size(); i++){
-			File f = meta.getFile(i);
+			Meta_File f = meta.getFile(i);
 			
 			System.out.println(f.getFileName());				
 		}

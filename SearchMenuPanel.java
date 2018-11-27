@@ -1,16 +1,28 @@
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.border.BevelBorder;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.net.DatagramSocket;
 
-import java.util.*;
-import java.awt.event.*;
-import java.io.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.border.BevelBorder;
+import javax.swing.table.DefaultTableModel;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-
-import javax.swing.table.*;
 
 /**
  * Search Menu Class that deals with searching for songs
@@ -209,6 +221,19 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 	}
 	
 	/**
+	 * Changes results based on the search array input
+	 * @param search - an array of song strings related to userSearch
+	 * @param userSearch - the user input
+	 */
+	public void changeSearch(String [] search, String userSearch) {
+		updateSearch(search, userSearch);
+		results.setModel(model);
+		results.updateUI();
+		
+		panel = this;
+	}
+	
+	/**
 	 * Update the search based on the search.
 	 * @param search
 	 * @param userSearch
@@ -239,20 +264,7 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 		searchLabel.setText("Searching for: '" + u_search + "'");
 		searchLabel.setSize(new Dimension(searchLabel.getPreferredSize()));
 	}
-	
-	/**
-	 * Changes results based on the search array input
-	 * @param search - an array of song strings related to userSearch
-	 * @param userSearch - the user input
-	 */
-	public void changeSearch(String [] search, String userSearch) {
-		updateSearch(search, userSearch);
-		results.setModel(model);
-		results.updateUI();
 		
-		panel = this;
-	}
-	
 	/**
 	 * Void method. Sorts the input array search and return a 'sorted' array
 	 * @param search: a string array
@@ -345,36 +357,29 @@ public class SearchMenuPanel extends JPanel implements ActionListener {
 	}
 	
 	/**
-	 * OBSOLETE
 	 * Search method to search for the user's desired song and display relevant results
 	 * @param text: what the user wants to search for
 	 * @return String array of the search results
 	 */
-	public static String[] search(String text) {
-		// Desired Music extension
-		final String EXT = ".wav";
-
-		// System command to grab current working directory
-		String currentFolderPath = System.getProperty("user.dir"); // C:\Users\Austin\Eclipse_OxyMain\MusicStreaming
-		//"user.dir" will return your MusicStreaming folder in the Eclipse Workspace
-		java.io.File currentFolder = new java.io.File(currentFolderPath);// + "\\Music");
-
-
-		// list() vs listFiles()
-		// List- string array
-		// listFiles - files array
-		// Doing list() reduces unnecessary code
-		String[] FilesInFolder = currentFolder.list();
-		// Storage for results
-		ArrayList<String> searchResults = new ArrayList<String>();
-
-		for (int i = 0; i < FilesInFolder.length; i++) {
-			if (FilesInFolder[i].endsWith(EXT) && FilesInFolder[i].toLowerCase().contains(text.toLowerCase()))
-				searchResults.add(FilesInFolder[i].replace(EXT, ""));
-		}
-
-		return searchResults.toArray(new String[searchResults.size()]);
+	public static String[] search(String text, DatagramSocket aSocket, int serverPort) {
+		
+		System.out.println("SearchMenuPanel call");
+		
+		String [] args = {text.toLowerCase(), "Song"}; // uses "Song" for the filter bc of how playlists are shown
+		JSONObject obj = requestReply.UDPRequestReply("getSearch", args, aSocket, serverPort);
+		// uses aSocket and serverPort from panel, which it got from its related Homepage
+		String results = obj.get("result").toString(); 
+		
+		if (results.length() < 3) return null;
+		
+		results = results.substring(2, results.length() - 2).replace("\",\"", "\n");
+		System.out.println("These are the results:\n" + results);
+		
+		return results.split("\n");
 	}
+	
+	
+	
 
 	/**
 	 * Method for grabbing the current user's playlists
