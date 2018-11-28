@@ -1,6 +1,6 @@
 import java.io.IOException;
 
-public class Reducer implements ReduceInterface{
+public class Reducer implements ReduceInterface {
 
 	@Override
 	public void reduce(String key, String[] values) throws IOException {

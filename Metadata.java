@@ -142,18 +142,22 @@ public class Metadata {
 		     songsList.add(sc.nextLine());
 		}
 		sc.close();
-		System.out.println("Searching for " + filter);
+		System.out.println("\nSearching for " + filter + ":");
 		for (int i = 0; i < songsList.size(); i++) {
 			System.out.println(songsList.get(i));
 		}
 		
 		List<String> result = new ArrayList<String>();
-		System.out.println(songsList.get(0).substring(0, filter.length()-1));
-		for (int i = 0; i < songsList.size(); i++) {
-			if (filter.equalsIgnoreCase(songsList.get(i).substring(0, filter.length()))) {
+		//System.out.println(songsList.get(0).substring(0, filter.length()-1));
+		System.out.println("\n-^-\n" + songsList.get(0).split(";")[0].toLowerCase());
+		// i starts at 1 to skip the headers in index 0
+		for (int i = 1; i < songsList.size(); i++) {
+			//if (filter.equalsIgnoreCase(songsList.get(i).substring(0, filter.length()))) {
+			if (songsList.get(i).split(";")[0].toLowerCase().contains(filter.toLowerCase())) {
 				result.add(songsList.get(i));
 			}
 		}
+		System.out.println("-O-\nResults:");
 		for (int i = 0; i < result.size(); i++) {
 			System.out.println(result.get(i));
 		}
@@ -173,7 +177,7 @@ public class Metadata {
 			moddedSearch.add(temp2);
 		}
 		
-
+		System.out.println("\n-v-\nFinal list:");
 		String[] array = moddedSearch.toArray(new String[moddedSearch.size()]);
 		for (int i = 0; i < moddedSearch.size(); i++) {
 			System.out.println(moddedSearch.get(i));

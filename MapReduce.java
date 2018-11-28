@@ -6,15 +6,15 @@ public class MapReduce {
 		
 	}
 	
-	public static void emitMap(PeerDHT peer, String key, String value, Counter counter){
+	public static void emitMap(PeerDHT peer, String key, String value, Counter counter) {
 		
 	}
 	
-	public static void mapContext(PeerDHT peer, Integer page, MapInterface mapper, Counter counter){
+	public static void mapContext(PeerDHT peer, Integer page, MapInterface mapper, Counter counter) {
 		
 	}
 	
-	public static void reduceContext(PeerDHT peer, Integer source, ReduceInterface reducer, Counter counter){
+	public static void reduceContext(PeerDHT peer, Integer source, ReduceInterface reducer, Counter counter) {
 		
 	}
 	
@@ -23,13 +23,25 @@ public class MapReduce {
 	}
 	
 	public static void runMapReduce(String file) {
+		Counter mapCounter = new Counter(),
+				reduceCounter = new Counter(),
+				completedCounter = new Counter();
+		
+		Mapper mapper = new Mapper();
+		Reducer reducer = new Reducer();
+		
+		// map phase
+		// locate metafile.file
+		
+		// ...
+		
 		/* Pseudo code from assignment 4 
 		 * 
-		mapCounter = new Counter();
-		reduceCounter = new Counter();
-		completedCounter = new Counter();
-		mapper = new MapInterface(); 
-		reducer = new ReduceInterface(); 
+		>>^ mapCounter = new Counter();
+		>>^ reduceCounter = new Counter();
+		>>^ completedCounter = new Counter();
+		>>^ mapper = new MapInterface(); 
+		>>^ reducer = new ReduceInterface(); 
 		// map Phases 
 		for each page in metafile.file 
 			mapCounter.add(page); 
@@ -41,6 +53,6 @@ public class MapReduce {
 			wait until reduceCounter.hasCompleted() = true; 
 			completed(guid, completedCounter); 
 			wait until completedCounter.hasCompleted() = true;
-	*/
+		*/
 	}
 }
