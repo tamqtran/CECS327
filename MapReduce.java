@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 import net.tomp2p.dht.PeerDHT;
 
 public class MapReduce {
@@ -22,14 +24,28 @@ public class MapReduce {
 		
 	}
 	
-	public static void runMapReduce(String file) {
-		Counter mapCounter = new Counter(),
-				reduceCounter = new Counter(),
-				completedCounter = new Counter();
+	/**
+	 * Initailizes the map reduce using a peer
+	 *  @param file - metafile txt file (contains all the index files)
+	 *  @return returns nothing
+	 *  @throws IOException 
+	 */
+	public static void runMapReduce(String file) throws IOException {
+		MapCounter mapCounter = new MapCounter();
+		ReduceCounter reduceCounter = new ReduceCounter();
+		CompletedCounter completedCounter = new CompletedCounter();
 		
 		Mapper mapper = new Mapper();
 		Reducer reducer = new Reducer();
 		
+		// get metadata file
+		Metadata meta= new Metadata(file);
+
+		// for each index file in the metadata.txt
+		for(int i = 0; i < 3; i++){
+			//System.out.println(meta.getFile(i).getFileName());
+			mapCounter.add(meta.getFile(i).getFileName());
+		}
 		// map phase
 		// locate metafile.file
 		

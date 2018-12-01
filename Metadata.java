@@ -38,6 +38,19 @@ public class Metadata {
 		}
 		sc.close();
 	}
+	
+	/**
+	 * Contructor for Metadata with specified file
+	 */
+	public Metadata(String file) throws IOException {
+		fileList = new ArrayList<Meta_File>();
+		
+		Scanner sc = new Scanner(Paths.get(file));
+		while (sc.hasNextLine()) {
+		     fileList.add(new Meta_File(sc.nextLine()));
+		}
+		sc.close();
+	}
 
 	// append an inverted index file by add content at the end of filename. 
 	// if filename does not exists, it creates it and adds the content
