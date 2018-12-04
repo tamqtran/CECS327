@@ -101,7 +101,7 @@ public class TCPServer {
 				
 			}
 			
-			MapReduce.runMapReduce("METADATA.txt");
+			MapReduce.runMapReduce(peers ,"METADATA.txt");
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
