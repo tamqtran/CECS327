@@ -24,7 +24,7 @@ public class MapReduce {
 	
 	public static void runMapReduce(String file) {
 		/* Pseudo code from assignment 4 
-		 * 
+		 *
 		mapCounter = new Counter();
 		reduceCounter = new Counter();
 		completedCounter = new Counter();
@@ -33,7 +33,7 @@ public class MapReduce {
 		// map Phases 
 		for each page in metafile.file 
 			mapCounter.add(page); 
-			let peer be the process responsible for storing page 
+			let peer be the process responsible for storing page
 			peer.mapContext(page, mapper, mapCounter) 
 			wait until mapCounter.hasCompleted() = true 
 			// reduce phase 
