@@ -97,7 +97,11 @@ public class TCPServer {
 
 				// args: random peer, guid from index file, song bytes
 				put(peer,new Number160(songArray[3].trim()),songByte);
+				
+				
 			}
+			
+			MapReduce.runMapReduce(peers ,"METADATA.txt");
 		} 
 		catch (Exception e) {
 			e.printStackTrace();

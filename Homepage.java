@@ -387,9 +387,9 @@ public class Homepage {
 		//initialize isHistory (used for searchField focus)
 		
 		// add focus and mouse listeners to the text field component of searchField
-		JTextField editorComponent = (JTextField)searchField.getEditor().getEditorComponent();
-		editorComponent.setText("");
-		editorComponent.addFocusListener(new FocusListener() {
+		JTextField sfield_editorComponent = (JTextField)searchField.getEditor().getEditorComponent();
+		sfield_editorComponent.setText("");
+		sfield_editorComponent.addFocusListener(new FocusListener() {
 			@Override public void focusGained(FocusEvent e) {
 				SwingUtilities.invokeLater(new Runnable() { // the focus is run last
 					@Override public void run() {
@@ -431,7 +431,7 @@ public class Homepage {
 				});
 			}
 		});
-		editorComponent.addMouseListener(new MouseAdapter() {
+		sfield_editorComponent.addMouseListener(new MouseAdapter() {
 			@Override public void mouseClicked(MouseEvent e) {
 				System.out.println("item index: " + searchField.getSelectedIndex());
 				if (searchField.getSelectedIndex() < 0);
@@ -444,7 +444,7 @@ public class Homepage {
 					if (e.getClickCount() == 2) {
 						System.out.println("item double-clicked: " 
 								+ ((searchField.getSelectedItem().equals("")) ? "<blank>" : searchField.getSelectedItem()));
-						editorComponent.setText("");
+						sfield_editorComponent.setText("");
 						searchField.setSelectedIndex(-1);
 					}
 				}
@@ -455,7 +455,49 @@ public class Homepage {
 		searchFilter = new JComboBox<String>(filterTypes);
 		searchFilter.setEditable(false);
 		searchFilter.setName("search by");
-		searchFilter.setToolTipText("Choose one of these three filters. (Initial default on 'song')");
+		searchFilter.setToolTipText("Choose one of these three filters to search by.");
+		searchFilter.addFocusListener(new FocusListener() {
+			@Override public void focusGained(FocusEvent e) {
+				SwingUtilities.invokeLater(new Runnable() { // the focus is run last
+					@Override public void run() {
+						System.out.println("searchFilter focus GAINED");	// system call
+						System.out.println("Search");
+						// swap cards from SearchMenuPanel to ShiftingPanel
+						((CardLayout)(CorePanel.getLayout())).show(CorePanel, SEARCH_PANEL);	
+						CorePanel.updateUI();
+						System.out.println();
+					}
+				});
+			}
+			@Override public void focusLost(FocusEvent e) {
+				SwingUtilities.invokeLater(new Runnable() { // the focus is run last
+					@Override public void run() {	
+						// Don't do it if the focus is moved to any of the components in SearchPanel
+						boolean check = false;
+						for(Component c : SearchPanel.getComponents()) {
+							if (c.hasFocus()) {
+								check = true;
+								break;
+							}
+						}
+						System.out.println("searchFilter focus LOST");	// system call
+						// this will be skipped if focus was not passed to a component in SearchPanel. Otherwise...
+						if (check == true) {
+							System.out.println("Search");
+							// swap cards from ShiftingPanel to SearchMenuPanel
+							((CardLayout)(CorePanel.getLayout())).show(CorePanel, SEARCH_PANEL);	
+							CorePanel.updateUI();
+						} else {
+							System.out.println("Shift");
+							// swap cards from SearchMenuPanel to ShiftingPanel
+							((CardLayout)(CorePanel.getLayout())).show(CorePanel, SHIFT_PANEL);	
+							CorePanel.updateUI();
+						}
+						System.out.println();
+					}
+				});
+			}
+		});
 		searchFilter.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
 				currentFilter = (String) searchFilter.getSelectedItem();
@@ -463,6 +505,8 @@ public class Homepage {
 		});
 		searchFilter.setSelectedIndex(0);
 		currentFilter = "Song";
+		
+		
 		
 		// initialize searchQuery_ and add an action listener that searches for text in searchField
 		searchQuery_ = new JButton("Search");							
