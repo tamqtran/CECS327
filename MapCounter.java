@@ -20,7 +20,7 @@ public class MapCounter implements CounterInterface{
 	}
 
 	@Override
-	public void increment(String key, long n) throws RemoteException {
+	public void increment(String key, int n) throws RemoteException {
 		set.remove(key);
 		counter += n;
 	}
