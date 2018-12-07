@@ -97,6 +97,8 @@ public class TCPServer {
 
 				// args: random peer, guid from index file, song bytes
 				put(peer,new Number160(songArray[3].trim()),songByte);
+				peer.storageLayer().updateResponsibilities(new Number160(songArray[3].trim()), peer.peerID());
+				
 				
 				
 			}

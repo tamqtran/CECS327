@@ -8,7 +8,9 @@ import java.util.TreeMap;
 import net.tomp2p.dht.PeerDHT;
 
 public class MapReduce {
-	TreeMap mappingTree = new TreeMap();
+	TreeMap<String, List<String>> mappingTreeSong = new TreeMap();
+	TreeMap<String, List<String>> mappingTreeArtist = new TreeMap();
+	TreeMap<String, List<String>> mappingTreeAlbum = new TreeMap();
 	TreeMap reduceTree = new TreeMap();
 	
 	/**
@@ -37,7 +39,14 @@ public class MapReduce {
 			
 			// let peer be the process responsible for storing page
 			mapContext(peers, meta.getFile(i).getFileName(), mapper, mapCounter); 
+			
+			
 		}
+		
+		// Printing to make sure it has the right mapping
+		//System.out.println(mappingTreeSong);
+		//System.out.println(mappingTreeArtist);
+		//System.out.println(mappingTreeAlbum);
 		// map phase
 		// locate metafile.file
 		
@@ -72,7 +81,7 @@ public class MapReduce {
 		
 	}
 	
-	public void mapContext(PeerDHT[] peer, String page, MapInterface mapper, MapCounter mapCounter) throws IOException {
+	public void mapContext(PeerDHT[] peers, String page, MapInterface mapper, MapCounter mapCounter) throws IOException {
 		
 		// read the file and put in list
 		Scanner sc = new Scanner(Paths.get(page));
@@ -85,41 +94,30 @@ public class MapReduce {
 			String row = sc.nextLine();
 
 			String[] songInfo = row.split(";");
-			String key = null;
-			String[] value = new String[4];
 			
-			switch (page) {
-	            case "songIndex.txt": 
-	            	key = songInfo[0];
-	            	value[0] = songInfo[0];
-	            	value[1] = songInfo[1];
-	            	value[2] = songInfo[2];
-	            	value[3] = songInfo[3];
-	            	System.out.println(value[0] + "_" + value[1] + "_" + value[2] + "_" + value[3]);
-	            	break;
-	            case "artistIndex.txt":
-	            	key = songInfo[0];
-	            	value[0] = songInfo[1];
-	            	value[1] = songInfo[0];
-	            	value[2] = songInfo[2];
-	            	value[3] = songInfo[3];
-	            	System.out.println(value[0] + "_" + value[1] + "_" + value[2] + "_" + value[3]);
-	            	break;
-	            case "albumIndex.txt":
-	            	key = songInfo[0];
-	            	value[0] = songInfo[1];
-	            	value[1] = songInfo[2];
-	            	value[2] = songInfo[0];
-	            	value[3] = songInfo[3];
-	            	System.out.println(value[0] + "_" + value[1] + "_" + value[2] + "_" + value[3]);
-	            	break;
-	            default: 
-	            	System.out.println("No index");
-                	break;
-			 }
+			// before the first ';' in the index file
+			String key = songInfo[0];
+			
+			// after the first ';' in the index file
+			String value= songInfo[1] + ";" + songInfo[2]+ ";" + songInfo[3];
+		
 			n++;
 			
-			mapper.map(key, value, mappingTree);
+			// depending on page, use corresponding treemaps
+			switch(page) {
+				case "songIndex.txt":
+					mapper.map(key, value, mappingTreeSong, peers);
+					break;
+				case "artistIndex.txt":
+					mapper.map(key, value, mappingTreeArtist, peers);
+					break;
+				case "albumIndex.txt":
+					mapper.map(key, value, mappingTreeAlbum, peers);
+					break;
+				default:
+					System.out.println("No Index");
+					break;
+			}
 		}
 		sc.close();
 		
