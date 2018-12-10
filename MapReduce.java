@@ -1,11 +1,13 @@
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.TreeMap;
 
 import net.tomp2p.dht.PeerDHT;
+import net.tomp2p.peers.Number160;
 
 public class MapReduce {
 	TreeMap<String, List<String>> mappingTreeSong = new TreeMap();
@@ -32,16 +34,23 @@ public class MapReduce {
 		// get metadata file
 		Metadata meta= new Metadata(file);
 
-		// for each index file in the metadata.txt
-		for(int i = 0; i < 3; i++){
-			//System.out.println(meta.getFile(i).getFileName());
-			mapCounter.add(meta.getFile(i).getFileName());
-			
-			// let peer be the process responsible for storing page
-			mapContext(peers, meta.getFile(i).getFileName(), mapper, mapCounter); 
-			
-			
-		}
+		// MAPPING PHASE
+		do {
+			// for each index file in the metadata.txt
+			for(int i = 0; i < 3; i++){
+				//System.out.println(meta.getFile(i).getFileName());
+				mapCounter.add(meta.getFile(i).getFileName());
+				
+				// let peer be the process responsible for storing page
+				mapContext(peers, meta.getFile(i).getFileName(), mapper, mapCounter); 
+			}
+		}while(!mapCounter.hasCompleted());
+		
+		
+		System.out.println(mapCounter.hasCompleted());
+		//System.out.println(mapCounter.counter);
+		// printing to test out if treemap has the correct values
+		//System.out.println(mappingTreeSong);
 		
 		// Printing to make sure it has the right mapping
 		//System.out.println(mappingTreeSong);
@@ -77,8 +86,43 @@ public class MapReduce {
 		
 	}
 	
-	public void emitMap(PeerDHT peer, String key, String value, Counter counter) {
+	public static void emitMap(PeerDHT peer, String key, String value, MapCounter mapCounter, TreeMap<String, List<String>> map) throws RemoteException {
+		// get content of peer
+		List<Number160> contentOfPeer = (List<Number160>) peer.storageLayer().findContentForResponsiblePeerID(peer.peerID());
 		
+		// get guid of song from value to match the guid of song in the peer
+		Number160 guid = new Number160(value.split(";")[2]);
+		
+		// go through each peer
+		for(Number160 p: contentOfPeer)
+		{
+			// checking if peer has the song guid
+			if(p.equals(new Number160(value.split(";")[2]))) {
+				
+				// if there is not a key for peer, make a new key with a List of String
+				if(!map.containsKey(key)){
+					
+					// list and add value
+					List<String> valueList = new ArrayList<String>();
+					valueList.add(value);
+					map.put(key, valueList);
+					
+					
+				}
+				// if there is a key, add on to its List of String
+				else {
+					// add value to existing list and put it back inside the tree map
+					List<String> newValueList = map.get(key);
+					newValueList.add(value);
+					map.replace(key, newValueList);
+				}
+				
+				// decrement counter
+				mapCounter.decrement();
+			}
+			else
+				System.out.println("Song not in peer");
+		}
 	}
 	
 	public void mapContext(PeerDHT[] peers, String page, MapInterface mapper, MapCounter mapCounter) throws IOException {
@@ -101,27 +145,28 @@ public class MapReduce {
 			// after the first ';' in the index file
 			String value= songInfo[1] + ";" + songInfo[2]+ ";" + songInfo[3];
 		
-			n++;
-			
 			// depending on page, use corresponding treemaps
 			switch(page) {
 				case "songIndex.txt":
-					mapper.map(key, value, mappingTreeSong, peers);
+					mapper.map(key, value, mappingTreeSong, mapCounter, peers);
 					break;
 				case "artistIndex.txt":
-					mapper.map(key, value, mappingTreeArtist, peers);
+					mapper.map(key, value, mappingTreeArtist, mapCounter, peers);
 					break;
 				case "albumIndex.txt":
-					mapper.map(key, value, mappingTreeAlbum, peers);
+					mapper.map(key, value, mappingTreeAlbum, mapCounter, peers);
 					break;
 				default:
 					System.out.println("No Index");
 					break;
 			}
+			n++;
 		}
 		sc.close();
 		
+		// increment counter
 		mapCounter.increment(page, n);
+		
 		
 		//TODO create new thread to avoid blocking?
 	}
