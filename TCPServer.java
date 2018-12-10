@@ -99,8 +99,10 @@ public class TCPServer {
 				put(peer,new Number160(songArray[3].trim()),songByte);
 				peer.storageLayer().updateResponsibilities(new Number160(songArray[3].trim()), peer.peerID());
 				
-				
-				
+				// add duplicate songs into different peers
+				PeerDHT peer2 = peers[(i+1)%3];
+				put(peer2,new Number160(songArray[3].trim()),songByte);
+				peer2.storageLayer().updateResponsibilities(new Number160(songArray[3].trim()), peer2.peerID());
 			}
 			
 			MapReduce mr = new MapReduce();

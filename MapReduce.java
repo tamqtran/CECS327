@@ -49,41 +49,27 @@ public class MapReduce {
 				mapContext(peers, meta.getFile(i).getFileName(), mapper, mapCounter);
 			}
 		} while (!mapCounter.hasCompleted());
+		
+		// indicate mapping phase has completed
+		System.out.println("Mapping Phase is done");
+		System.out.println(mappingTreeSong);
+		System.out.println(mappingTreeArtist);
+		System.out.println(mappingTreeAlbum);
 
 		// Again. I know lazy LOL
 		reduceContext(mappingTreeSong, reduceTreeSong, reducer, reduceCounter);
 		reduceContext(mappingTreeArtist, reduceTreeArtist, reducer, reduceCounter);
 		reduceContext(mappingTreeAlbum, reduceTreeAlbum, reducer, reduceCounter);
-
+		
+		// indicate reduce phase has completed
+		System.out.println("Reduce Phase is done");
+		System.out.println(reduceTreeSong);
+		System.out.println(reduceTreeArtist);
+		System.out.println(reduceTreeAlbum);
+		
 		completed(completedCounter);
 
 		System.out.println(mapCounter.hasCompleted());
-		// System.out.println(mapCounter.counter);
-		// printing to test out if treemap has the correct values
-		// System.out.println(mappingTreeSong);
-
-		// Printing to make sure it has the right mapping
-		// System.out.println(mappingTreeSong);
-		// System.out.println(mappingTreeArtist);
-		// System.out.println(mappingTreeAlbum);
-		// map phase
-		// locate metafile.file
-
-		// ...
-
-		/*
-		 * Pseudo code from assignment 4
-		 * 
-		 * >>^ mapCounter = new Counter(); >>^ reduceCounter = new Counter(); >>^
-		 * completedCounter = new Counter(); >>^ mapper = new MapInterface(); >>^
-		 * reducer = new ReduceInterface(); // map Phases for each page in metafile.file
-		 * mapCounter.add(page); let peer be the process responsible for storing page
-		 * peer.mapContext(page, mapper, mapCounter) wait until
-		 * mapCounter.hasCompleted() = true // reduce phase reduceContext(guid, reducer,
-		 * reduceCounter); wait until reduceCounter.hasCompleted() = true;
-		 * completed(guid, completedCounter); wait until completedCounter.hasCompleted()
-		 * = true;
-		 */
 	}
 
 	public void emitReduce(PeerDHT peer, String key, String value, Counter counter) {
@@ -98,12 +84,21 @@ public class MapReduce {
 
 		// get guid of song from value to match the guid of song in the peer
 		Number160 guid = new Number160(value.split(";")[2]);
+		
+		System.out.println(contentOfPeer);
 
-		// go through each peer
+		// go through each key in peer
 		for (Number160 p : contentOfPeer) {
 			// checking if peer has the song guid
 			if (p.equals(new Number160(value.split(";")[2]))) {
+				System.out.println("Song is in peer");
 
+				// decrement counter
+				System.out.println(mapCounter.counter);
+				mapCounter.decrement();
+				System.out.println(mapCounter.counter);
+				
+				
 				// if there is not a key for peer, make a new key with a List of String
 				if (!map.containsKey(key)) {
 
@@ -112,8 +107,10 @@ public class MapReduce {
 					valueList.add(value);
 					map.put(key, valueList);
 
+					
 				}
 				// if there is a key, add on to its List of String
+				// this is where duplicates can appear
 				else {
 					// add value to existing list and put it back inside the tree map
 					List<String> newValueList = map.get(key);
@@ -121,8 +118,7 @@ public class MapReduce {
 					map.replace(key, newValueList);
 				}
 
-				// decrement counter
-				mapCounter.decrement();
+				
 			} else
 				System.out.println("Song not in peer");
 		}

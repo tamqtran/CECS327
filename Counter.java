@@ -14,7 +14,7 @@ public class Counter implements CounterInterface {
 	@Override
 	public boolean hasCompleted() {
 		// TODO Auto-generated method stub
-		if (counter == 0 && set.isEmpty())
+		if (counter <= 0 && set.isEmpty())
 			return true;
 		return false;
 	}

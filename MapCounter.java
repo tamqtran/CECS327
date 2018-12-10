@@ -14,7 +14,7 @@ public class MapCounter implements CounterInterface{
 
 	@Override
 	public boolean hasCompleted() {
-		if( counter == 0 && set.isEmpty() )
+		if( counter <= 0 && set.isEmpty() )
 			return true;
 		return false;
 	}
