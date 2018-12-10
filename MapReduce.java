@@ -35,7 +35,7 @@ public class MapReduce {
 		Mapper mapper = new Mapper();
 		Reducer reducer = new Reducer();
 
-		// get metadata file
+		// get index files from metadata file
 		Metadata meta = new Metadata(file);
 
 		// MAPPING PHASE
@@ -55,12 +55,14 @@ public class MapReduce {
 		System.out.println(mappingTreeSong);
 		System.out.println(mappingTreeArtist);
 		System.out.println(mappingTreeAlbum);
-
-		// Again. I know lazy LOL
-		reduceContext(mappingTreeSong, reduceTreeSong, reducer, reduceCounter);
-		reduceContext(mappingTreeArtist, reduceTreeArtist, reducer, reduceCounter);
-		reduceContext(mappingTreeAlbum, reduceTreeAlbum, reducer, reduceCounter);
 		
+		// REDUCE PHASE
+		for (int i = 0; i < 3; i++) {
+			
+			// reduce for each index file
+			reduceContext(meta.getFile(i).getFileName(), reducer, reduceCounter);
+		}
+
 		// indicate reduce phase has completed
 		System.out.println("Reduce Phase is done");
 		System.out.println(reduceTreeSong);
@@ -171,9 +173,30 @@ public class MapReduce {
 	}
 
 	// Modeled after mapContext
-	public void reduceContext(TreeMap<String, List<String>> source, TreeMap<String, String> dest,
-			ReduceInterface reducer, ReduceCounter counter) throws IOException {
-
+	public void reduceContext(String file, ReduceInterface reducer, ReduceCounter counter) throws IOException {
+		
+		TreeMap<String, List<String>> source = new TreeMap<String, List<String>>();
+		TreeMap<String, String> dest = new TreeMap<String, String>();
+		
+		// depending on page, use corresponding treemaps
+		switch (file) {
+		case "songIndex.txt":
+			source = mappingTreeSong;
+			dest = reduceTreeSong;
+			break;
+		case "artistIndex.txt":
+			source = mappingTreeArtist;
+			dest = reduceTreeArtist;
+			break;
+		case "albumIndex.txt":
+			source = mappingTreeAlbum;
+			dest = reduceTreeAlbum;
+			break;
+		default:
+			System.out.println("No Index");
+			break;
+		}
+		
 		for (Map.Entry<String, List<String>> entry : source.entrySet()) {
 			String key = entry.getKey();
 			List<String> value = entry.getValue();
