@@ -42,7 +42,7 @@ public class MapReduce {
 		do {
 			// for each index file in the metadata.txt
 			for (int i = 0; i < 3; i++) {
-				// System.out.println(meta.getFile(i).getFileName());
+				
 				mapCounter.add(meta.getFile(i).getFileName());
 
 				// let peer be the process responsible for storing page
@@ -57,11 +57,16 @@ public class MapReduce {
 		System.out.println(mappingTreeAlbum);
 		
 		// REDUCE PHASE
-		for (int i = 0; i < 3; i++) {
-			
-			// reduce for each index file
-			reduceContext(meta.getFile(i).getFileName(), reducer, reduceCounter);
-		}
+		do {
+			for (int i = 0; i < 3; i++) {
+				
+				reduceCounter.add(meta.getFile(i).getFileName());
+				
+				// reduce for each index file
+				reduceContext(meta.getFile(i).getFileName(), reducer, reduceCounter);
+			}
+		} while(!reduceCounter.hasCompleted());
+		
 
 		// indicate reduce phase has completed
 		System.out.println("Reduce Phase is done");
@@ -196,14 +201,15 @@ public class MapReduce {
 			System.out.println("No Index");
 			break;
 		}
-		
+		int n = 0;
 		for (Map.Entry<String, List<String>> entry : source.entrySet()) {
 			String key = entry.getKey();
 			List<String> value = entry.getValue();
-			reducer.reduce(key, value, dest);
+			reducer.reduce(key, value, dest, counter);
+			n++;
 		}
-
-		// I have no idea how to use counter
+		
+		counter.increment(file, n);
 	}
 
 	public void completed(CompletedCounter counter) throws UnsupportedEncodingException, IOException {
