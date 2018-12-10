@@ -20,7 +20,7 @@ public class Counter implements CounterInterface {
 	}
 
 	@Override
-	public void increment(String key, long n) throws RemoteException {
+	public void increment(String key, int n) throws RemoteException {
 		// TODO Auto-generated method stub
 		set.remove(key);
 		counter += n;
