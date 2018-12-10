@@ -9,7 +9,7 @@ import java.util.TreeMap;
 public class Reducer implements ReduceInterface {
 
 	@Override
-	public void reduce(String key, List<String> values, TreeMap<String, String> map) throws IOException {
+	public void reduce(String key, List<String> values, TreeMap<String, String> map, ReduceCounter counter) throws IOException {
 		// TODO Auto-generated method stub
 
 		// Lazy way to remove duplicates
@@ -32,15 +32,18 @@ public class Reducer implements ReduceInterface {
 		// String variable to hold condensed format of values
 		// grabs first value of List
 		String newValue = noDupes.get(0);
-
+		counter.decrement();
+		
 		// iterates through sorted list
 		// adds each element onto list
 		for (int i = 1; i < noDupes.size(); i++) {
 			newValue = newValue + "_" + (String) noDupes.get(i);
+			counter.decrement();
 		}
 
 		// adds resulting string to reduceTree
 		map.put(key, newValue);
+		
 	}
 
 }
