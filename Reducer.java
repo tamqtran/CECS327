@@ -35,7 +35,7 @@ public class Reducer implements ReduceInterface {
 
 		// iterates through sorted list
 		// adds each element onto list
-		for (int i = 0; i < noDupes.size(); i++) {
+		for (int i = 1; i < noDupes.size(); i++) {
 			newValue = newValue + "_" + (String) noDupes.get(i);
 		}
 
