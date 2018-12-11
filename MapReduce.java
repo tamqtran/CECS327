@@ -12,6 +12,11 @@ import java.util.TreeMap;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.peers.Number160;
 
+/**
+ * This class holds all the main methods for the Map-Reduce features 
+ * @author Duong Pham, Tam Tran, Vincent Vu
+ *
+ */
 public class MapReduce {
 	TreeMap<String, List<String>> mappingTreeSong = new TreeMap<String, List<String>>();
 	TreeMap<String, List<String>> mappingTreeArtist = new TreeMap<String, List<String>>();
@@ -21,7 +26,7 @@ public class MapReduce {
 	TreeMap<String, String> reduceTreeAlbum = new TreeMap<String, String>();
 
 	/**
-	 * Initailizes the map reduce using a peer
+	 * Initializes the map reduce using a peer
 	 * 
 	 * @param file - metafile txt file (contains all the index files)
 	 * @return returns nothing
@@ -79,10 +84,17 @@ public class MapReduce {
 		System.out.println(mapCounter.hasCompleted());
 	}
 
-	public void emitReduce(PeerDHT peer, String key, String value, Counter counter) {
 
-	}
 
+	/**
+	 * Emit mapping on the specified peer
+	 * @param peer - the peer that is being mapped
+	 * @param key - the key that is being checked
+	 * @param value - the value that is being added to the tree map
+	 * @param mapCounter - the map counter
+	 * @param map - the tree map of map phase
+	 * @throws RemoteException
+	 */
 	public static void emitMap(PeerDHT peer, String key, String value, MapCounter mapCounter,
 			TreeMap<String, List<String>> map) throws RemoteException {
 		// get content of peer
@@ -131,6 +143,14 @@ public class MapReduce {
 		}
 	}
 
+	/**
+	 * Begins the map phase by mapping the infomation provided by page
+	 * @param peers - the list of peers to map
+	 * @param page - the name of the file
+	 * @param mapper - the mapper that maps the peers
+	 * @param mapCounter - the map counter
+	 * @throws IOException
+	 */
 	public void mapContext(PeerDHT[] peers, String page, MapInterface mapper, MapCounter mapCounter)
 			throws IOException {
 
@@ -177,7 +197,13 @@ public class MapReduce {
 		// TODO create new thread to avoid blocking?
 	}
 
-	// Modeled after mapContext
+	/**
+	 * Begins the reduce phase by reducing the tree map of the map phase in to a simpler tree map on the provided file
+	 * @param file - the name of the file
+	 * @param reducer - the reducer that is used to reduce the tree map of the map phase
+	 * @param counter - the reduce counter
+	 * @throws IOException
+	 */
 	public void reduceContext(String file, ReduceInterface reducer, ReduceCounter counter) throws IOException {
 		
 		TreeMap<String, List<String>> source = new TreeMap<String, List<String>>();
@@ -212,38 +238,42 @@ public class MapReduce {
 		counter.increment(file, n);
 	}
 
+	/**
+	 * When Map Phase and Reduce Phase have been completed then write into new sort files
+	 * @param counter -the completed counter
+	 * @throws UnsupportedEncodingException
+	 * @throws IOException
+	 */
 	public void completed(CompletedCounter counter) throws UnsupportedEncodingException, IOException {
-		// Again got no idea what counter is for
-		/**
-		 * Code for if we want to empty and override //CAREFUL WHEN TESTING //SAVE A
-		 * COPY OF INDEX FILES
-		 * 
-		 * //empties content of file new PrintWriter(source).close();
-		 * 
-		 * //Writes to file by appending PrintWriter output = new PrintWriter(new
-		 * FileWriter(source, true));
-		 */
-
-		String[] output = { "sortedSongIndex.txt", "sortedArtistIndex.txt", "sortedAlbumIndex.txt" };
-		for (String i : output) {
-			switch (i) {
-			case "sortedSongIndex.txt":
-				tree2File(reduceTreeSong, i);
-				break;
-			case "sortedArtistIndex.txt":
-				tree2File(reduceTreeArtist, i);
-				break;
-			case "sortedAlbumIndex.txt":
-				tree2File(reduceTreeAlbum, i);
-				break;
-			default:
-				System.out.println("Did i make a spelling error somewhere");
-				break;
+		
+		if(counter.hasCompleted()) {
+			String[] output = { "sortedSongIndex.txt", "sortedArtistIndex.txt", "sortedAlbumIndex.txt" };
+			for (String i : output) {
+				switch (i) {
+				case "sortedSongIndex.txt":
+					tree2File(reduceTreeSong, i);
+					break;
+				case "sortedArtistIndex.txt":
+					tree2File(reduceTreeArtist, i);
+					break;
+				case "sortedAlbumIndex.txt":
+					tree2File(reduceTreeAlbum, i);
+					break;
+				default:
+					System.out.println("Did i make a spelling error somewhere");
+					break;
+				}
 			}
 		}
-
 	}
 
+	/**
+	 * Writes tree map into file
+	 * @param map - tree map that using to write
+	 * @param newFile - name of the new file that is being created
+	 * @throws IOException
+	 * @throws UnsupportedEncodingException
+	 */
 	public void tree2File(TreeMap<String, String> map, String newFile)
 			throws IOException, UnsupportedEncodingException {
 		PrintWriter file = new PrintWriter(newFile, "UTF-8");
